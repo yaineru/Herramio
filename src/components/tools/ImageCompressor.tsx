@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download, ImageOff, Loader2, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { Download, ImageOff, Loader2, RotateCcw, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Label";
@@ -215,6 +216,15 @@ export function ImageCompressor() {
           <RotateCcw className="h-4 w-4" /> Elegir otra imagen
         </Button>
       </div>
+
+      {resultBlob && !isProcessing && (
+        <Link
+          href="/imagen-convertir"
+          className="mt-4 flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:underline"
+        >
+          ¿Necesitas el resultado en otro formato? Conviértelo <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      )}
 
       <p className="mt-4 text-xs text-slate-400">
         Tu imagen se procesa directamente en tu navegador: no se sube a nuestros servidores en

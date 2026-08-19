@@ -27,6 +27,15 @@ const seoContent: ContentBlock[] = [
       "Verificar el contenido real de una cadena Base64 antes de usarla en código",
     ],
   },
+  { type: "h2", text: "Errores frecuentes" },
+  {
+    type: "ul",
+    items: [
+      "Intentar decodificar un texto que no es Base64 válido — la herramienta te avisa en vez de mostrar un resultado incorrecto",
+      "Pegar una cadena Base64 con saltos de línea o espacios extra, que a veces se agregan al copiar desde otro sistema",
+      "Confundir Base64 con cifrado y usarlo para intentar ocultar información sensible — cualquiera puede decodificarlo",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -41,6 +50,10 @@ const faqItems = [
   {
     question: "¿Se guarda mi texto en algún servidor?",
     answer: "No. Todo el proceso ocurre en tu navegador usando las APIs nativas btoa/atob; nada se envía a un servidor.",
+  },
+  {
+    question: "¿Qué pasa si intento decodificar algo que no es Base64?",
+    answer: "La herramienta te avisa con un mensaje claro (\"Base64 inválido\") en vez de mostrar un resultado sin sentido, para que sepas de inmediato que el texto no es válido.",
   },
 ];
 

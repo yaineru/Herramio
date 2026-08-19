@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Zap, ShieldCheck, Smartphone, Infinity as InfinityIcon, ArrowRight } from "lucide-react";
 import { Hero } from "@/components/marketing/Hero";
+import { ContinueWhereYouLeftOff } from "@/components/marketing/ContinueWhereYouLeftOff";
 import { CategoryGrid } from "@/components/marketing/CategoryGrid";
 import { CategoryHub } from "@/components/marketing/CategoryHub";
 import { ToolGrid } from "@/components/marketing/ToolGrid";
@@ -95,6 +96,8 @@ export default function HomePage() {
       />
 
       <Hero />
+
+      <ContinueWhereYouLeftOff />
 
       <section className="container-page py-16">
         <Reveal>

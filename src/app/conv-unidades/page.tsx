@@ -29,6 +29,16 @@ const seoContent: ContentBlock[] = [
     type: "p",
     text: "Elige la categoría, escribe la cantidad y selecciona la unidad de origen y destino — el resultado se calcula al instante. Usa el botón central para invertir rápidamente las unidades.",
   },
+  { type: "h2", text: "Casos de uso reales" },
+  {
+    type: "ul",
+    items: [
+      "Convertir una receta de cocina de tazas y onzas a mililitros y gramos",
+      "Pasar una medida de un plano o mueble de pulgadas a centímetros antes de comprar algo",
+      "Convertir tu peso o estatura entre el sistema métrico e imperial para un formulario o consulta médica",
+      "Calcular cuántos kilómetros son una distancia dada en millas antes de un viaje",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -41,6 +51,10 @@ const faqItems = [
     question: "¿Por qué la temperatura funciona distinto a las demás categorías?",
     answer:
       "Celsius, Fahrenheit y Kelvin no están relacionados por un simple factor multiplicador como el resto de unidades, así que la conversión usa las fórmulas estándar entre escalas de temperatura.",
+  },
+  {
+    question: "¿Qué pasa si escribo un valor que no es un número?",
+    answer: "El campo simplemente no muestra un resultado hasta que introduzcas un número válido — no se genera ningún cálculo erróneo.",
   },
 ];
 

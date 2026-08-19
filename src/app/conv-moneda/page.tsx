@@ -37,6 +37,10 @@ const faqItems = [
     question: "¿Necesito internet para usar esta herramienta?",
     answer: "Sí, a diferencia del resto de las herramientas de Herramio, esta necesita conexión para obtener la tasa de cambio actualizada.",
   },
+  {
+    question: "¿Qué pasa si el servicio de tasas de cambio no responde?",
+    answer: "Verás un mensaje pidiéndote intentar de nuevo en unos minutos, en vez de un resultado incorrecto o inventado.",
+  },
 ];
 
 export default function ConvMonedaPage() {

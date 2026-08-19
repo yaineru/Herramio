@@ -32,6 +32,15 @@ const seoContent: ContentBlock[] = [
     type: "p",
     text: "El IMC no distingue entre masa muscular y grasa corporal, por lo que puede no ser preciso para personas muy musculosas, deportistas de alto rendimiento, personas mayores o durante el embarazo. Es un indicador orientativo general, no un diagnóstico médico individual.",
   },
+  { type: "h2", text: "Cuándo tiene sentido calcularlo" },
+  {
+    type: "ul",
+    items: [
+      "Como referencia rápida al empezar un cambio de hábitos alimenticios o de actividad física",
+      "Para llevar un seguimiento simple de tu peso en relación a tu altura a lo largo del tiempo",
+      "Antes de una consulta médica, como dato de referencia (nunca como reemplazo del criterio profesional)",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -48,6 +57,10 @@ const faqItems = [
   {
     question: "¿Mis datos se guardan en algún lugar?",
     answer: "No. El cálculo ocurre completamente en tu navegador; no almacenamos ningún dato de salud.",
+  },
+  {
+    question: "¿Puedo usar libras y pulgadas en vez de kilogramos y centímetros?",
+    answer: "La calculadora trabaja con kilogramos y centímetros. Si tienes tus datos en unidades imperiales, conviértelos primero con nuestro convertidor de unidades.",
   },
 ];
 

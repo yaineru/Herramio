@@ -31,6 +31,15 @@ const seoContent: ContentBlock[] = [
       "La temperatura corporal normal es aproximadamente 37°C, 98.6°F",
     ],
   },
+  { type: "h2", text: "Cuándo se usa cada escala" },
+  {
+    type: "ul",
+    items: [
+      "Celsius: la escala estándar en la mayoría de países para clima, cocina y uso cotidiano",
+      "Fahrenheit: la escala habitual en Estados Unidos — útil al leer recetas, el clima o manuales en inglés",
+      "Kelvin: la escala usada en ciencia e ingeniería, porque parte del cero absoluto y no tiene valores negativos",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -41,6 +50,14 @@ const faqItems = [
   {
     question: "¿Esta herramienta también convierte otras unidades?",
     answer: "Para longitud, peso, área, volumen y tiempo, usa nuestro convertidor de unidades general.",
+  },
+  {
+    question: "¿Puede dar un resultado con temperatura negativa?",
+    answer: "En Celsius y Fahrenheit sí, es normal. En Kelvin no: 0 K es el cero absoluto, la temperatura más baja físicamente posible, así que un resultado negativo en Kelvin no tiene sentido físico.",
+  },
+  {
+    question: "¿Se envían mis datos a algún servidor?",
+    answer: "No. La conversión usa fórmulas matemáticas fijas y ocurre completamente en tu navegador.",
   },
 ];
 
