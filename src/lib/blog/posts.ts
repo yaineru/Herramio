@@ -851,6 +851,110 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "como-unir-archivos-pdf-online",
+    title: "Cómo unir archivos PDF online, gratis y sin subir tus documentos",
+    excerpt:
+      "Combinar varios PDF en uno solo no debería requerir instalar un programa ni subir contratos o identificaciones a un servidor desconocido. Así se hace bien, en menos de un minuto.",
+    description:
+      "Guía práctica para unir varios PDF en un solo archivo, en el orden correcto, sin instalar programas ni subir tus documentos a un servidor.",
+    datePublished: "2026-08-19",
+    readingTime: "4 min",
+    relatedTool: "pdf-unir",
+    content: [
+      {
+        type: "p",
+        text: "Tienes tres archivos distintos — un contrato, un anexo y una identificación escaneada — y necesitas enviarlos como un solo PDF. Hacerlo bien, en el orden correcto y sin perder calidad, toma menos de un minuto si usas la herramienta correcta.",
+      },
+      { type: "h2", text: "Cuándo tiene sentido unir varios PDF" },
+      {
+        type: "ul",
+        items: [
+          "Combinar varios contratos o formularios firmados en un solo documento antes de enviarlos",
+          "Juntar capítulos o secciones de un informe que llegaron por separado",
+          "Unir comprobantes o facturas escaneadas antes de mandarlas a contabilidad",
+          "Armar un solo PDF con tu CV, portafolio y cartas de recomendación para una postulación",
+        ],
+      },
+      { type: "h2", text: "Cómo unir tus PDF paso a paso" },
+      {
+        type: "steps",
+        items: [
+          { title: "Sube tus archivos", text: "Arrastra dos o más PDF, o selecciónalos desde tu computadora." },
+          { title: "Ordénalos", text: "Usa las flechas para definir en qué orden quedará cada documento en el archivo final." },
+          { title: "Descarga el resultado", text: "Obtienes un solo PDF con todas las páginas, en el orden que definiste." },
+        ],
+      },
+      { type: "h2", text: "Qué pasa con tus archivos" },
+      {
+        type: "p",
+        text: "A diferencia de la mayoría de herramientas online de PDF, unir tus archivos en Herramio ocurre completamente en tu navegador — nunca se suben a un servidor. Esto importa especialmente cuando los documentos contienen información sensible: contratos, identificaciones o datos financieros nunca salen de tu computadora.",
+      },
+      { type: "h2", text: "Errores comunes al unir PDF" },
+      {
+        type: "ul",
+        items: [
+          "Subir los archivos y olvidar reordenarlos antes de descargar el resultado",
+          "Intentar unir un PDF protegido con contraseña sin quitarle la protección primero",
+          "No abrir el PDF combinado para confirmar que el orden y el contenido son correctos antes de enviarlo",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "como-convertir-imagenes-jpg-png-webp",
+    title: "JPG, PNG o WebP: cómo convertir tus imágenes y cuál formato elegir",
+    excerpt:
+      "Cada formato de imagen sirve para algo distinto — elegir mal significa perder transparencia, cargar peso de más o toparte con un archivo que un programa viejo no puede abrir.",
+    description:
+      "Guía para convertir imágenes entre JPG, PNG y WebP, con criterios claros sobre cuándo conviene cada formato.",
+    datePublished: "2026-08-19",
+    readingTime: "4 min",
+    relatedTool: "imagen-convertir",
+    content: [
+      {
+        type: "p",
+        text: "Tienes una imagen en PNG que pesa demasiado, o un WebP que un programa viejo no abre, o necesitas transparencia y solo tienes un JPG. Cada uno de estos problemas se resuelve convirtiendo al formato correcto — el truco está en saber cuál.",
+      },
+      { type: "h2", text: "Qué formato usar según lo que necesitas" },
+      {
+        type: "ul",
+        items: [
+          "JPG: la mejor opción para fotografías — buena compresión y tamaño de archivo pequeño, sin soporte de transparencia",
+          "PNG: necesario cuando la imagen requiere fondo transparente (logos, iconos) o cuando el detalle nítido pesa más que el ahorro de espacio",
+          "WebP: suele dar el mejor balance entre calidad y peso para web, aunque algunos programas o sistemas antiguos todavía no lo abren sin problema",
+        ],
+      },
+      { type: "h2", text: "Cómo convertir una imagen paso a paso" },
+      {
+        type: "steps",
+        items: [
+          { title: "Sube tu imagen", text: "JPG, PNG o WebP, la que necesites convertir." },
+          { title: "Elige el formato de salida", text: "El que necesites según el uso que le vas a dar." },
+          { title: "Descarga el resultado", text: "La conversión ocurre al instante, sin esperar." },
+        ],
+      },
+      { type: "h2", text: "Qué pasa con la transparencia al convertir" },
+      {
+        type: "p",
+        text: "Si conviertes una imagen PNG o WebP con transparencia a JPG, el área transparente se rellena automáticamente con fondo blanco — JPG no tiene forma de representar transparencia. Si necesitas conservarla, convierte a PNG o WebP en su lugar.",
+      },
+      { type: "h2", text: "Errores comunes al convertir imágenes" },
+      {
+        type: "ul",
+        items: [
+          "Convertir un logo con transparencia a JPG y descubrir que el fondo ahora es blanco sólido",
+          "Elegir WebP para un archivo que necesitas abrir en un programa de diseño antiguo que no lo soporta",
+          "Convertir varias veces entre formatos con pérdida (JPG → PNG → JPG de nuevo), acumulando pérdida de calidad innecesaria",
+        ],
+      },
+      { type: "h2", text: "Privacidad" },
+      {
+        type: "p",
+        text: "Al igual que el resto de herramientas de imagen de Herramio, esta conversión ocurre completamente en tu navegador usando la API Canvas nativa — tu imagen nunca se sube a un servidor.",
+      },
+    ],
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

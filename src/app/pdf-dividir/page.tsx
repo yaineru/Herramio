@@ -12,6 +12,16 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const seoContent: ContentBlock[] = [
+  { type: "h2", text: "Cuándo dividir un PDF" },
+  {
+    type: "ul",
+    items: [
+      "Separar los capítulos de un libro o informe largo en archivos independientes",
+      "Extraer solo las páginas que necesitas de un contrato o expediente extenso",
+      "Sacar una página específica (un anexo, una firma) sin enviar el documento completo",
+      "Reducir un PDF pesado a partes más pequeñas y manejables para compartir",
+    ],
+  },
   { type: "h2", text: "Cómo dividir un PDF" },
   {
     type: "steps",
@@ -26,6 +36,15 @@ const seoContent: ContentBlock[] = [
     type: "p",
     text: "Si escribes \"1-3,4-6\", obtendrás dos archivos: uno con las páginas 1 a 3, y otro con las páginas 4 a 6 — útil para separar capítulos o secciones de un mismo documento.",
   },
+  { type: "h2", text: "Errores frecuentes" },
+  {
+    type: "ul",
+    items: [
+      "Escribir un rango fuera del total de páginas del documento (por ejemplo \"5-10\" en un PDF de 6 páginas)",
+      "Confundir el orden de los rangos — cada grupo que escribas se descarga como un archivo separado, en el orden en que lo escribiste",
+      "Intentar dividir un PDF protegido con contraseña sin quitarle la protección primero",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -35,7 +54,19 @@ const faqItems = [
   },
   {
     question: "¿Se sube mi PDF a un servidor?",
-    answer: "No. La división ocurre completamente en tu navegador.",
+    answer: "No. La división ocurre completamente en tu navegador — el documento nunca sale de tu computadora.",
+  },
+  {
+    question: "¿Cuántos rangos puedo definir a la vez?",
+    answer: "No hay un límite fijo. Puedes definir tantos grupos de páginas como necesites, separados por comas.",
+  },
+  {
+    question: "¿Qué pasa si me equivoco en un rango?",
+    answer: "Simplemente corrige el texto y vuelve a generar la división — no se descarga nada hasta que confirmes.",
+  },
+  {
+    question: "¿Funciona con PDF escaneados o con imágenes?",
+    answer: "Sí, la división solo reorganiza las páginas del archivo; no importa si el contenido es texto, imágenes o ambos.",
   },
 ];
 

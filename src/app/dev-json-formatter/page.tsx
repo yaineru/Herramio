@@ -27,6 +27,16 @@ const seoContent: ContentBlock[] = [
       "Revisar rápidamente la estructura de un objeto JSON anidado",
     ],
   },
+  { type: "h2", text: "Errores frecuentes en JSON" },
+  {
+    type: "ul",
+    items: [
+      "Dejar una coma extra después del último elemento de un objeto o arreglo",
+      "Usar comillas simples en vez de comillas dobles para las claves o los strings",
+      "Olvidar comillas en una clave (JSON exige claves entre comillas, a diferencia de JavaScript)",
+      "Copiar un objeto de JavaScript con comentarios o funciones — JSON no admite ninguno de los dos",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -41,6 +51,10 @@ const faqItems = [
   {
     question: "¿Hay un límite de tamaño?",
     answer: "No hay un límite artificial, pero JSON muy grandes (varios megabytes) pueden tardar más en procesarse según la potencia de tu dispositivo.",
+  },
+  {
+    question: "¿Por qué mi JSON válido en JavaScript no pasa la validación?",
+    answer: "JSON es más estricto que un objeto literal de JavaScript: exige comillas dobles en las claves, no permite comas finales ni comentarios. Un objeto que funciona en tu código puede no ser JSON válido.",
   },
 ];
 

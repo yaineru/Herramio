@@ -12,6 +12,16 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const seoContent: ContentBlock[] = [
+  { type: "h2", text: "Cuándo convertir un PDF a JPG" },
+  {
+    type: "ul",
+    items: [
+      "Extraer una imagen o gráfico de un PDF para usarlo en una presentación o publicación",
+      "Compartir una página específica como imagen en redes sociales o WhatsApp, donde un PDF no siempre se previsualiza bien",
+      "Insertar una página de un documento dentro de otro archivo que solo acepta imágenes",
+      "Generar miniaturas rápidas del contenido de un PDF sin abrir un lector especializado",
+    ],
+  },
   { type: "h2", text: "Cómo convertir un PDF a JPG" },
   {
     type: "steps",
@@ -26,6 +36,15 @@ const seoContent: ContentBlock[] = [
     type: "p",
     text: "Puedes convertir hasta 30 páginas por conversión. Este límite evita que el navegador se sature al renderizar muchas páginas de una vez — para documentos más largos, conviértelos en varios lotes.",
   },
+  { type: "h2", text: "Errores frecuentes" },
+  {
+    type: "ul",
+    items: [
+      "Pedir un rango de páginas que no existe en el documento (por ejemplo \"10\" en un PDF de 5 páginas)",
+      "Convertir un PDF muy largo de una sola vez y no dividirlo en lotes cuando el navegador se ve lento",
+      "Esperar texto seleccionable en la imagen resultante — un JPG es una imagen plana, no conserva el texto como texto",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -35,7 +54,15 @@ const faqItems = [
   },
   {
     question: "¿Se sube mi PDF a un servidor?",
-    answer: "No. La conversión ocurre completamente en tu navegador.",
+    answer: "No. La conversión ocurre completamente en tu navegador — el documento nunca sale de tu computadora.",
+  },
+  {
+    question: "¿Por qué hay un límite de 30 páginas?",
+    answer: "Renderizar páginas de PDF a imagen consume memoria del navegador. El límite evita que se congele en documentos muy largos; para más páginas, conviértelas en varios lotes.",
+  },
+  {
+    question: "¿Puedo elegir el formato de salida además de JPG?",
+    answer: "Esta herramienta genera únicamente JPG. Si necesitas PNG o WebP, puedes convertir el resultado con nuestro convertidor de imágenes.",
   },
 ];
 

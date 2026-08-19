@@ -5,9 +5,9 @@ import { buildMetadata } from "@/lib/seo";
 import { BLOG_POSTS } from "@/lib/blog/posts";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Blog: guías sobre códigos QR",
+  title: "Blog: guías prácticas de QR, PDF, imágenes y más",
   description:
-    "Artículos prácticos sobre cómo crear, personalizar e imprimir códigos QR para negocios, restaurantes, eventos y uso personal.",
+    "Artículos prácticos para resolver tareas concretas: crear códigos QR, unir PDF, comprimir y convertir imágenes, contraseñas seguras y más.",
   path: "/blog",
 });
 
@@ -17,8 +17,8 @@ export default function BlogIndexPage() {
       <Breadcrumbs items={[{ href: "/blog", label: "Blog" }]} />
       <h1 className="mt-4 text-3xl font-bold text-slate-900">Blog</h1>
       <p className="mt-2 max-w-2xl text-slate-500">
-        Guías prácticas sobre códigos QR: cómo crearlos, personalizarlos e imprimirlos sin
-        errores, para negocios y uso personal.
+        Guías prácticas para resolver tareas concretas — códigos QR, PDF, imágenes, contraseñas
+        y más — cada una enlazada a la herramienta que la resuelve.
       </p>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -5,6 +5,7 @@ import { ContentBlocks } from "@/components/marketing/ContentBlocks";
 import { Button } from "@/components/ui/Button";
 import { buildMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+import { TOOLS } from "@/lib/tools/registry";
 import type { ContentBlock } from "@/lib/blog/types";
 
 export const metadata: Metadata = buildMetadata({
@@ -16,7 +17,7 @@ export const metadata: Metadata = buildMetadata({
 const content: ContentBlock[] = [
   {
     type: "p",
-    text: `${SITE.name} nació de una idea simple: resolver una tarea rápida online no debería requerir registrarte, pagar, ni descargar una app. Hoy somos 48 herramientas gratuitas en 8 categorías — QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad — y seguimos sumando más siguiendo el mismo criterio: solo herramientas que funcionen de verdad, de principio a fin.`,
+    text: `${SITE.name} nació de una idea simple: resolver una tarea rápida online no debería requerir registrarte, pagar, ni descargar una app. Hoy somos ${TOOLS.length} herramientas gratuitas en 8 categorías — QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad — y seguimos sumando más siguiendo el mismo criterio: solo herramientas que funcionen de verdad, de principio a fin.`,
   },
   { type: "h2", text: "Lo que nos importa" },
   {

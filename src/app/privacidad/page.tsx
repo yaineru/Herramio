@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { ContentBlocks } from "@/components/marketing/ContentBlocks";
 import { buildMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+import { TOOLS } from "@/lib/tools/registry";
 import type { ContentBlock } from "@/lib/blog/types";
 
 export const metadata: Metadata = buildMetadata({
@@ -14,7 +15,7 @@ export const metadata: Metadata = buildMetadata({
 const content: ContentBlock[] = [
   {
     type: "p",
-    text: `Última actualización: 19 de agosto de 2026. ${SITE.name} ofrece 48 herramientas gratuitas en 8 categorías — QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad. Tratamos de recopilar la menor cantidad de datos posible. Esta política explica qué información manejamos, herramienta por herramienta, y por qué.`,
+    text: `Última actualización: 19 de agosto de 2026. ${SITE.name} ofrece ${TOOLS.length} herramientas gratuitas en 8 categorías — QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad. Tratamos de recopilar la menor cantidad de datos posible. Esta política explica qué información manejamos, herramienta por herramienta, y por qué.`,
   },
   { type: "h2", text: "1. Los archivos y datos que procesas en las herramientas" },
   {
@@ -26,10 +27,10 @@ const content: ContentBlock[] = [
     type: "p",
     text: "El convertidor de moneda es la única herramienta que no funciona 100% sin conexión: para mostrar tasas de cambio reales, consulta la API pública de Frankfurter (frankfurter.dev), que republica tasas de referencia del Banco Central Europeo. Esa consulta envía únicamente el código de la moneda que elegiste (por ejemplo \"USD\") — nunca ningún dato personal ni ninguna cantidad que hayas escrito. No se requiere ni se usa una clave de API.",
   },
-  { type: "h2", text: "3. Favoritos e historial reciente" },
+  { type: "h2", text: "3. Favoritos e historial reciente (almacenamiento local, no cookies)" },
   {
     type: "p",
-    text: "Si marcas una herramienta como favorita o la usas, guardamos esa información únicamente en el almacenamiento local de tu propio navegador (localStorage) — nunca en un servidor. El historial guarda solo el nombre de la herramienta y la fecha de uso, nunca el contenido, archivos o datos que introdujiste en ella. Puedes borrar este historial en cualquier momento desde la página de Favoritos, o borrando los datos del sitio desde la configuración de tu navegador.",
+    text: "Si marcas una herramienta como favorita o la usas, guardamos esa información únicamente en el almacenamiento local de tu propio navegador (localStorage) — una tecnología distinta a las cookies, que no se envía a ningún servidor en cada solicitud y que nunca llega a nuestro lado. El historial guarda solo el nombre de la herramienta y la fecha de uso, nunca el contenido, archivos o datos que introdujiste en ella. Puedes borrar este historial en cualquier momento desde la página de Favoritos, o borrando los datos del sitio desde la configuración de tu navegador.",
   },
   { type: "h2", text: "4. Analítica web (Google Analytics)" },
   {
@@ -39,7 +40,7 @@ const content: ContentBlock[] = [
   { type: "h2", text: "5. Publicidad" },
   {
     type: "p",
-    text: "Hoy no mostramos anuncios reales en el sitio. Cuando la publicidad esté activa, podremos mostrar anuncios a través de Google AdSense, que puede usar cookies para personalizar los anuncios según tu actividad de navegación. Puedes rechazar estas cookies desde el aviso de cookies o desde la configuración de anuncios de Google.",
+    text: "Hoy no mostramos anuncios en el sitio. Como parte de la preparación técnica para activarlos más adelante, el script base de Google AdSense está presente en todas las páginas — por sí solo no muestra anuncios ni te identifica de forma personal, aunque Google puede usarlo para verificar el sitio y detectar tráfico inválido. Cuando la publicidad esté realmente activa, podremos mostrar anuncios a través de Google AdSense, que en ese momento sí podrá usar cookies para personalizarlos según tu actividad de navegación. Puedes rechazar esas cookies desde el aviso de cookies o desde la configuración de anuncios de Google.",
   },
   { type: "h2", text: "6. Cookies" },
   {
@@ -59,7 +60,7 @@ const content: ContentBlock[] = [
   { type: "h2", text: "9. Sin registro" },
   {
     type: "p",
-    text: "Ninguna herramienta de Herramio requiere crear una cuenta ni iniciar sesión. No pedimos tu correo, nombre ni ningún dato personal para usar cualquiera de las 48 herramientas.",
+    text: `Ninguna herramienta de ${SITE.name} requiere crear una cuenta ni iniciar sesión. No pedimos tu correo, nombre ni ningún dato personal para usar cualquiera de las ${TOOLS.length} herramientas.`,
   },
   { type: "h2", text: "10. Menores de edad" },
   {

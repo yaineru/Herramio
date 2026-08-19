@@ -3,6 +3,7 @@ import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { ContentBlocks } from "@/components/marketing/ContentBlocks";
 import { buildMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
+import { TOOLS } from "@/lib/tools/registry";
 import type { ContentBlock } from "@/lib/blog/types";
 
 export const metadata: Metadata = buildMetadata({
@@ -16,7 +17,7 @@ const content: ContentBlock[] = [
   { type: "h2", text: "1. Descripción del servicio" },
   {
     type: "p",
-    text: `${SITE.name} ofrece 48 herramientas gratuitas en 8 categorías: códigos QR, PDF (unir, dividir, convertir), imágenes (comprimir, convertir), calculadoras, convertidores, texto, herramientas para desarrolladores y productividad. El servicio se ofrece "tal cual", sin garantía de disponibilidad ininterrumpida ni de que cada herramienta esté libre de errores.`,
+    text: `${SITE.name} ofrece ${TOOLS.length} herramientas gratuitas en 8 categorías: códigos QR, PDF (unir, dividir, convertir), imágenes (comprimir, convertir), calculadoras, convertidores, texto, herramientas para desarrolladores y productividad. El servicio se ofrece "tal cual", sin garantía de disponibilidad ininterrumpida ni de que cada herramienta esté libre de errores.`,
   },
   { type: "h2", text: "2. Uso permitido" },
   {
