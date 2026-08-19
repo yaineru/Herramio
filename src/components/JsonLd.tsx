@@ -43,6 +43,24 @@ export function softwareApplicationSchema(opts: {
   };
 }
 
+export function howToSchema(opts: {
+  name: string;
+  description: string;
+  steps: { title: string; text: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: opts.name,
+    description: opts.description,
+    step: opts.steps.map((step) => ({
+      "@type": "HowToStep",
+      name: step.title,
+      text: step.text,
+    })),
+  };
+}
+
 export function articleSchema(opts: {
   headline: string;
   description: string;

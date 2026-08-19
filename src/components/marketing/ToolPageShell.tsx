@@ -8,7 +8,7 @@ import { ToolGrid } from "@/components/marketing/ToolGrid";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { FavoriteButton } from "@/components/tools/FavoriteButton";
 import { HistoryTracker } from "@/components/tools/HistoryTracker";
-import { JsonLd, faqPageSchema, softwareApplicationSchema } from "@/components/JsonLd";
+import { JsonLd, faqPageSchema, howToSchema, softwareApplicationSchema } from "@/components/JsonLd";
 import type { ContentBlock } from "@/lib/blog/types";
 import { getBlogPostByTool } from "@/lib/blog/posts";
 import { getRelatedTools, getToolById } from "@/lib/tools/registry";
@@ -45,6 +45,10 @@ export function ToolPageShell({
   const category = tool ? getCategory(tool.category) : undefined;
   const relatedTools = tool ? getRelatedTools(tool) : [];
   const relatedArticle = getBlogPostByTool(toolId);
+  // Only real "steps" content already written for this tool becomes HowTo
+  // schema — never fabricated, so a tool without genuine step-by-step copy
+  // simply gets no HowTo markup.
+  const stepsBlock = seoContent.find((block): block is Extract<ContentBlock, { type: "steps" }> => block.type === "steps");
 
   return (
     <div className="container-page py-10">
@@ -56,6 +60,9 @@ export function ToolPageShell({
         })}
       />
       <JsonLd data={faqPageSchema(faqItems)} />
+      {stepsBlock && (
+        <JsonLd data={howToSchema({ name: toolName, description: intro, steps: stepsBlock.items })} />
+      )}
 
       <HistoryTracker toolId={toolId} toolName={toolName} />
 
@@ -88,6 +95,21 @@ export function ToolPageShell({
 
       <div className="mt-8">{children}</div>
 
+      {relatedTools.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-bold text-slate-900">Herramientas relacionadas</h2>
+          <div className="mt-5">
+            <ToolGrid tools={relatedTools} />
+          </div>
+          <Link
+            href="/herramientas"
+            className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline"
+          >
+            Ver todas las herramientas <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      )}
+
       <div className="my-12">
         <AdSlot placement="below-generator" />
       </div>
@@ -114,21 +136,6 @@ export function ToolPageShell({
       <div className="mx-auto mt-12 max-w-2xl">
         <FAQ items={faqItems} />
       </div>
-
-      {relatedTools.length > 0 && (
-        <div className="mt-14">
-          <h2 className="text-xl font-bold text-slate-900">Herramientas relacionadas</h2>
-          <div className="mt-5">
-            <ToolGrid tools={relatedTools} />
-          </div>
-          <Link
-            href="/herramientas"
-            className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline"
-          >
-            Ver todas las herramientas <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-      )}
 
       <div className="mx-auto mt-12 max-w-2xl">
         <AdSlot placement="in-content" />

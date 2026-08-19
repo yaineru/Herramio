@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { HeroBackground } from "@/components/marketing/HeroBackground";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +33,9 @@ export function Hero() {
         <p className="mt-4 max-w-xl text-lg text-slate-500">
           Herramientas online gratuitas para convertir, calcular, crear y resolver tareas en
           segundos.
+        </p>
+        <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+          <ShieldCheck className="h-4 w-4" /> Todo se procesa en tu navegador — nada se sube a un servidor.
         </p>
 
         <div className="mt-8 w-full max-w-lg">
