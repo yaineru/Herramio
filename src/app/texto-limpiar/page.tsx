@@ -38,6 +38,14 @@ const faqItems = [
     question: "¿Se guarda el texto que pego?",
     answer: "No, todo el procesamiento ocurre en tu navegador; el texto nunca se envía a ningún servidor.",
   },
+  {
+    question: "¿Funciona correctamente con tildes y la letra ñ?",
+    answer: "Sí, el cambio de mayúsculas/minúsculas respeta correctamente los acentos y la ñ — no los convierte en caracteres incorrectos ni los elimina.",
+  },
+  {
+    question: "¿En qué orden se aplican las limpiezas?",
+    answer: "Primero se recortan los espacios de cada línea, luego se unifican los espacios duplicados, después se quitan las líneas vacías y por último se aplica el cambio de mayúsculas/minúsculas — un orden fijo pensado para que el resultado sea consistente sin importar qué opciones actives.",
+  },
 ];
 
 export default function TextoLimpiarPage() {

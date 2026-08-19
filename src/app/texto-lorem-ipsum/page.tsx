@@ -38,6 +38,14 @@ const faqItems = [
     question: "¿El texto siempre empieza igual?",
     answer: "Por defecto sí, con el clásico \"Lorem ipsum dolor sit amet...\" — puedes desactivar esa opción para obtener texto aleatorio desde la primera palabra.",
   },
+  {
+    question: "¿Genera texto de relleno en español?",
+    answer: "No, genera el texto clásico Lorem Ipsum en pseudo-latín — el estándar de facto en diseño y maquetación. No incluye una versión en español ni otros idiomas.",
+  },
+  {
+    question: "¿Puedo generar varios párrafos, oraciones o palabras a la vez?",
+    answer: "Sí, elige la unidad (palabras, oraciones o párrafos) y la cantidad exacta que necesites en cada generación.",
+  },
 ];
 
 export default function TextoLoremIpsumPage() {
