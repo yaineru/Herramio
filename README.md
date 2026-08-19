@@ -2,7 +2,7 @@
 
 "Todas tus herramientas online, en un solo lugar." Plataforma web gratuita
 de herramientas para convertir, calcular, crear y resolver tareas en
-segundos. Hoy cubre **44 herramientas activas** en **8 categorías** — **QR**
+segundos. Hoy cubre **48 herramientas activas** en **8 categorías** — **QR**
 (14), **PDF** (4), **Imágenes** (2), **Calculadoras** (5),
 **Convertidores** (3), **Texto** (4), **Desarrolladores** (8, JSON/Base64/
 hash/regex/UUID/timestamp/HTML) y **Productividad** (4, temporizador/
@@ -116,7 +116,7 @@ herramienta (`active`/`planned`/`coming-soon`).
 
 ## Documentación relacionada
 
-- [TOOLS.md](TOOLS.md) — catálogo completo de las 44 herramientas, generado desde el registry
+- [TOOLS.md](TOOLS.md) — catálogo completo de las 48 herramientas, generado desde el registry
 - [PRODUCT-ROADMAP.md](PRODUCT-ROADMAP.md) — estado real de cada herramienta, dependencias, decisiones técnicas
 - [GROWTH-ROADMAP.md](GROWTH-ROADMAP.md) — catálogo priorizado de próximas herramientas
 - [BRANDING.md](BRANDING.md) — identidad de marca, logo, cómo evitar referencias a la marca antigua

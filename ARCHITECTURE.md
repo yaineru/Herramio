@@ -2,7 +2,7 @@
 
 Herramio está pensado para crecer de "13 herramientas QR" a "cientos de
 herramientas en varias categorías" sin reescribir la aplicación. Hoy tiene
-44 herramientas activas en 8 categorías — QR, PDF, Imágenes, Calculadoras,
+48 herramientas activas en 8 categorías — QR, PDF, Imágenes, Calculadoras,
 Convertidores, Texto, Desarrolladores y Productividad (ver `TOOLS.md` para
 el listado completo y `PRODUCT-ROADMAP.md` para el detalle técnico de
 cada una) — todas construidas reutilizando el mismo `ToolPageShell`. Esta

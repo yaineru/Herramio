@@ -69,7 +69,7 @@ const FAQ_ITEMS = [
   {
     question: "¿Qué herramientas hay disponibles ahora?",
     answer:
-      "Hoy Herramio ofrece 44 herramientas en 8 categorías: QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad — y seguimos sumando más.",
+      "Hoy Herramio ofrece 48 herramientas en 8 categorías: QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad — y seguimos sumando más.",
   },
   {
     question: "¿Puedo pedir una herramienta que todavía no existe?",
@@ -191,7 +191,7 @@ export default function HomePage() {
           <div className="rounded-3xl bg-slate-900 px-8 py-14 text-center">
             <h2 className="text-2xl font-bold text-white sm:text-3xl">¿Listo para resolverlo en segundos?</h2>
             <p className="mx-auto mt-2 max-w-md text-slate-300">
-              44 herramientas gratis, sin registro, directamente en tu navegador.
+              48 herramientas gratis, sin registro, directamente en tu navegador.
             </p>
             <div className="mt-7 flex justify-center">
               <MagneticButton>

@@ -1,6 +1,6 @@
 # Growth Roadmap — próximas herramientas
 
-Este documento prioriza qué construir después del catálogo base de 13 herramientas QR (hoy 44 herramientas activas en 8 categorías — ver `TOOLS.md`).
+Este documento prioriza qué construir después del catálogo base de 13 herramientas QR (hoy 48 herramientas activas en 8 categorías — ver `TOOLS.md`).
 **No es una lista de tareas confirmadas** — es un plan de priorización para
 decidir juntos qué construir primero.
 
@@ -120,11 +120,11 @@ haya tráfico, con Search Console.
 |---|---|---|---|---|---|---|---|---|
 | `calc-porcentaje` | Calculadora de porcentajes | "calculadora de porcentajes" | "sacar porcentaje online" | Baja | Alta | Media | **Alta** | Ninguna |
 | `calc-imc` | Calculadora de IMC | "calculadora de imc" | "índice de masa corporal" | Baja | Alta | Media | **Alta** | Ninguna |
-| `calc-edad` | Calculadora de edad | "calculadora de edad" | "cuántos años tengo" | Baja | Alta | Baja-Media | Alta | Ninguna |
+| `calc-edad` | Calculadora de edad | "calculadora de edad" | "cuántos años tengo" | Baja | Alta | Baja-Media | ✅ Construida (Ronda 3) | Ninguna |
 | `calc-prestamo` | Calculadora de préstamo/cuota | "calculadora de préstamo" | "simulador de crédito" | Media | Alta | Alta (CPM financiero suele ser mayor) | **Alta** | Ninguna (matemática pura) |
 | `calc-propinas` | Calculadora de propina | "calculadora de propina" | "split de cuenta" | Baja | Media | Baja-Media | Media | Ninguna |
 | `calc-descuento` | Calculadora de descuentos | "calculadora de descuento" | "precio con descuento" | Baja | Media | Media | ✅ Construida | Ninguna |
-| `calc-fecha` | Calculadora de diferencia entre fechas | "calculadora de fechas" | "días entre fechas" | Baja | Media | Baja-Media | Media | Ninguna |
+| `calc-fecha` | Calculadora de diferencia entre fechas | "calculadora de fechas" | "días entre fechas" | Baja | Media | Baja-Media | ✅ Construida (Ronda 3) | Ninguna |
 | `calc-interes-compuesto` | Calculadora de interés compuesto | "calculadora interés compuesto" | "simulador de inversión" | Media | Media (audiencia con intención financiera) | Alta | Media-Alta | Ninguna |
 | `calc-calorias` | Calculadora de calorías diarias | "calculadora de calorías" | "calorías diarias necesarias" | Baja | Alta | Media | Alta | Ninguna |
 | `calc-huso-horario` | Conversor de husos horarios | "conversor de zona horaria" | "hora en otro país" | Media | Alta | Media | Media-Alta | `Intl.DateTimeFormat` nativo |
@@ -166,7 +166,7 @@ haya tráfico, con Search Console.
 | `prod-lista-tareas` | Lista de tareas simple (sin cuenta) | "lista de tareas online" | "to do list gratis sin registro" | Baja | Media-Alta | Media | Media-Alta | `localStorage` (sin backend) |
 | `prod-generador-codigo-barras` | Generador de código de barras | "generador de código de barras" | "crear código de barras online" | Baja | Media (nicho negocios/inventario) | Media | Media | Librería de barcode (ej. `jsbarcode`) — mismo espíritu que el motor QR actual |
 
-## Desarrolladores (categoría nueva, activa — 8 construidas)
+## Desarrolladores (activa — 10 construidas)
 
 No estaba contemplada en la versión original de este roadmap; se identificó
 durante la Ronda 2 como una categoría de alto encaje con el patrón
@@ -184,13 +184,14 @@ publicitario que utilidades genéricas.
 | Probador de regex | "regex tester online" | ✅ Construida | Ninguna (con tope de tamaño/coincidencias por ReDoS) |
 | Convertidor de timestamp Unix | "unix timestamp converter" | ✅ Construida | Ninguna |
 | Escapar/desescapar HTML | "html escape online" | ✅ Construida | Ninguna |
+| Convertidor de color (HEX/RGB/HSL) | "hex to rgb", "color picker online" | ✅ Construida (Ronda 3) | Ninguna |
+| Convertidor CSV ↔ JSON | "csv to json online" | ✅ Construida (Ronda 3) | Ninguna (parser CSV propio) |
 
-Candidatas naturales para una tercera ronda en esta categoría (no
+Candidatas naturales para una próxima ronda en esta categoría (no
 construidas todavía): comparador de JSON (diff), generador de contraseñas
-específico para desarrolladores (.env), formateador de CSS/SQL, color
-picker / conversor HEX↔RGB↔HSL, generador de Cron expressions. Ninguna se
-construyó en esta ronda para no diluir calidad con cantidad — quedan como
-propuestas, no compromisos.
+específico para desarrolladores (.env), formateador de CSS/SQL, generador
+de Cron expressions. Ninguna se construyó en esta ronda para no diluir
+calidad con cantidad — quedan como propuestas, no compromisos.
 
 ---
 

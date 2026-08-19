@@ -93,12 +93,21 @@ sincronizan ni se envían a ningún servidor. El historial solo guarda
 ingresados en las herramientas. Ver `/favoritos` y `src/lib/favorites.ts` /
 `src/lib/history.ts`.
 
-**Notas de procesamiento**: las 44 herramientas activas son 100%
+**Notas de procesamiento**: las 48 herramientas activas son 100%
 client-side — nada se sube a un servidor, con la única excepción declarada
 del convertidor de moneda (tasas de cambio vía API pública, sin datos del
 usuario involucrados). Toda dependencia no trivial (`pdf-lib`,
 `pdfjs-dist`, `jsqr`) se carga con `import()` dinámico solo dentro de la
 página que la necesita.
+
+### Ronda 3: color, CSV/JSON, edad, diferencia de fechas (4)
+
+| Herramienta | Categoría | Ruta | Procesamiento | Dependencias |
+|---|---|---|---|---|
+| Convertidor de Color (HEX/RGB/HSL) | Desarrolladores | `/dev-color-picker` | Cliente (JS puro + `<input type="color">`) | Ninguna |
+| Convertidor CSV ↔ JSON | Desarrolladores | `/dev-csv-json` | Cliente (parser CSV propio, respeta comillas/comas/saltos de línea) | Ninguna |
+| Calculadora de Edad | Calculadoras | `/calc-edad` | Cliente (JS puro, cálculo calendario-aware) | Ninguna |
+| Calculadora de Diferencia entre Fechas | Calculadoras | `/calc-fecha` | Cliente (JS puro) | Ninguna |
 
 ## Categorías: estado
 
@@ -107,13 +116,13 @@ página que la necesita.
 | QR | active | 14 |
 | PDF | active | 4 |
 | Imágenes | active | 2 |
-| Calculadoras | active | 5 |
+| Calculadoras | active | 7 |
 | Convertidores | active | 3 |
 | Texto | active | 4 |
-| Desarrolladores | active | 8 |
+| Desarrolladores | active | 10 |
 | Productividad | active | 4 |
 
-**Total: 44 herramientas activas.**
+**Total: 48 herramientas activas.**
 
 ## Próximas herramientas (planned)
 

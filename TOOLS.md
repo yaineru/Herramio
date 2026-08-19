@@ -2,7 +2,7 @@
 
 Referencia técnica de cada herramienta activa en Herramio: ruta, categoría y qué hace. Generado a partir de `src/lib/tools/registry.ts` — esa es la fuente de verdad; si algo no coincide con este archivo, confía en el registry y actualiza este documento.
 
-**Total: 44 herramientas activas, en 8 categorías.**
+**Total: 48 herramientas activas, en 8 categorías.**
 
 ## QR (14)
 
@@ -39,7 +39,7 @@ Referencia técnica de cada herramienta activa en Herramio: ruta, categoría y q
 | Comprimir Imagen | `/imagen-comprimir` | Reduce el peso de una imagen JPG, PNG o WebP sin subirla a un servidor. |
 | Convertidor de Imágenes | `/imagen-convertir` | Convierte imágenes entre JPG, PNG y WebP directamente en tu navegador. |
 
-## Calculadoras (5)
+## Calculadoras (7)
 
 | Herramienta | Ruta | Descripción |
 |---|---|---|
@@ -48,6 +48,8 @@ Referencia técnica de cada herramienta activa en Herramio: ruta, categoría y q
 | Calculadora de Descuento | `/calc-descuento` | Calcula cuánto ahorras y el precio final con un descuento. |
 | Calculadora de IVA | `/calc-iva` | Calcula el IVA de un precio, con o sin impuesto incluido. |
 | Calculadora de Regla de Tres | `/calc-regla-de-tres` | Resuelve reglas de tres directas e inversas. |
+| Calculadora de Edad | `/calc-edad` | Calcula tu edad exacta en años, meses y días a partir de tu fecha de nacimiento. |
+| Calculadora de Diferencia entre Fechas | `/calc-fecha` | Calcula cuántos días, semanas, meses o años hay entre dos fechas. |
 
 ## Convertidores (3)
 
@@ -66,7 +68,7 @@ Referencia técnica de cada herramienta activa en Herramio: ruta, categoría y q
 | Generador de Lorem Ipsum | `/texto-lorem-ipsum` | Genera texto de relleno Lorem Ipsum por palabras, oraciones o párrafos. |
 | Limpiador de Texto | `/texto-limpiar` | Quita espacios duplicados, líneas vacías y normaliza mayúsculas/minúsculas. |
 
-## Desarrolladores (8)
+## Desarrolladores (10)
 
 | Herramienta | Ruta | Descripción |
 |---|---|---|
@@ -78,6 +80,8 @@ Referencia técnica de cada herramienta activa en Herramio: ruta, categoría y q
 | Probador de Expresiones Regulares | `/dev-regex-tester` | Prueba expresiones regulares en tiempo real con resaltado de coincidencias. |
 | Convertidor de Timestamp Unix | `/dev-timestamp-converter` | Convierte entre timestamp Unix y fecha legible, en ambas direcciones. |
 | Escapar/Desescapar HTML | `/dev-html-escape` | Convierte caracteres HTML especiales a entidades y viceversa. |
+| Convertidor de Color (HEX, RGB, HSL) | `/dev-color-picker` | Convierte colores entre HEX, RGB y HSL al instante, con selector visual. |
+| Convertidor CSV a JSON | `/dev-csv-json` | Convierte de CSV a JSON y de JSON a CSV, en ambas direcciones. |
 
 ## Productividad (4)
 

@@ -55,7 +55,7 @@ export function Hero() {
           <MagneticButton>
             <Link href="/herramientas" onClick={() => AnalyticsEvents.ctaClicked("hero_explore")}>
               <Button size="lg">
-                Explorar las 44 herramientas <ArrowRight className="h-4 w-4" />
+                Explorar las 48 herramientas <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </MagneticButton>
