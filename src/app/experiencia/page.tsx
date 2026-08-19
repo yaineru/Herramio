@@ -14,8 +14,7 @@ import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = buildMetadata({
   title: "La experiencia Herramio",
-  description:
-    "Explora el universo de las 48 herramientas de Herramio en una página interactiva: mueve el mouse, pasa por encima de una herramienta y entra directo a usarla.",
+  description: `Explora el universo de las ${TOOLS.length} herramientas de Herramio en una página interactiva: mueve el mouse, pasa por encima de una herramienta y entra directo a usarla.`,
   path: "/experiencia",
 });
 
@@ -87,7 +86,7 @@ export default function ExperienciaPage() {
           <div className="rounded-3xl bg-slate-900 px-8 py-14 text-center">
             <h2 className="text-2xl font-bold text-white sm:text-3xl">Esto es Herramio de verdad</h2>
             <p className="mx-auto mt-2 max-w-md text-slate-300">
-              Sin cuentas, sin instalar nada, sin límites. 48 herramientas gratis, hoy.
+              Sin cuentas, sin instalar nada, sin límites. {TOOLS.length} herramientas gratis, hoy.
             </p>
             <div className="mt-7 flex justify-center">
               <MagneticButton>

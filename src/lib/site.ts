@@ -1,10 +1,11 @@
+import { TOOLS } from "@/lib/tools/registry";
+
 export const SITE = {
   name: "Herramio",
   shortName: "Herramio",
   tagline: "Todas tus herramientas online, en un solo lugar.",
   taglineAlt: "Herramientas online rápidas, gratis y sin complicaciones.",
-  description:
-    "48 herramientas online gratuitas para convertir, calcular, crear y resolver tareas en segundos: códigos QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad.",
+  description: `${TOOLS.length} herramientas online gratuitas para convertir, calcular, crear y resolver tareas en segundos: códigos QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad.`,
   // Update NEXT_PUBLIC_SITE_URL in .env.local / Vercel once the domain is connected.
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.herramio.com",
   locale: "es",

@@ -9,6 +9,7 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { openSearchPalette } from "@/lib/search-events";
 import { AnalyticsEvents } from "@/lib/analytics";
 import { SITE } from "@/lib/site";
+import { TOOLS } from "@/lib/tools/registry";
 
 const EXAMPLES = [
   { label: "Crear un código QR...", query: "QR" },
@@ -55,7 +56,7 @@ export function Hero() {
           <MagneticButton>
             <Link href="/herramientas" onClick={() => AnalyticsEvents.ctaClicked("hero_explore")}>
               <Button size="lg">
-                Explorar las 48 herramientas <ArrowRight className="h-4 w-4" />
+                Explorar las {TOOLS.length} herramientas <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </MagneticButton>

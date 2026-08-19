@@ -31,7 +31,7 @@ export default function NotFound() {
         </p>
 
         <div className="mt-8 w-full max-w-lg">
-          <SearchTrigger variant="large" placeholder="Buscar entre las 48 herramientas..." />
+          <SearchTrigger variant="large" placeholder={`Buscar entre las ${TOOLS.length} herramientas...`} />
         </div>
 
         <div className="mt-6">
