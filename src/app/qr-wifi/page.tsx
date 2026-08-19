@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -68,11 +69,16 @@ export default function QrWifiPage() {
         toolName="QR de WiFi"
         eyebrow="Para negocios y hogar"
         intro="Comparte tu red WiFi sin decir la contraseña en voz alta: tus invitados escanean y se conectan automáticamente."
-        fields={fields}
-        emptyHint="Escribe el nombre de tu red para generar el QR."
         seoContent={seoContent}
         faqItems={faqItems}
-      />
+      >
+        <QRGenerator
+          toolId="qr-wifi"
+          toolName="QR de WiFi"
+          fields={fields}
+          emptyHint="Escribe el nombre de tu red para generar el QR."
+        />
+      </ToolPageShell>
       <div className="container-page pb-16 text-center text-sm text-slate-400">
         Guía completa:{" "}
         <Link href="/blog/como-compartir-wifi-con-codigo-qr" className="font-medium text-emerald-700 underline">

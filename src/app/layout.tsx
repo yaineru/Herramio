@@ -7,6 +7,7 @@ import { CookieBanner } from "@/components/CookieBanner";
 import { Analytics } from "@/components/Analytics";
 import { ReferralTracker } from "@/components/ReferralTracker";
 import { SearchPalette } from "@/components/search/SearchPalette";
+import { CursorSpotlight } from "@/components/marketing/CursorSpotlight";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE } from "@/lib/site";
 
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-white text-slate-900">
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
+        <CursorSpotlight />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

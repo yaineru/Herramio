@@ -6,6 +6,7 @@ import { Search, CornerDownLeft, ArrowUp, ArrowDown, X } from "lucide-react";
 import { subscribeToSearchOpen } from "@/lib/search-events";
 import { searchTools, findMatchingComingSoonCategory } from "@/lib/tools/search";
 import { TOOLS } from "@/lib/tools/registry";
+import { AnalyticsEvents } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 const SUGGESTED_IDS = ["qr-whatsapp", "qr-wifi", "qr-url", "qr-vcard"];
@@ -37,6 +38,18 @@ export function SearchPalette() {
   }), []);
 
   useEffect(() => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    // Debounced so we log one "search_used" per pause in typing, not one
+    // per keystroke.
+    const timeout = setTimeout(() => {
+      AnalyticsEvents.searchUsed(trimmed, results.length);
+    }, 500);
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
+
+  useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const isShortcut = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k";
       if (isShortcut) {
@@ -59,13 +72,14 @@ export function SearchPalette() {
         const tool = results[activeIndex];
         if (tool) {
           setOpen(false);
+          if (query.trim()) AnalyticsEvents.searchResultClicked(tool.id, query.trim());
           router.push(tool.href);
         }
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, results, activeIndex, router]);
+  }, [open, results, activeIndex, router, query]);
 
   useEffect(() => {
     if (open) {
@@ -127,6 +141,7 @@ export function SearchPalette() {
               onMouseEnter={() => setActiveIndex(i)}
               onClick={() => {
                 setOpen(false);
+                if (query.trim()) AnalyticsEvents.searchResultClicked(tool.id, query.trim());
                 router.push(tool.href);
               }}
               className={cn(

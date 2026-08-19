@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -57,11 +58,16 @@ export default function QrVCardPage() {
         toolName="QR de tarjeta de contacto (vCard)"
         eyebrow="Tarjeta de presentación digital"
         intro="Comparte tu tarjeta de presentación digital: nombre, teléfono, empresa y más, lista para guardar como contacto."
-        fields={fields}
-        emptyHint="Completa al menos tu nombre o teléfono para generar el QR."
         seoContent={seoContent}
         faqItems={faqItems}
-      />
+      >
+        <QRGenerator
+          toolId="qr-vcard"
+          toolName="QR de tarjeta de contacto (vCard)"
+          fields={fields}
+          emptyHint="Completa al menos tu nombre o teléfono para generar el QR."
+        />
+      </ToolPageShell>
       <div className="container-page pb-16 text-center text-sm text-slate-400">
         Guía completa:{" "}
         <Link href="/blog/qr-tarjeta-de-presentacion-digital" className="font-medium text-emerald-700 underline">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -60,10 +61,15 @@ export default function QrTelefonoPage() {
       toolName="QR de llamada telefónica"
       eyebrow="Contacto directo"
       intro="Crea un QR que abre el marcador con tu número ya cargado, listo para iniciar una llamada."
-      fields={fields}
-      emptyHint="Escribe un número de teléfono para generar el QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-telefono"
+        toolName="QR de llamada telefónica"
+        fields={fields}
+        emptyHint="Escribe un número de teléfono para generar el QR."
+      />
+    </ToolPageShell>
   );
 }

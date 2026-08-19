@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -53,10 +54,15 @@ export default function QrEmailPage() {
       toolName="QR de correo electrónico"
       eyebrow="Contacto directo"
       intro="Genera un QR que abre un correo nuevo con destinatario, asunto y mensaje ya redactados."
-      fields={fields}
-      emptyHint="Escribe un correo destinatario para generar el QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-email"
+        toolName="QR de correo electrónico"
+        fields={fields}
+        emptyHint="Escribe un correo destinatario para generar el QR."
+      />
+    </ToolPageShell>
   );
 }

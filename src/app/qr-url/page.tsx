@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -74,10 +75,15 @@ export default function QrUrlPage() {
       toolName="QR para enlaces (URL)"
       eyebrow="Herramienta más usada"
       intro="Convierte cualquier enlace o página web en un código QR escaneable, listo para imprimir o compartir digitalmente."
-      fields={fields}
-      emptyHint="Escribe un enlace para generar tu QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-url"
+        toolName="QR para enlaces (URL)"
+        fields={fields}
+        emptyHint="Escribe un enlace para generar tu QR."
+      />
+    </ToolPageShell>
   );
 }

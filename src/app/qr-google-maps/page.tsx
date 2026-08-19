@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -61,11 +62,16 @@ export default function QrGoogleMapsPage() {
         toolName="QR de Google Maps"
         eyebrow="Ubicación y direcciones"
         intro="Genera un QR que lleva directo a tu ubicación exacta en el mapa, sin explicar direcciones por texto."
-        fields={fields}
-        emptyHint="Pega un enlace o escribe una dirección para generar tu QR."
         seoContent={seoContent}
         faqItems={faqItems}
-      />
+      >
+        <QRGenerator
+          toolId="qr-google-maps"
+          toolName="QR de Google Maps"
+          fields={fields}
+          emptyHint="Pega un enlace o escribe una dirección para generar tu QR."
+        />
+      </ToolPageShell>
       <div className="container-page pb-16 text-center text-sm text-slate-400">
         Guía completa:{" "}
         <Link href="/blog/qr-para-google-maps-ubicacion" className="font-medium text-emerald-700 underline">

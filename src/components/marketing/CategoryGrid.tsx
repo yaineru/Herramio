@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { CATEGORIES } from "@/lib/tools/categories";
 import { getToolsByCategory } from "@/lib/tools/registry";
+import { AnalyticsEvents } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 export function CategoryGrid() {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {CATEGORIES.map((category) => {
         const count = getToolsByCategory(category.id).length;
         const isComingSoon = category.status === "coming-soon";
@@ -13,6 +16,7 @@ export function CategoryGrid() {
           <Link
             key={category.id}
             href={`/herramientas?categoria=${category.id}`}
+            onClick={() => AnalyticsEvents.categorySelected(category.id)}
             className={cn(
               "group flex flex-col items-start gap-2 rounded-2xl border border-slate-200 bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md hover:shadow-slate-900/5",
             )}
@@ -32,7 +36,7 @@ export function CategoryGrid() {
                 isComingSoon ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-700",
               )}
             >
-              {isComingSoon ? "Próximamente" : `${count} herramientas`}
+              {isComingSoon ? "Próximamente" : `${count} herramienta${count === 1 ? "" : "s"}`}
             </span>
           </Link>
         );

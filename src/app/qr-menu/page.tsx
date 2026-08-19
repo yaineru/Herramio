@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -62,11 +63,16 @@ export default function QrMenuPage() {
         toolName="QR para menú de restaurante"
         eyebrow="Para restaurantes y cafeterías"
         intro="Crea un QR que lleva al menú digital de tu restaurante, bar o cafetería, actualizable sin reimprimir nada."
-        fields={fields}
-        emptyHint="Pega el enlace de tu menú para generar el QR."
         seoContent={seoContent}
         faqItems={faqItems}
-      />
+      >
+        <QRGenerator
+          toolId="qr-menu"
+          toolName="QR para menú de restaurante"
+          fields={fields}
+          emptyHint="Pega el enlace de tu menú para generar el QR."
+        />
+      </ToolPageShell>
       <div className="container-page pb-16 text-center text-sm text-slate-400">
         Guía completa:{" "}
         <Link href="/blog/qr-para-restaurantes-menu-digital" className="font-medium text-emerald-700 underline">

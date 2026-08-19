@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -48,10 +49,15 @@ export default function QrSmsPage() {
       toolName="QR de SMS"
       eyebrow="Contacto directo"
       intro="Genera un QR que abre la app de mensajes con número y texto predefinidos, sin necesidad de internet."
-      fields={fields}
-      emptyHint="Escribe un número de teléfono para generar el QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-sms"
+        toolName="QR de SMS"
+        fields={fields}
+        emptyHint="Escribe un número de teléfono para generar el QR."
+      />
+    </ToolPageShell>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -66,10 +67,15 @@ export default function QrNegocioPage() {
       toolName="QR para negocios"
       eyebrow="Todo en un solo QR"
       intro="Un QR todo-en-uno para que tu negocio comparta web, redes sociales y contacto desde un solo escaneo."
-      fields={fields}
-      emptyHint="Escribe el enlace principal de tu negocio para generar el QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-negocio"
+        toolName="QR para negocios"
+        fields={fields}
+        emptyHint="Escribe el enlace principal de tu negocio para generar el QR."
+      />
+    </ToolPageShell>
   );
 }

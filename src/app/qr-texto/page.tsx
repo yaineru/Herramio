@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -65,10 +66,15 @@ export default function QrTextoPage() {
       toolName="QR de texto"
       eyebrow="Notas e instrucciones"
       intro="Codifica cualquier texto plano, nota o instrucción en un código QR que se muestra directo en pantalla al escanear."
-      fields={fields}
-      emptyHint="Escribe un texto para generar tu QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-texto"
+        toolName="QR de texto"
+        fields={fields}
+        emptyHint="Escribe un texto para generar tu QR."
+      />
+    </ToolPageShell>
   );
 }

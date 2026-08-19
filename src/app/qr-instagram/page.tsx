@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -58,10 +59,15 @@ export default function QrInstagramPage() {
       toolName="QR de Instagram"
       eyebrow="Redes sociales"
       intro="Lleva a tus clientes directo a tu perfil de Instagram con un solo escaneo, sin que tengan que buscarte."
-      fields={fields}
-      emptyHint="Escribe tu usuario de Instagram para generar el QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-instagram"
+        toolName="QR de Instagram"
+        fields={fields}
+        emptyHint="Escribe tu usuario de Instagram para generar el QR."
+      />
+    </ToolPageShell>
   );
 }

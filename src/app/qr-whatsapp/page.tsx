@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -79,11 +80,16 @@ export default function QrWhatsAppPage() {
         toolName="QR de WhatsApp"
         eyebrow="Ventas y atención al cliente"
         intro="Crea un QR que abre un chat de WhatsApp con tu número y un mensaje predefinido, sin que el cliente tenga que guardarte antes."
-        fields={fields}
-        emptyHint="Escribe un número de WhatsApp para generar tu QR."
         seoContent={seoContent}
         faqItems={faqItems}
-      />
+      >
+        <QRGenerator
+          toolId="qr-whatsapp"
+          toolName="QR de WhatsApp"
+          fields={fields}
+          emptyHint="Escribe un número de WhatsApp para generar tu QR."
+        />
+      </ToolPageShell>
       <div className="container-page pb-16 text-center text-sm text-slate-400">
         ¿Quieres aprender más? Lee la guía:{" "}
         <Link href="/blog/como-crear-qr-whatsapp" className="font-medium text-emerald-700 underline">

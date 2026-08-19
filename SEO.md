@@ -21,8 +21,10 @@
   las herramientas con `status: "active"` en `src/lib/tools/registry.ts` y
   todos los artículos del blog automáticamente — al agregar una herramienta
   activa o un post a `BLOG_POSTS`, aparece en el sitemap sin tocar este
-  archivo. Las categorías `"coming-soon"` (PDF, imágenes...) nunca generan
-  URLs propias hasta que tengan herramientas reales.
+  archivo. Las categorías `"coming-soon"` nunca generan URLs propias hasta
+  que tengan herramientas reales (hoy las 8 categorías del catálogo están
+  `"active"` — ver `TOOLS.md` — pero el mecanismo sigue vigente para la
+  próxima categoría que se agregue).
 - **Robots** (`src/app/robots.ts`): permite todo excepto `/api/` y `/_next/`,
   y referencia el sitemap.
 - **Manifest** (`src/app/manifest.ts`): PWA básico con ícono y colores de marca.
@@ -33,8 +35,10 @@ Las herramientas QR (`/qr-*`) son SEO programático **con utilidad real**:
 cada una resuelve una búsqueda específica ("QR de WhatsApp", "QR de WiFi")
 con una herramienta funcional, contenido explicativo único, FAQ propia y
 ejemplos — no son páginas duplicadas con una plantilla vacía. Este mismo
-principio aplica a futuras categorías (PDF, imágenes...): una categoría solo
-pasa a `status: "active"` en `src/lib/tools/categories.ts` cuando tiene
+principio aplicó al abrir cada categoría nueva (PDF, Imágenes,
+Calculadoras, Convertidores, Texto, Desarrolladores, Productividad): una
+categoría solo pasa a `status: "active"` en `src/lib/tools/categories.ts`
+cuando tiene
 herramientas reales — nunca se publican páginas de categoría vacías o con
 contenido genérico. Antes de agregar una nueva página `/qr-*` (o de otra
 categoría), verifica que:

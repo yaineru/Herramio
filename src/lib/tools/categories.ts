@@ -1,6 +1,14 @@
-import { QrCode, FileText, Image, Calculator, RefreshCw, Type, type LucideIcon } from "lucide-react";
+import { QrCode, FileText, Image, Calculator, RefreshCw, Type, Zap, Code2, type LucideIcon } from "lucide-react";
 
-export type CategoryId = "qr" | "pdf" | "imagenes" | "calculadoras" | "convertidores" | "texto";
+export type CategoryId =
+  | "qr"
+  | "pdf"
+  | "imagenes"
+  | "calculadoras"
+  | "convertidores"
+  | "texto"
+  | "desarrolladores"
+  | "productividad";
 export type CategoryStatus = "active" | "coming-soon";
 
 export interface Category {
@@ -12,10 +20,9 @@ export interface Category {
 }
 
 /**
- * The full set of categories Herramio is planned to grow into. Only "qr"
- * has real tools today — the rest render as "Próximamente" so the catalog
- * communicates where the product is headed without linking to anything
- * that doesn't exist yet.
+ * The full set of categories Herramio is planned to grow into. A category's
+ * status flips from "coming-soon" to "active" only once it has at least one
+ * real, working tool — never earlier (see ARCHITECTURE.md).
  */
 export const CATEGORIES: Category[] = [
   {
@@ -28,37 +35,51 @@ export const CATEGORIES: Category[] = [
   {
     id: "pdf",
     name: "PDF",
-    description: "Comprimir, unir, dividir y convertir archivos PDF.",
+    description: "Unir, dividir y convertir archivos PDF.",
     icon: FileText,
-    status: "coming-soon",
+    status: "active",
   },
   {
     id: "imagenes",
     name: "Imágenes",
     description: "Comprimir, convertir y redimensionar imágenes.",
     icon: Image,
-    status: "coming-soon",
+    status: "active",
   },
   {
     id: "calculadoras",
     name: "Calculadoras",
     description: "Porcentajes, finanzas y cálculos rápidos.",
     icon: Calculator,
-    status: "coming-soon",
+    status: "active",
   },
   {
     id: "convertidores",
     name: "Convertidores",
     description: "Convierte archivos, unidades y formatos.",
     icon: RefreshCw,
-    status: "coming-soon",
+    status: "active",
   },
   {
     id: "texto",
     name: "Texto",
     description: "Contar, formatear y transformar texto.",
     icon: Type,
-    status: "coming-soon",
+    status: "active",
+  },
+  {
+    id: "desarrolladores",
+    name: "Desarrolladores",
+    description: "JSON, Base64, hashes y otras utilidades para programar.",
+    icon: Code2,
+    status: "active",
+  },
+  {
+    id: "productividad",
+    name: "Productividad",
+    description: "Temporizadores, cronómetro, sorteos y utilidades del día a día.",
+    icon: Zap,
+    status: "active",
   },
 ];
 

@@ -53,6 +53,37 @@ node tests/load/load-test.mjs --url=https://your-preview.vercel.app/api/test/pin
 
 Never set `ALLOW_LOAD_TEST=true` on the Production environment.
 
+## Resultados de la última prueba (2026-08-19, tras la consolidación visual — 81 rutas, incl. /experiencia)
+
+Ejecutada contra `npm run start` (build de producción) en local — **nunca**
+contra `herramio.com` — con `ALLOW_LOAD_TEST=true` solo en el proceso
+local. Endpoint: `/api/test/ping`.
+
+| Usuarios concurrentes | Requests totales | Errores | Requests/seg | Latencia media | p95 | p99 |
+|---|---|---|---|---|---|---|
+| 10 | 28,524 | 0 | 1,425.8 | 7.0 ms | 13.3 ms | 16.6 ms |
+| 50 | 28,714 | 0 | 1,433.9 | 34.8 ms | 50.7 ms | 63.3 ms |
+| 100 | 42,675 | 0 | 1,420.2 | 70.2 ms | 93.0 ms | 107.2 ms |
+| 500 | 44,069 | 0 | 1,453.8 | 341.4 ms | 407.9 ms | 433.5 ms |
+| 1000 | 45,138 | 0 | 1,470.1 | 670.2 ms | 772.9 ms | 799.4 ms |
+
+**Lectura**: cero errores en los cinco niveles. Los números son
+prácticamente idénticos a la corrida anterior (antes del rediseño visual y
+de agregar `/experiencia`, el hub interactivo y el spotlight de cursor) —
+esperable, ya que todo el trabajo de esta ronda es cliente puro
+(CSS/`requestAnimationFrame`) y `/api/test/ping` no ejecuta nada de eso.
+
+**Contexto importante**: esto midió un único proceso `next start` en una
+laptop de desarrollo, no la infraestructura real de Vercel. Producción en
+Vercel escala horizontalmente entre múltiples instancias de función
+serverless — el comportamiento real bajo carga en producción debería ser
+igual o mejor que estos números, no peor. Esta prueba responde la pregunta
+"¿el código del servidor se comporta bien bajo carga sostenida?" (sí), no
+"¿cuál es la capacidad exacta de Vercel?" (esa cifra depende del plan de
+Vercel contratado y no es algo que se pueda medir de forma segura y
+controlada contra el dominio real sin arriesgar la experiencia de
+usuarios reales, que es justamente lo que este módulo evita).
+
 ## Optional: k6
 
 For more advanced scenarios (ramping stages, thresholds), install

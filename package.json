@@ -1,5 +1,5 @@
 {
-  "name": "qr-toolkit",
+  "name": "herramio",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,24 +12,21 @@
     "load:test": "node tests/load/load-test.mjs"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.9.1",
-    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "file-saver": "^2.0.5",
+    "jsqr": "^1.4.0",
     "lucide-react": "^1.32.0",
     "next": "16.3.1",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.2.108",
     "qr-code-styling": "^1.9.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-hook-form": "^7.85.0",
-    "tailwind-merge": "^3.6.0",
-    "zod": "^4.4.3"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.2",
-    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

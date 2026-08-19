@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ToolPageShell } from "@/components/marketing/ToolPageShell";
+import { QRGenerator } from "@/components/qr/QRGenerator";
 import { buildMetadata } from "@/lib/seo";
 import type { FieldConfig } from "@/lib/qr/fields";
 import type { ContentBlock } from "@/lib/blog/types";
@@ -53,10 +54,15 @@ export default function QrFacebookPage() {
       toolName="QR de Facebook"
       eyebrow="Redes sociales"
       intro="Comparte tu página o perfil de Facebook mediante un código QR fácil de escanear desde cualquier celular."
-      fields={fields}
-      emptyHint="Escribe tu página de Facebook para generar el QR."
       seoContent={seoContent}
       faqItems={faqItems}
-    />
+    >
+      <QRGenerator
+        toolId="qr-facebook"
+        toolName="QR de Facebook"
+        fields={fields}
+        emptyHint="Escribe tu página de Facebook para generar el QR."
+      />
+    </ToolPageShell>
   );
 }

@@ -1,7 +1,13 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
+import { HeroBackground } from "@/components/marketing/HeroBackground";
+import { Button } from "@/components/ui/Button";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { openSearchPalette } from "@/lib/search-events";
+import { AnalyticsEvents } from "@/lib/analytics";
 import { SITE } from "@/lib/site";
 
 const EXAMPLES = [
@@ -13,8 +19,9 @@ const EXAMPLES = [
 
 export function Hero() {
   return (
-    <section className="border-b border-slate-100 bg-white">
-      <div className="container-page flex flex-col items-center py-20 text-center sm:py-28">
+    <section className="relative overflow-hidden border-b border-slate-100 bg-white">
+      <HeroBackground />
+      <div className="container-page relative flex flex-col items-center py-20 text-center sm:py-28">
         <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
           {SITE.name} · herramientas gratuitas
         </span>
@@ -42,6 +49,16 @@ export function Hero() {
               {example.label}
             </button>
           ))}
+        </div>
+
+        <div className="mt-7">
+          <MagneticButton>
+            <Link href="/herramientas" onClick={() => AnalyticsEvents.ctaClicked("hero_explore")}>
+              <Button size="lg">
+                Explorar las 44 herramientas <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </MagneticButton>
         </div>
 
         <p className="mt-6 text-sm text-slate-400">

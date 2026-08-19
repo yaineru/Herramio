@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
 
-const CONTACT_EMAIL = "hola@herramio.app";
+// Placeholder pointing at the real domain — verify this inbox is actually
+// monitored before relying on it for real user contact (see PRODUCT-ROADMAP.md).
+const CONTACT_EMAIL = "hola@herramio.com";
 
 /**
  * No backend: builds a mailto: link from the form and lets the visitor's

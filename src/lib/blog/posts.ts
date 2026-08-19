@@ -497,8 +497,367 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "como-calcular-un-porcentaje-facilmente",
+    title: "Cómo calcular un porcentaje fácilmente (con ejemplos)",
+    excerpt:
+      "Las tres fórmulas de porcentaje que realmente necesitas en el día a día, explicadas con ejemplos simples: de descuentos a aumentos de sueldo.",
+    description:
+      "Guía práctica para calcular porcentajes: qué es X% de Y, qué porcentaje representa un número, y cómo aumentar o disminuir una cantidad.",
+    datePublished: "2026-08-10",
+    readingTime: "4 min",
+    relatedTool: "calc-porcentaje",
+    content: [
+      {
+        type: "p",
+        text: "Calcular un porcentaje se reduce a tres operaciones distintas, y la confusión casi siempre viene de no saber cuál de las tres necesitas en cada momento. Aquí están las tres, con ejemplos reales.",
+      },
+      { type: "h2", text: "1. Sacar el X% de una cantidad" },
+      {
+        type: "p",
+        text: "Es la más común: cuánto es el 20% de 500. La fórmula es (porcentaje × cantidad) ÷ 100. En este caso: (20 × 500) ÷ 100 = 100. Se usa constantemente para calcular descuentos, propinas o comisiones.",
+      },
+      { type: "h2", text: "2. Saber qué porcentaje representa un número" },
+      {
+        type: "p",
+        text: "Aquí la pregunta es al revés: 50 es qué porcentaje de 200. La fórmula es (parte ÷ total) × 100. En este caso: (50 ÷ 200) × 100 = 25%. Útil para saber, por ejemplo, qué porcentaje de tu sueldo representa un gasto fijo.",
+      },
+      { type: "h2", text: "3. Aumentar o disminuir una cantidad en un porcentaje" },
+      {
+        type: "p",
+        text: "Para aumentar: cantidad × (1 + porcentaje ÷ 100). Para disminuir: cantidad × (1 − porcentaje ÷ 100). Por ejemplo, un sueldo de 500 con un aumento del 20% queda en 500 × 1.20 = 600. El mismo sueldo con un descuento del 20% queda en 500 × 0.80 = 400.",
+      },
+      { type: "h2", text: "Ejemplos rápidos del día a día" },
+      {
+        type: "ul",
+        items: [
+          "Una prenda de $80 con 30% de descuento: 80 × 0.70 = $56",
+          "Una propina del 15% sobre una cuenta de $40: (15 × 40) ÷ 100 = $6",
+          "Un ahorro de $150 sobre un ingreso de $1,200: (150 ÷ 1200) × 100 = 12.5%",
+        ],
+      },
+      {
+        type: "p",
+        text: "Si prefieres no hacer la cuenta a mano, nuestra calculadora de porcentaje resuelve estos tres casos al instante, sin necesidad de recordar ninguna fórmula.",
+      },
+    ],
+  },
+  {
+    slug: "como-reducir-tamano-de-imagen-sin-perder-calidad",
+    title: "Cómo reducir el tamaño de una imagen sin perder demasiada calidad",
+    excerpt:
+      "La diferencia entre comprimir bien y arruinar una foto está en el formato y el nivel de calidad que elijas. Aquí está cómo hacerlo bien.",
+    description:
+      "Guía práctica para comprimir imágenes JPG, PNG o WebP reduciendo el peso del archivo sin perder calidad visual notable.",
+    datePublished: "2026-08-12",
+    readingTime: "4 min",
+    relatedTool: "imagen-comprimir",
+    content: [
+      {
+        type: "p",
+        text: "Una foto pesada carga lento, ocupa espacio y en muchos formularios web directamente no se puede subir. La buena noticia es que casi siempre se puede reducir el peso de una imagen entre 60% y 80% sin que el ojo humano note la diferencia — si eliges bien el formato y el nivel de calidad.",
+      },
+      { type: "h2", text: "Elige el formato correcto" },
+      {
+        type: "p",
+        text: "JPEG y WebP tienen compresión con pérdida ajustable: puedes elegir cuánto peso sacrificar a cambio de calidad. PNG es sin pérdida — ideal para logos o capturas con texto nítido, pero casi no reduce su tamaño al \"comprimirse\". Si tu imagen es una fotografía y no necesita transparencia, conviértela a JPEG o WebP antes de comprimir.",
+      },
+      { type: "h2", text: "El punto dulce de calidad: 70-85%" },
+      {
+        type: "p",
+        text: "Por debajo de 70% de calidad empiezan a notarse artefactos de compresión (bloques, borrosidad) en fotografías con detalle. Por encima de 85%, el ahorro de peso adicional es mínimo. El rango 70-85% suele dar la mejor relación entre tamaño de archivo y calidad visual.",
+      },
+      { type: "h2", text: "Ejemplo real" },
+      {
+        type: "p",
+        text: "Una fotografía de 2.4 MB en JPEG con calidad 100% puede bajar a unos 780 KB con calidad 80% — una reducción aproximada del 67%, prácticamente indistinguible a simple vista en la mayoría de pantallas.",
+      },
+      { type: "h2", text: "Cuándo NO comprimir tanto" },
+      {
+        type: "ul",
+        items: [
+          "Material para impresión de alta calidad (usa calidad 90%+ o formatos sin pérdida)",
+          "Imágenes con texto pequeño o líneas finas, donde los artefactos son más visibles",
+          "Archivos que ya pasaron por varias compresiones previas (cada recompresión pierde más calidad)",
+        ],
+      },
+      {
+        type: "p",
+        text: "Nuestro compresor de imágenes hace este ajuste de formato y calidad en tiempo real, mostrándote el tamaño resultante antes de descargar, directamente en tu navegador.",
+      },
+    ],
+  },
+  {
+    slug: "como-convertir-jpg-a-pdf",
+    title: "Cómo convertir JPG a PDF gratis",
+    excerpt:
+      "Convertir una o varias fotos a un solo PDF es útil para enviar documentos escaneados, comprobantes o portafolios. Así se hace en segundos.",
+    description:
+      "Guía para convertir imágenes JPG o PNG a un archivo PDF, incluyendo cómo unir varias imágenes en un solo documento.",
+    datePublished: "2026-08-14",
+    readingTime: "3 min",
+    relatedTool: "jpg-a-pdf",
+    content: [
+      {
+        type: "p",
+        text: "Convertir una imagen a PDF es útil cuando necesitas enviar un documento escaneado con el celular, armar un portafolio de fotos, o simplemente entregar algo en un formato que se vea igual en cualquier dispositivo.",
+      },
+      { type: "h2", text: "Cuándo conviene usar PDF en vez de JPG" },
+      {
+        type: "ul",
+        items: [
+          "Cuando necesitas enviar varias páginas o fotos como un solo archivo",
+          "Cuando el destinatario espera un documento formal, no una imagen suelta",
+          "Cuando quieres asegurar que se vea igual sin importar el dispositivo o programa que lo abra",
+        ],
+      },
+      { type: "h2", text: "Cómo convertir varias imágenes en un solo PDF" },
+      {
+        type: "steps",
+        items: [
+          { title: "Sube tus imágenes", text: "JPG o PNG, una o varias a la vez." },
+          { title: "Ordénalas", text: "Cada imagen se convierte en una página, en el orden que definas." },
+          { title: "Descarga el PDF", text: "Obtienes un solo archivo listo para enviar o imprimir." },
+        ],
+      },
+      {
+        type: "p",
+        text: "Esto es especialmente útil para escanear varias páginas de un mismo documento con la cámara del celular (una foto por página) y entregarlas como un solo PDF ordenado, en vez de mandar varias fotos sueltas.",
+      },
+    ],
+  },
+  {
+    slug: "como-crear-una-contrasena-segura",
+    title: "Cómo crear una contraseña segura (y por qué la mayoría no lo son)",
+    excerpt:
+      "La longitud importa más que la complejidad, reutilizar contraseñas es el error más costoso, y un generador aleatorio resuelve ambos problemas en segundos.",
+    description:
+      "Guía práctica sobre qué hace segura a una contraseña, por qué la longitud pesa más que los símbolos, y cómo generar una con Web Crypto API.",
+    datePublished: "2026-08-18",
+    readingTime: "5 min",
+    relatedTool: "texto-generador-contrasenas",
+    content: [
+      {
+        type: "p",
+        text: "La mayoría de las filtraciones de cuentas no ocurren porque alguien 'hackeó' nada: ocurren porque la misma contraseña débil se reutilizó en varios sitios, y cuando uno de ellos sufre una filtración, los atacantes la prueban automáticamente en el resto. Crear contraseñas seguras y distintas para cada servicio sigue siendo, hoy, la defensa más efectiva y más ignorada.",
+      },
+      { type: "h2", text: "Lo que realmente hace fuerte a una contraseña" },
+      {
+        type: "p",
+        text: "La longitud pesa más que la complejidad. Una contraseña de 16 caracteres aleatorios con solo minúsculas es, en la práctica, más difícil de forzar por fuerza bruta que una de 8 caracteres con mayúsculas, números y símbolos mezclados. Esto se debe a que cada carácter adicional multiplica exponencialmente el número de combinaciones posibles, mientras que añadir tipos de carácter solo lo hace de forma lineal.",
+      },
+      {
+        type: "ul",
+        items: [
+          "Prioriza la longitud: al menos 12-16 caracteres para cuentas normales",
+          "Combina tipos de carácter cuando el sitio lo permita, pero no a costa de longitud",
+          "Nunca reutilices la misma contraseña en dos sitios distintos",
+          "Usa un gestor de contraseñas para no depender de la memoria",
+        ],
+      },
+      { type: "h2", text: "Por qué Math.random() no sirve para esto" },
+      {
+        type: "p",
+        text: "Muchos generadores de contraseñas 'caseros' en JavaScript usan Math.random(), que es un generador de números pseudoaleatorios diseñado para animaciones y juegos, no para seguridad — su secuencia es predecible si se conoce el estado interno. Un generador de contraseñas serio debe usar un CSPRNG (generador criptográficamente seguro), como crypto.getRandomValues(), disponible de forma nativa en cualquier navegador moderno.",
+      },
+      { type: "h2", text: "Cómo generar una contraseña fuerte en segundos" },
+      {
+        type: "steps",
+        items: [
+          { title: "Elige una longitud de al menos 16 caracteres", text: "Cuanto más larga, mejor — dentro de lo que el sitio permita." },
+          { title: "Activa varios tipos de carácter", text: "Mayúsculas, minúsculas, números y símbolos, si el servicio los acepta." },
+          { title: "Genera y copia", text: "La contraseña se crea con crypto.getRandomValues() directamente en tu navegador." },
+          { title: "Guárdala en un gestor de contraseñas", text: "Así no necesitas memorizarla ni anotarla en texto plano." },
+        ],
+      },
+      {
+        type: "p",
+        text: "El generador de contraseñas de Herramio hace exactamente esto: usa la API criptográfica nativa del navegador, nunca envía la contraseña generada a ningún servidor, y muestra un indicador de fortaleza para que sepas de un vistazo si vale la pena regenerar.",
+      },
+    ],
+  },
+  {
+    slug: "como-hacer-un-sorteo-justo-en-redes-sociales",
+    title: "Cómo hacer un sorteo justo y transparente en redes sociales",
+    excerpt:
+      "Elegir un ganador 'a ojo' entre los comentarios genera desconfianza. Así es como un sorteo aleatorio y verificable evita reclamos y mejora tu credibilidad.",
+    description:
+      "Cómo organizar un sorteo o giveaway justo en redes sociales usando un selector aleatorio, evitando reclamos de favoritismo.",
+    datePublished: "2026-08-20",
+    readingTime: "4 min",
+    relatedTool: "productividad-sorteador",
+    content: [
+      {
+        type: "p",
+        text: "Un sorteo mal gestionado — donde el ganador se elige 'mirando la lista' o con un método poco claro — genera desconfianza incluso cuando fue completamente honesto. La forma más simple de evitarlo es usar un método de selección visiblemente aleatorio, que cualquiera pueda entender y que no dependa de tu criterio personal.",
+      },
+      { type: "h2", text: "Por qué importa el método, no solo el resultado" },
+      {
+        type: "p",
+        text: "Cuando anuncias que el ganador se eligió 'al azar', pero el proceso no es visible ni verificable, los participantes solo tienen tu palabra. Usar una herramienta pública de sorteo, y mostrar cómo se armó la lista de participantes, convierte una afirmación de confianza en algo que cualquiera puede entender y aceptar.",
+      },
+      { type: "h2", text: "Cómo organizar el sorteo paso a paso" },
+      {
+        type: "steps",
+        items: [
+          { title: "Define las reglas de participación con claridad", text: "Qué acción cuenta como entrada (comentar, seguir, compartir) y hasta cuándo." },
+          { title: "Arma la lista completa de participantes", text: "Copia los nombres o usuarios que cumplieron las reglas, uno por línea." },
+          { title: "Sortea con una herramienta aleatoria", text: "Pega la lista y deja que el generador elija al ganador, sin intervención manual." },
+          { title: "Comparte el resultado con la lista visible", text: "Así cualquiera puede verificar que el ganador estaba realmente en la lista." },
+        ],
+      },
+      { type: "h2", text: "Sorteos con varios ganadores" },
+      {
+        type: "p",
+        text: "Si vas a repartir varios premios, sortea uno a la vez y retira al ganador de la lista antes del siguiente sorteo — así evitas que la misma persona gane dos veces y mantienes el proceso transparente en cada ronda.",
+      },
+    ],
+  },
+  {
+    slug: "que-es-json-y-como-formatearlo",
+    title: "Qué es JSON y cómo formatearlo para que sea legible",
+    excerpt:
+      "JSON es el formato que usan casi todas las APIs modernas para intercambiar datos. Cuando llega comprimido en una sola línea, formatearlo es el primer paso para entenderlo.",
+    description:
+      "Qué es JSON, cómo está estructurado y cómo formatearlo o validarlo cuando llega minificado desde una API.",
+    datePublished: "2026-08-22",
+    readingTime: "5 min",
+    relatedTool: "dev-json-formatter",
+    content: [
+      {
+        type: "p",
+        text: "JSON (JavaScript Object Notation) es un formato de texto para representar datos estructurados — objetos, listas, números, texto — que se convirtió en el estándar de facto para el intercambio de información entre aplicaciones web y APIs. Casi cualquier API que consultes hoy responde en este formato.",
+      },
+      { type: "h2", text: "Estructura básica de JSON" },
+      {
+        type: "ul",
+        items: [
+          "Los objetos van entre llaves { } con pares clave-valor",
+          "Las listas van entre corchetes [ ] con elementos separados por comas",
+          "Los valores pueden ser texto (entre comillas), números, booleanos, null, otros objetos u otras listas",
+          "Las claves siempre van entre comillas dobles",
+        ],
+      },
+      { type: "h2", text: "Por qué llega minificado" },
+      {
+        type: "p",
+        text: "Para ahorrar ancho de banda, la mayoría de las APIs devuelven el JSON sin espacios ni saltos de línea — todo en una sola línea compacta. Esto es eficiente para que lo procese una máquina, pero prácticamente ilegible para una persona que necesita depurar o entender la respuesta.",
+      },
+      { type: "h2", text: "Cómo formatear JSON para leerlo" },
+      {
+        type: "steps",
+        items: [
+          { title: "Copia el JSON minificado", text: "Desde la respuesta de la API, la consola del navegador o un archivo de configuración." },
+          { title: "Pégalo en un formateador", text: "La herramienta detecta la estructura y valida que sea JSON correcto." },
+          { title: "Revisa la indentación resultante", text: "Cada nivel de anidación queda visualmente claro, con saltos de línea y sangría." },
+          { title: "Si hay un error de sintaxis, corrígelo", text: "El formateador señala exactamente qué parte del texto no es JSON válido." },
+        ],
+      },
+      {
+        type: "p",
+        text: "El proceso inverso — minificar — es útil cuando necesitas incluir el JSON en código o un archivo de configuración donde el tamaño importa más que la legibilidad para humanos.",
+      },
+    ],
+  },
+  {
+    slug: "tecnica-pomodoro-como-funciona",
+    title: "Qué es la técnica Pomodoro y cómo aplicarla sin complicarte",
+    excerpt:
+      "Dividir el trabajo en bloques cortos de enfoque, con descansos programados, es una de las formas más simples de mejorar la concentración sin fuerza de voluntad extra.",
+    description:
+      "Qué es la técnica Pomodoro, cómo estructurar los bloques de trabajo y descanso, y cómo aplicarla con un temporizador simple.",
+    datePublished: "2026-08-24",
+    readingTime: "4 min",
+    relatedTool: "productividad-temporizador",
+    content: [
+      {
+        type: "p",
+        text: "La técnica Pomodoro, creada por Francesco Cirillo a finales de los 80, propone algo simple: trabajar en bloques cortos y delimitados de tiempo, con descansos programados entre ellos, en vez de intentar mantener la concentración indefinidamente hasta agotarse.",
+      },
+      { type: "h2", text: "La estructura básica" },
+      {
+        type: "ul",
+        items: [
+          "25 minutos de trabajo enfocado en una sola tarea",
+          "5 minutos de descanso corto",
+          "Repetir el ciclo 4 veces",
+          "Cada 4 bloques, un descanso largo de 15-30 minutos",
+        ],
+      },
+      { type: "h2", text: "Por qué funciona" },
+      {
+        type: "p",
+        text: "El límite de tiempo reduce la procrastinación: 25 minutos es un compromiso pequeño y concreto, mucho menos intimidante que 'trabajar en esto toda la tarde'. Al mismo tiempo, saber que viene un descanso programado ayuda a mantener el enfoque durante el bloque, en vez de distraerte revisando el teléfono cada pocos minutos.",
+      },
+      { type: "h2", text: "Cómo aplicarla con un temporizador" },
+      {
+        type: "steps",
+        items: [
+          { title: "Elige una sola tarea", text: "No varias a la vez — el objetivo es enfoque, no multitarea." },
+          { title: "Inicia un bloque de 25 minutos", text: "Trabaja solo en esa tarea hasta que suene el aviso." },
+          { title: "Toma un descanso real de 5 minutos", text: "Levántate, estira, evita revisar redes sociales." },
+          { title: "Cada 4 bloques, toma un descanso largo", text: "15 a 30 minutos antes de empezar el siguiente ciclo." },
+        ],
+      },
+      {
+        type: "p",
+        text: "No es necesario seguir los 25 minutos al pie de la letra: algunas personas prefieren bloques de 45-50 minutos con descansos de 10. Lo esencial es la estructura — trabajo delimitado seguido de descanso delimitado — no el número exacto.",
+      },
+    ],
+  },
+  {
+    slug: "que-es-un-hash-y-para-que-sirve",
+    title: "Qué es un hash (SHA-256) y para qué se usa en la práctica",
+    excerpt:
+      "Un hash convierte cualquier texto en una huella digital de longitud fija, irreversible. Así es como se usa para verificar integridad sin necesidad de guardar el original.",
+    description:
+      "Qué es una función hash como SHA-256, en qué se diferencia de cifrar, y casos prácticos de uso como verificación de integridad.",
+    datePublished: "2026-08-26",
+    readingTime: "4 min",
+    relatedTool: "dev-hash-generator",
+    content: [
+      {
+        type: "p",
+        text: "Un hash es el resultado de aplicar una función matemática a un texto o archivo, que produce siempre una cadena de longitud fija — por ejemplo, 64 caracteres hexadecimales para SHA-256. La misma entrada siempre produce exactamente el mismo hash, pero es prácticamente imposible reconstruir la entrada original a partir del hash.",
+      },
+      { type: "h2", text: "Hash no es lo mismo que cifrado" },
+      {
+        type: "p",
+        text: "El cifrado es reversible: con la clave correcta, puedes recuperar el texto original a partir del texto cifrado. Un hash no es reversible por diseño — su propósito no es ocultar información para recuperarla después, sino crear una huella digital verificable. No existe una función 'deshacer hash'.",
+      },
+      { type: "h2", text: "Casos de uso comunes" },
+      {
+        type: "ul",
+        items: [
+          "Verificar que un archivo descargado no fue alterado, comparando su hash publicado contra el hash calculado localmente",
+          "Detectar cambios en un texto o configuración sin comparar carácter por carácter",
+          "Crear identificadores reproducibles a partir de contenido, sin guardar el contenido completo",
+          "Como parte (nunca como único paso) de sistemas de verificación de contraseñas",
+        ],
+      },
+      { type: "h2", text: "Cómo calcular un hash" },
+      {
+        type: "steps",
+        items: [
+          { title: "Elige el algoritmo", text: "SHA-256 es el estándar general recomendado hoy en día." },
+          { title: "Pega el texto o contenido", text: "Se procesa directamente en tu navegador, sin enviarlo a ningún servidor." },
+          { title: "Copia el hash resultante", text: "Una cadena hexadecimal de longitud fija según el algoritmo elegido." },
+          { title: "Compáralo con el hash de referencia", text: "Si coinciden exactamente, el contenido no fue alterado." },
+        ],
+      },
+      {
+        type: "p",
+        text: "Un detalle importante: cambiar un solo carácter en la entrada produce un hash completamente distinto — no un hash 'parecido'. Esto es lo que hace útil a un hash para detectar hasta la alteración más mínima.",
+      },
+    ],
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
   return BLOG_POSTS.find((post) => post.slug === slug);
+}
+
+/** Reverse lookup of getBlogPost's relatedTool field, for tool pages to link back to their article. */
+export function getBlogPostByTool(toolId: string): BlogPost | undefined {
+  return BLOG_POSTS.find((post) => post.relatedTool === toolId);
 }

@@ -18,9 +18,10 @@ de AdSense.
   1. Debajo del hero / generador principal (home y cada herramienta)
   2. Entre contenido (dentro de artículos de blog y páginas de herramientas)
   3. Antes del footer (home)
-- El generador de QR sigue siendo siempre el elemento principal de cada
-  página — ningún AdSlot interfiere con el formulario ni con los botones de
-  descarga.
+- La herramienta (generador de QR, calculadora, subidor de archivos PDF...)
+  sigue siendo siempre el elemento principal de cada página — ningún AdSlot
+  interfiere con el formulario ni con los botones de descarga, en ninguna
+  categoría.
 
 ## Cómo activar AdSense cuando el sitio esté listo
 
