@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, Children, type ReactNode } from "react";
+import { useEffect, useRef, useState, Children, type ReactNode } from "react";
 import { motionEffectsEnabled } from "@/lib/motion/preferences";
 import { computeParallaxOffset } from "@/lib/motion/motion-math";
 
@@ -17,10 +17,33 @@ export function FloatingToolverse({ children }: { children: ReactNode }) {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number | null>(null);
   const pointerRef = useRef<{ x: number; y: number } | null>(null);
+  const [revealed, setRevealed] = useState(false);
 
   const items = Children.toArray(children);
   const depths = items.map((_, i) => 0.35 + (i % 3) * 0.3);
   const yOffsets = items.map((_, i) => (i % 2 === 0 ? 1 : -1) * (8 + (i % 3) * 6));
+
+  // Cards cascade in one by one as the grid enters view, instead of all
+  // popping in at once — cheap (opacity-only) so it never competes with the
+  // pointer-driven parallax below for the same animation budget.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || typeof IntersectionObserver === "undefined") {
+      setRevealed(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" },
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -73,8 +96,13 @@ export function FloatingToolverse({ children }: { children: ReactNode }) {
           ref={(el) => {
             cardRefs.current[i] = el;
           }}
-          className="transition-transform duration-300 ease-out will-change-transform motion-reduce:transform-none"
-          style={{ transform: `translateY(${yOffsets[i]}px)` }}
+          className={`transition-[transform,opacity] duration-300 ease-out will-change-transform motion-reduce:transform-none motion-reduce:!opacity-100 motion-reduce:!transition-none ${
+            revealed ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            transform: `translateY(${yOffsets[i]}px)`,
+            transitionDelay: revealed ? `${(i % 6) * 60}ms` : "0ms",
+          }}
         >
           {child}
         </div>

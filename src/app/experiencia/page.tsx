@@ -6,8 +6,10 @@ import { FloatingToolverse } from "@/components/marketing/FloatingToolverse";
 import { FloatingToolCard } from "@/components/marketing/FloatingToolCard";
 import { CategoryHub } from "@/components/marketing/CategoryHub";
 import { Reveal } from "@/components/marketing/Reveal";
+import { TiltWrapper } from "@/components/marketing/TiltWrapper";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Button } from "@/components/ui/Button";
+import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { buildMetadata } from "@/lib/seo";
 import { TOOLS } from "@/lib/tools/registry";
 import { SITE } from "@/lib/site";
@@ -52,6 +54,9 @@ export default function ExperienciaPage() {
             Mueve el mouse, pasa por encima de una herramienta y entra directo a usarla. Cada
             tarjeta de esta página es real — nada aquí es solo una maqueta.
           </p>
+          <div className="mt-8 w-full max-w-lg">
+            <SearchTrigger variant="large" placeholder={`Buscar entre las ${TOOLS.length} herramientas...`} />
+          </div>
         </div>
       </section>
 
@@ -63,7 +68,9 @@ export default function ExperienciaPage() {
         <Reveal delay={100} className="mt-10">
           <FloatingToolverse>
             {UNIVERSE_TOOLS.map((tool) => (
-              <FloatingToolCard key={tool.id} tool={tool} />
+              <TiltWrapper key={tool.id}>
+                <FloatingToolCard tool={tool} />
+              </TiltWrapper>
             ))}
           </FloatingToolverse>
         </Reveal>
