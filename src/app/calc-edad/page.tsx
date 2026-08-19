@@ -26,6 +26,15 @@ const seoContent: ContentBlock[] = [
       "Días que faltan para tu próximo cumpleaños",
     ],
   },
+  { type: "h2", text: "Cuándo se usa" },
+  {
+    type: "ul",
+    items: [
+      "Verificar tu edad exacta para un trámite, formulario o requisito de edad mínima",
+      "Calcular la edad de un hijo, familiar o mascota en años y meses, no solo en años",
+      "Saber cuántos días faltan exactamente para tu próximo cumpleaños",
+    ],
+  },
 ];
 
 const faqItems = [
@@ -36,6 +45,14 @@ const faqItems = [
   {
     question: "¿Por qué la edad en años a veces difiere de restar el año directamente?",
     answer: "Porque se ajusta al mes y día exactos: si tu cumpleaños de este año todavía no pasó, la calculadora todavía te cuenta con la edad del año anterior.",
+  },
+  {
+    question: "¿Qué pasa si escribo una fecha de nacimiento futura?",
+    answer: "La calculadora te avisa con un mensaje claro (\"La fecha de nacimiento no puede ser futura\") en vez de mostrar un resultado sin sentido.",
+  },
+  {
+    question: "¿Tiene en cuenta los años bisiestos?",
+    answer: "Sí. El cálculo se basa en las fechas reales del calendario, así que un 29 de febrero como fecha de nacimiento se maneja correctamente.",
   },
 ];
 

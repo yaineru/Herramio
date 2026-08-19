@@ -24,6 +24,7 @@ const seoContent: ContentBlock[] = [
       "Calcular cuántos días faltan para un evento o fecha límite",
       "Calcular la duración exacta de un proyecto, contrato o estadía",
       "Saber cuántas semanas han pasado desde una fecha determinada",
+      "Verificar el plazo exacto de una garantía, préstamo o periodo de prueba",
     ],
   },
 ];
@@ -36,6 +37,14 @@ const faqItems = [
   {
     question: "¿Se guardan mis fechas en algún servidor?",
     answer: "No. El cálculo ocurre completamente en tu navegador; las fechas nunca se envían a ningún servidor.",
+  },
+  {
+    question: "¿Por qué el resultado en semanas no es un número exacto de días entre 7?",
+    answer: "Sí lo es: se muestran las semanas completas más los días restantes por separado (por ejemplo, \"51 semanas y 1 día\"), para que el total en días siga siendo exacto.",
+  },
+  {
+    question: "¿Cuenta el día de inicio, el día final, o ambos?",
+    answer: "Cuenta el número de días completos transcurridos entre ambas fechas — por ejemplo, del 1 al 3 de un mes hay 2 días de diferencia, no 3.",
   },
 ];
 
