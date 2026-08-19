@@ -16,14 +16,14 @@ export const metadata: Metadata = buildMetadata({
 const content: ContentBlock[] = [
   {
     type: "p",
-    text: `${SITE.name} nació de una idea simple: resolver una tarea rápida online no debería requerir registrarte, pagar, ni descargar una app. Estamos construyendo un conjunto de herramientas gratuitas, rápidas y enfocadas en casos reales — hoy códigos QR, y progresivamente PDF, imágenes, calculadoras, convertidores y texto.`,
+    text: `${SITE.name} nació de una idea simple: resolver una tarea rápida online no debería requerir registrarte, pagar, ni descargar una app. Hoy somos 48 herramientas gratuitas en 8 categorías — QR, PDF, imágenes, calculadoras, convertidores, texto, desarrolladores y productividad — y seguimos sumando más siguiendo el mismo criterio: solo herramientas que funcionen de verdad, de principio a fin.`,
   },
   { type: "h2", text: "Lo que nos importa" },
   {
     type: "ul",
     items: [
       "Gratis de verdad: sin límites de uso ni funciones básicas bloqueadas",
-      "Privacidad primero: cuando es posible, tus datos se procesan en tu propio navegador",
+      "Privacidad primero: casi todas nuestras herramientas procesan tus archivos y datos directamente en tu navegador, sin subirlos a un servidor — la única excepción es el convertidor de moneda, que consulta tasas de cambio públicas",
       "Velocidad: cada herramienta responde al instante, sin recargar la página",
       "Contenido útil: cada herramienta y artículo del blog resuelve un problema real",
     ],
@@ -31,7 +31,7 @@ const content: ContentBlock[] = [
   { type: "h2", text: "Cómo se sostiene el proyecto" },
   {
     type: "p",
-    text: "El sitio se financia mediante publicidad no intrusiva, que se muestra sin interferir con el uso de las herramientas. Nunca vendemos ni compartimos el contenido que generas con nuestras herramientas.",
+    text: "El sitio se financia mediante publicidad no intrusiva — hoy todavía no mostramos anuncios reales, pero cuando los activemos, se mostrarán sin interferir con el uso de las herramientas. Nunca vendemos ni compartimos los archivos o datos que procesas con nuestras herramientas, porque nunca llegan a nuestros servidores para empezar.",
   },
 ];
 

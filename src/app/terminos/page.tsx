@@ -12,26 +12,26 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const content: ContentBlock[] = [
-  { type: "p", text: "Última actualización: 18 de agosto de 2026. Al usar este sitio, aceptas estos términos." },
+  { type: "p", text: "Última actualización: 19 de agosto de 2026. Al usar este sitio, aceptas estos términos." },
   { type: "h2", text: "1. Descripción del servicio" },
   {
     type: "p",
-    text: `${SITE.name} ofrece herramientas gratuitas para generar, personalizar y descargar códigos QR. El servicio se ofrece "tal cual", sin garantía de disponibilidad ininterrumpida.`,
+    text: `${SITE.name} ofrece 48 herramientas gratuitas en 8 categorías: códigos QR, PDF (unir, dividir, convertir), imágenes (comprimir, convertir), calculadoras, convertidores, texto, herramientas para desarrolladores y productividad. El servicio se ofrece "tal cual", sin garantía de disponibilidad ininterrumpida ni de que cada herramienta esté libre de errores.`,
   },
   { type: "h2", text: "2. Uso permitido" },
   {
     type: "p",
-    text: "Puedes usar las herramientas para fines personales, educativos o comerciales, sin límite de generación. No está permitido usar el sitio para generar códigos QR con contenido ilegal, fraudulento, difamatorio o que infrinja derechos de terceros.",
+    text: "Puedes usar las herramientas para fines personales, educativos o comerciales, sin límite de uso. No está permitido usarlas para procesar o generar contenido ilegal, fraudulento, difamatorio o que infrinja derechos de terceros — por ejemplo, códigos QR con enlaces maliciosos o archivos que no tengas derecho a manipular.",
   },
-  { type: "h2", text: "3. Responsabilidad sobre el contenido" },
+  { type: "h2", text: "3. Responsabilidad sobre tus archivos y datos" },
   {
     type: "p",
-    text: "Eres el único responsable del contenido que codifiques en tus códigos QR (enlaces, textos, datos de contacto) y de cómo los distribuyas. No supervisamos ni podemos supervisar el contenido generado por los usuarios, ya que la generación ocurre en tu propio navegador.",
+    text: "Eres el único responsable del contenido que proceses en cualquier herramienta (archivos PDF o de imagen, texto, datos de contacto, códigos QR) y de cómo los distribuyas después. No supervisamos ni podemos supervisar ese contenido, porque el procesamiento ocurre en tu propio navegador y nunca llega a nuestros servidores.",
   },
   { type: "h2", text: "4. Propiedad intelectual" },
   {
     type: "p",
-    text: "El diseño, código y marca del sitio son propiedad de sus operadores. Los códigos QR que generas son tuyos: puedes usarlos, modificarlos y distribuirlos libremente, sin atribución.",
+    text: "El diseño, código y marca del sitio son propiedad de sus operadores. Los archivos, códigos QR y resultados que generas con nuestras herramientas son tuyos: puedes usarlos, modificarlos y distribuirlos libremente, sin atribución.",
   },
   { type: "h2", text: "5. Publicidad" },
   {
@@ -41,7 +41,7 @@ const content: ContentBlock[] = [
   { type: "h2", text: "6. Límite de responsabilidad" },
   {
     type: "p",
-    text: "No nos hacemos responsables por errores de escaneo derivados de una impresión, personalización o distancia de lectura inadecuadas, ni por el uso que terceros den a la información codificada en un QR que hayas compartido.",
+    text: "No nos hacemos responsables por errores de escaneo derivados de una impresión o distancia de lectura inadecuadas en un QR, por resultados inesperados al procesar archivos dañados o en formatos no soportados, por la disponibilidad de servicios externos de los que depende alguna herramienta (como las tasas de cambio del convertidor de moneda), ni por el uso que terceros den a información que hayas compartido.",
   },
   { type: "h2", text: "7. Cambios en el servicio o estos términos" },
   {
