@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Combine, Download, Loader2, RotateCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Combine, Download, Loader2, RotateCcw, Split } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FileDropZone } from "@/components/tools/FileDropZone";
 import { ReorderableFileList } from "@/components/tools/ReorderableFileList";
 import { formatBytes } from "@/lib/images/canvas-image";
 import { MAX_PDF_BYTES, mergePdfs } from "@/lib/pdf/pdf-engine";
+import { setToolHandoff } from "@/lib/tool-handoff";
 import { AnalyticsEvents } from "@/lib/analytics";
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -22,6 +24,7 @@ function downloadBlob(blob: Blob, filename: string) {
 }
 
 export function PdfMerger() {
+  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -87,6 +90,14 @@ export function PdfMerger() {
     AnalyticsEvents.toolDownloaded("pdf-unir", "pdf");
   }
 
+  function handleSendToSplitter() {
+    if (!resultBlob) return;
+    const handoffFile = new File([resultBlob], "documento-unido.pdf", { type: "application/pdf" });
+    setToolHandoff({ sourceTool: "pdf-unir", targetTool: "pdf-dividir", file: handoffFile });
+    AnalyticsEvents.ctaClicked("handoff_pdf-unir_to_pdf-dividir");
+    router.push("/pdf-dividir");
+  }
+
   return (
     <Card className="p-6">
       <FileDropZone
@@ -137,6 +148,16 @@ export function PdfMerger() {
           </Button>
         )}
       </div>
+
+      {resultBlob && (
+        <button
+          type="button"
+          onClick={handleSendToSplitter}
+          className="mt-4 flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:underline"
+        >
+          <Split className="h-3.5 w-3.5" /> Dividir este PDF sin volver a subirlo
+        </button>
+      )}
 
       <p className="mt-4 text-xs text-slate-400">
         Tus archivos se procesan directamente en tu navegador: no se suben a nuestros servidores

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, ImageOff, Loader2, RotateCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Download, ImageOff, Loader2, RotateCcw, FilePlus2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Label";
@@ -18,7 +19,7 @@ import {
   loadImageFile,
   type LoadedImage,
 } from "@/lib/images/canvas-image";
-import { consumeToolHandoff } from "@/lib/tool-handoff";
+import { consumeToolHandoff, setToolHandoff } from "@/lib/tool-handoff";
 import { AnalyticsEvents } from "@/lib/analytics";
 
 type OutputFormat = "image/jpeg" | "image/png" | "image/webp";
@@ -34,6 +35,7 @@ function otherFormats(current: string): OutputFormat[] {
 }
 
 export function ImageConverter() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [loaded, setLoaded] = useState<LoadedImage | null>(null);
   const [targetFormat, setTargetFormat] = useState<OutputFormat>("image/png");
@@ -120,6 +122,19 @@ export function ImageConverter() {
     const base = file.name.replace(/\.[^.]+$/, "");
     downloadBlob(resultBlob, `${base}.${extensionForMime(targetFormat)}`);
     AnalyticsEvents.toolDownloaded("imagen-convertir", extensionForMime(targetFormat));
+  }
+
+  // jpg-a-pdf only accepts JPEG or PNG — never offer this handoff for a
+  // WebP result, since the target tool would just reject it.
+  function handleSendToPdf() {
+    if (!resultBlob || !file || targetFormat === "image/webp") return;
+    const base = file.name.replace(/\.[^.]+$/, "");
+    const handoffFile = new File([resultBlob], `${base}.${extensionForMime(targetFormat)}`, {
+      type: targetFormat,
+    });
+    setToolHandoff({ sourceTool: "imagen-convertir", targetTool: "jpg-a-pdf", file: handoffFile });
+    AnalyticsEvents.ctaClicked("handoff_imagen-convertir_to_jpg-a-pdf");
+    router.push("/jpg-a-pdf");
   }
 
   if (!file) {
@@ -211,6 +226,16 @@ export function ImageConverter() {
           <RotateCcw className="h-4 w-4" /> Elegir otra imagen
         </Button>
       </div>
+
+      {resultBlob && !isProcessing && targetFormat !== "image/webp" && (
+        <button
+          type="button"
+          onClick={handleSendToPdf}
+          className="mt-4 flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:underline"
+        >
+          <FilePlus2 className="h-3.5 w-3.5" /> Crear un PDF con esta imagen
+        </button>
+      )}
 
       <p className="mt-4 text-xs text-slate-400">
         Tu imagen se procesa directamente en tu navegador: no se sube a nuestros servidores en

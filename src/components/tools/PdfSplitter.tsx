@@ -10,6 +10,7 @@ import { FileDropZone } from "@/components/tools/FileDropZone";
 import { formatBytes } from "@/lib/images/canvas-image";
 import { MAX_PDF_BYTES, getPdfPageCount, splitPdfByGroups } from "@/lib/pdf/pdf-engine";
 import { parsePageGroups } from "@/lib/pdf/page-ranges";
+import { consumeToolHandoff } from "@/lib/tool-handoff";
 import { AnalyticsEvents } from "@/lib/analytics";
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -33,6 +34,14 @@ export function PdfSplitter() {
 
   useEffect(() => {
     AnalyticsEvents.toolOpened("pdf-dividir");
+  }, []);
+
+  // Picks up a PDF handed off from pdf-unir or jpg-a-pdf via the exact same
+  // validation path as a manual upload — no separate code path to keep in
+  // sync. A no-op when there's nothing pending.
+  useEffect(() => {
+    const handoffFile = consumeToolHandoff("pdf-dividir");
+    if (handoffFile) handleFiles([handoffFile]);
   }, []);
 
   function handleFiles(files: File[]) {
