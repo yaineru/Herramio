@@ -26,6 +26,22 @@ export async function getPdfPageCountViaPdfJs(file: File): Promise<number> {
   return pdf.numPages;
 }
 
+/** Extracts the plain text of every page, in order. Scanned/image-only PDFs yield empty strings — this reads the PDF's real text layer, it never runs OCR. */
+export async function extractPdfText(file: File): Promise<string[]> {
+  const pdfjsLib = await getPdfJs();
+  const bytes = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+
+  const pages: string[] = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const text = content.items.map((item) => ("str" in item ? item.str : "")).join(" ");
+    pages.push(text.replace(/\s+/g, " ").trim());
+  }
+  return pages;
+}
+
 /** Renders one PDF page to a JPEG blob at the given scale (2 ≈ good print quality). */
 export async function renderPdfPageToBlob(
   file: File,
