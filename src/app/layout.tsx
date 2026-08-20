@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -66,11 +65,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-white text-slate-900">
-        <Script
+        {/*
+          A plain <script> tag, deliberately not next/script: every
+          next/script strategy (afterInteractive AND beforeInteractive) only
+          ever emits a <link rel="preload"> plus an inert RSC hydration
+          payload in the raw server-rendered HTML — the real DOM <script>
+          element is created by Next's client-side script-loader at
+          runtime. Google's AdSense site-verification crawler parses raw
+          HTML without executing that JS, so it never found the tag.
+          Confirmed via curl against a local production build. React 19
+          hoists a <script> rendered anywhere in the tree into <head>
+          automatically, matching what AdSense's own instructions ask for.
+        */}
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6226194062886410"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
