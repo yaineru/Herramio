@@ -46,6 +46,46 @@ export async function splitPdfByGroups(file: File, groups: number[][]): Promise<
   return results;
 }
 
+/** Returns a copy of the PDF with the given 0-based page indices removed. */
+export async function removePdfPages(file: File, pageIndicesToRemove: number[]): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const src = await PDFDocument.load(bytes);
+  const total = src.getPageCount();
+
+  const toRemove = new Set(pageIndicesToRemove);
+  const keep = Array.from({ length: total }, (_, i) => i).filter((i) => !toRemove.has(i));
+
+  const out = await PDFDocument.create();
+  const pages = await out.copyPages(src, keep);
+  pages.forEach((page) => out.addPage(page));
+
+  const outBytes = await out.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
+/** Rotates the given 0-based page indices (or every page) by the given degrees, added to whatever rotation the page already had. */
+export async function rotatePdfPages(
+  file: File,
+  pageIndices: number[] | "all",
+  degrees: 90 | 180 | 270,
+): Promise<Blob> {
+  const { PDFDocument, degrees: toDegrees } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  const total = doc.getPageCount();
+
+  const targets = pageIndices === "all" ? Array.from({ length: total }, (_, i) => i) : pageIndices;
+  for (const index of targets) {
+    const page = doc.getPage(index);
+    const current = page.getRotation().angle;
+    page.setRotation(toDegrees((current + degrees) % 360));
+  }
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
 export type ImageForPdf = { file: File; type: "image/jpeg" | "image/png" };
 
 /** Builds a single PDF with one image per page, sized to the image's native pixel dimensions. */
