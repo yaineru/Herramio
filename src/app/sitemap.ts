@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/site";
 import { TOOLS } from "@/lib/tools/registry";
+import { CATEGORIES } from "@/lib/tools/categories";
 import { BLOG_POSTS } from "@/lib/blog/posts";
 
 const STATIC_ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
@@ -34,6 +35,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  const categoryEntries = CATEGORIES.filter((c) => c.status === "active").map((c) => ({
+    url: `${SITE.url}/categoria/${c.id}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   const blogEntries = BLOG_POSTS.map((post) => ({
     url: `${SITE.url}/blog/${post.slug}`,
     lastModified: new Date(post.dateModified || post.datePublished),
@@ -41,5 +49,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...toolEntries, ...blogEntries];
+  return [...staticEntries, ...categoryEntries, ...toolEntries, ...blogEntries];
 }

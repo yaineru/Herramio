@@ -15,7 +15,7 @@ export function CategoryGrid() {
         return (
           <Link
             key={category.id}
-            href={`/herramientas?categoria=${category.id}`}
+            href={isComingSoon ? "/herramientas" : `/categoria/${category.id}`}
             onClick={() => AnalyticsEvents.categorySelected(category.id)}
             className={cn(
               "group flex flex-col items-start gap-2 rounded-2xl border border-slate-200 bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md hover:shadow-slate-900/5",

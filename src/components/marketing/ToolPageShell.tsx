@@ -5,13 +5,14 @@ import { Breadcrumbs } from "@/components/marketing/Breadcrumbs";
 import { ContentBlocks } from "@/components/marketing/ContentBlocks";
 import { FAQ, type FAQItem } from "@/components/marketing/FAQ";
 import { ToolGrid } from "@/components/marketing/ToolGrid";
+import { ProcessingBadge } from "@/components/marketing/ProcessingBadge";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { FavoriteButton } from "@/components/tools/FavoriteButton";
 import { HistoryTracker } from "@/components/tools/HistoryTracker";
 import { JsonLd, faqPageSchema, howToSchema, softwareApplicationSchema } from "@/components/JsonLd";
 import type { ContentBlock } from "@/lib/blog/types";
 import { getBlogPostByTool } from "@/lib/blog/posts";
-import { getRelatedTools, getToolById } from "@/lib/tools/registry";
+import { getRelatedTools, getToolById, isLocalProcessing } from "@/lib/tools/registry";
 import { getCategory } from "@/lib/tools/categories";
 import { SITE } from "@/lib/site";
 
@@ -68,9 +69,7 @@ export function ToolPageShell({
 
       <Breadcrumbs
         items={[
-          ...(category
-            ? [{ href: `/herramientas?categoria=${category.id}`, label: category.name }]
-            : []),
+          ...(category ? [{ href: `/categoria/${category.id}`, label: category.name }] : []),
           { href: `/${toolId}`, label: toolName },
         ]}
       />
@@ -91,6 +90,11 @@ export function ToolPageShell({
         </div>
         <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">{toolName}</h1>
         <p className="mt-3 text-slate-500">{intro}</p>
+        {tool && (
+          <div className="mt-3">
+            <ProcessingBadge local={isLocalProcessing(tool)} />
+          </div>
+        )}
       </div>
 
       <div className="mt-8">{children}</div>

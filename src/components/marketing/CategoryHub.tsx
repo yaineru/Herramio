@@ -99,7 +99,7 @@ export function CategoryHub() {
         )}
 
         <Link
-          href={`/herramientas?categoria=${active.id}`}
+          href={`/categoria/${active.id}`}
           className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline"
         >
           Ver todas en {active.name} <ArrowRight className="h-3.5 w-3.5" />

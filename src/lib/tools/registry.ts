@@ -65,6 +65,18 @@ export interface Tool {
   keywords: string[];
   status: ToolStatus;
   relatedTools: string[];
+  /**
+   * "local" (the default when omitted) means every byte the tool touches
+   * stays in the browser. Only set "external" when the tool genuinely makes
+   * a network request as part of its normal operation (today: only
+   * conv-moneda, for live exchange rates) — this field is what the trust
+   * badge and category privacy copy read from, so it must stay accurate.
+   */
+  processing?: "local" | "external";
+}
+
+export function isLocalProcessing(tool: Tool): boolean {
+  return tool.processing !== "external";
 }
 
 /**
@@ -462,6 +474,7 @@ export const TOOLS: Tool[] = [
     keywords: ["convertidor de moneda", "tipo de cambio", "conversor de divisas"],
     status: "active",
     relatedTools: ["conv-unidades", "conv-temperatura"],
+    processing: "external",
   },
   {
     id: "texto-lorem-ipsum",

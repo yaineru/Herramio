@@ -61,6 +61,19 @@ export function howToSchema(opts: {
   };
 }
 
+export function itemListSchema(opts: { items: { name: string; url: string }[] }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: opts.items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
 export function articleSchema(opts: {
   headline: string;
   description: string;

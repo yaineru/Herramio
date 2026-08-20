@@ -21,14 +21,14 @@ export const NAV_LINKS = [
 
 export const FOOTER_LINKS = {
   herramientas: [
-    { href: "/herramientas?categoria=qr", label: "QR" },
-    { href: "/herramientas?categoria=pdf", label: "PDF" },
-    { href: "/herramientas?categoria=imagenes", label: "Imágenes" },
-    { href: "/herramientas?categoria=calculadoras", label: "Calculadoras" },
-    { href: "/herramientas?categoria=convertidores", label: "Convertidores" },
-    { href: "/herramientas?categoria=texto", label: "Texto" },
-    { href: "/herramientas?categoria=desarrolladores", label: "Desarrolladores" },
-    { href: "/herramientas?categoria=productividad", label: "Productividad" },
+    { href: "/categoria/qr", label: "QR" },
+    { href: "/categoria/pdf", label: "PDF" },
+    { href: "/categoria/imagenes", label: "Imágenes" },
+    { href: "/categoria/calculadoras", label: "Calculadoras" },
+    { href: "/categoria/convertidores", label: "Convertidores" },
+    { href: "/categoria/texto", label: "Texto" },
+    { href: "/categoria/desarrolladores", label: "Desarrolladores" },
+    { href: "/categoria/productividad", label: "Productividad" },
   ],
   empresa: [
     { href: "/sobre-nosotros", label: "Sobre nosotros" },
