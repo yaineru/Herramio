@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Download, ImageOff, Loader2, RotateCcw, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -19,11 +19,13 @@ import {
   loadImageFile,
   type LoadedImage,
 } from "@/lib/images/canvas-image";
+import { setToolHandoff } from "@/lib/tool-handoff";
 import { AnalyticsEvents } from "@/lib/analytics";
 
 type OutputFormat = "image/jpeg" | "image/webp" | "image/png";
 
 export function ImageCompressor() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [loaded, setLoaded] = useState<LoadedImage | null>(null);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("image/jpeg");
@@ -104,6 +106,16 @@ export function ImageCompressor() {
     const base = file.name.replace(/\.[^.]+$/, "");
     downloadBlob(resultBlob, `${base}-comprimida.${extensionForMime(outputFormat)}`);
     AnalyticsEvents.toolDownloaded("imagen-comprimir", extensionForMime(outputFormat));
+  }
+
+  function handleSendToConverter() {
+    if (!resultBlob || !file) return;
+    const base = file.name.replace(/\.[^.]+$/, "");
+    const handoffFile = new File([resultBlob], `${base}-comprimida.${extensionForMime(outputFormat)}`, {
+      type: outputFormat,
+    });
+    setToolHandoff({ sourceTool: "imagen-comprimir", targetTool: "imagen-convertir", file: handoffFile });
+    router.push("/imagen-convertir");
   }
 
   const reduction =
@@ -218,12 +230,14 @@ export function ImageCompressor() {
       </div>
 
       {resultBlob && !isProcessing && (
-        <Link
-          href="/imagen-convertir"
+        <button
+          type="button"
+          onClick={handleSendToConverter}
           className="mt-4 flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:underline"
         >
-          ¿Necesitas el resultado en otro formato? Conviértelo <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+          ¿Necesitas el resultado en otro formato? Conviértelo sin volver a subirlo{" "}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
       )}
 
       <p className="mt-4 text-xs text-slate-400">

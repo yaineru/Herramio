@@ -18,6 +18,7 @@ import {
   loadImageFile,
   type LoadedImage,
 } from "@/lib/images/canvas-image";
+import { consumeToolHandoff } from "@/lib/tool-handoff";
 import { AnalyticsEvents } from "@/lib/analytics";
 
 type OutputFormat = "image/jpeg" | "image/png" | "image/webp";
@@ -43,6 +44,15 @@ export function ImageConverter() {
 
   useEffect(() => {
     AnalyticsEvents.toolOpened("imagen-convertir");
+  }, []);
+
+  // Picks up a file handed off from imagen-comprimir (or any future source)
+  // via the exact same validation/processing path as a manual upload — no
+  // separate code path to keep in sync, so it inherits every existing
+  // safety check for free. A no-op when there's nothing pending.
+  useEffect(() => {
+    const handoffFile = consumeToolHandoff("imagen-convertir");
+    if (handoffFile) handleFiles([handoffFile]);
   }, []);
 
   function handleFiles(files: File[]) {
