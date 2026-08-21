@@ -46,6 +46,16 @@ export function drawImageToCanvas(
   return canvas;
 }
 
+export function resizeImageToCanvas(img: HTMLImageElement, width: number, height: number): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(width));
+  canvas.height = Math.max(1, Math.round(height));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Tu navegador no pudo procesar esta imagen.");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+
 export function canvasToBlob(
   canvas: HTMLCanvasElement,
   mimeType: string,

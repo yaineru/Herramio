@@ -19,7 +19,7 @@ import {
   loadImageFile,
   type LoadedImage,
 } from "@/lib/images/canvas-image";
-import { setToolHandoff } from "@/lib/tool-handoff";
+import { setToolHandoff, consumeToolHandoff } from "@/lib/tool-handoff";
 import { AnalyticsEvents } from "@/lib/analytics";
 
 type OutputFormat = "image/jpeg" | "image/webp" | "image/png";
@@ -38,6 +38,15 @@ export function ImageCompressor() {
 
   useEffect(() => {
     AnalyticsEvents.toolOpened("imagen-comprimir");
+  }, []);
+
+  // Picks up an image handed off from imagen-eliminar-metadata (or any other
+  // source that reuses this same handoff target) via the exact same
+  // validation path as a manual upload — no separate code path to keep in
+  // sync. A no-op when there's nothing pending.
+  useEffect(() => {
+    const handoffFile = consumeToolHandoff("imagen-comprimir");
+    if (handoffFile) handleFiles([handoffFile]);
   }, []);
 
   function handleFiles(files: File[]) {

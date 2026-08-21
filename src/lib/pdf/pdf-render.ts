@@ -47,6 +47,7 @@ export async function renderPdfPageToBlob(
   file: File,
   pageNumber: number,
   scale = 2,
+  quality = 0.92,
 ): Promise<Blob> {
   const pdfjsLib = await getPdfJs();
   const bytes = await file.arrayBuffer();
@@ -66,7 +67,7 @@ export async function renderPdfPageToBlob(
     canvas.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error("No se pudo generar la imagen."))),
       "image/jpeg",
-      0.92,
+      quality,
     );
   });
 }
