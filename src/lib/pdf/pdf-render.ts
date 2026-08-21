@@ -42,12 +42,13 @@ export async function extractPdfText(file: File): Promise<string[]> {
   return pages;
 }
 
-/** Renders one PDF page to a JPEG blob at the given scale (2 ≈ good print quality). */
+/** Renders one PDF page to an image blob at the given scale (2 ≈ good print quality). Defaults to JPEG for backward compatibility; pass "image/png" for a lossless, transparency-capable export. */
 export async function renderPdfPageToBlob(
   file: File,
   pageNumber: number,
   scale = 2,
   quality = 0.92,
+  format: "image/jpeg" | "image/png" = "image/jpeg",
 ): Promise<Blob> {
   const pdfjsLib = await getPdfJs();
   const bytes = await file.arrayBuffer();
@@ -66,8 +67,8 @@ export async function renderPdfPageToBlob(
   return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error("No se pudo generar la imagen."))),
-      "image/jpeg",
-      quality,
+      format,
+      format === "image/jpeg" ? quality : undefined,
     );
   });
 }

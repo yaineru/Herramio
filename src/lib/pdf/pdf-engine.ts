@@ -285,6 +285,35 @@ export async function insertBlankPage(file: File, index: number): Promise<Blob> 
   return new Blob([outBytes as BlobPart], { type: "application/pdf" });
 }
 
+/** Inserts a new first page sized like the PDF's current first page, with the given image centered and scaled to fit inside it (contain, not crop). */
+export async function addCoverPage(
+  file: File,
+  coverImageBytes: ArrayBuffer,
+  coverImageType: "image/jpeg" | "image/png",
+): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  if (doc.getPageCount() === 0) throw new Error("El PDF no tiene páginas.");
+
+  const { width, height } = doc.getPage(0).getSize();
+  const embedded = coverImageType === "image/png" ? await doc.embedPng(coverImageBytes) : await doc.embedJpg(coverImageBytes);
+  const scale = Math.min(width / embedded.width, height / embedded.height);
+  const drawWidth = embedded.width * scale;
+  const drawHeight = embedded.height * scale;
+
+  const cover = doc.insertPage(0, [width, height]);
+  cover.drawImage(embedded, {
+    x: (width - drawWidth) / 2,
+    y: (height - drawHeight) / 2,
+    width: drawWidth,
+    height: drawHeight,
+  });
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
 export type ImageForPdf = { file: File; type: "image/jpeg" | "image/png" };
 
 /** Builds a single PDF with one image per page, sized to the image's native pixel dimensions. */
