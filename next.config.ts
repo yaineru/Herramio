@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://googleads.g.doubleclick.net https://*.adtrafficquality.google",
+  // Explicit worker-src (not just falling back to script-src) so pdfjs-dist
+  // can spin up its rendering worker from a blob: URL — without this, every
+  // PDF-to-image tool (pdf-a-jpg, pdf-a-png, pdf-comprimir, pdf-escala-grises,
+  // pdf-eliminar-paginas-blancas) hangs forever with no error shown.
+  "worker-src 'self' blob:",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
