@@ -314,6 +314,78 @@ export async function addCoverPage(
   return new Blob([outBytes as BlobPart], { type: "application/pdf" });
 }
 
+/** Builds an A4 PDF from plain text, word-wrapping and paginating as needed. */
+export async function createPdfFromText(text: string, fontSize = 12): Promise<Blob> {
+  const { PDFDocument, StandardFonts, rgb } = await getPdfLib();
+  const doc = await PDFDocument.create();
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+
+  const pageWidth = 595.28;
+  const pageHeight = 841.89;
+  const margin = 50;
+  const maxWidth = pageWidth - margin * 2;
+  const lineHeight = fontSize * 1.4;
+
+  const lines: string[] = [];
+  for (const paragraph of text.split("\n")) {
+    if (paragraph.trim() === "") {
+      lines.push("");
+      continue;
+    }
+    const words = paragraph.split(/\s+/).filter(Boolean);
+    let current = "";
+    for (const word of words) {
+      const candidate = current ? `${current} ${word}` : word;
+      if (font.widthOfTextAtSize(candidate, fontSize) <= maxWidth) {
+        current = candidate;
+      } else {
+        if (current) lines.push(current);
+        current = word;
+      }
+    }
+    if (current) lines.push(current);
+  }
+
+  let page = doc.addPage([pageWidth, pageHeight]);
+  let y = pageHeight - margin;
+  for (const line of lines) {
+    if (y < margin) {
+      page = doc.addPage([pageWidth, pageHeight]);
+      y = pageHeight - margin;
+    }
+    if (line) page.drawText(line, { x: margin, y, size: fontSize, font, color: rgb(0, 0, 0) });
+    y -= lineHeight;
+  }
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
+export type MergeItem = { kind: "pdf"; file: File } | { kind: "image"; file: File; type: "image/jpeg" | "image/png" };
+
+/** Merges PDFs and images together, in the given order, into a single PDF — each image becomes its own page sized to its native pixel dimensions. */
+export async function mergePdfsAndImages(items: MergeItem[]): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const merged = await PDFDocument.create();
+
+  for (const item of items) {
+    if (item.kind === "pdf") {
+      const bytes = await item.file.arrayBuffer();
+      const src = await PDFDocument.load(bytes);
+      const pages = await merged.copyPages(src, src.getPageIndices());
+      pages.forEach((page) => merged.addPage(page));
+    } else {
+      const bytes = await item.file.arrayBuffer();
+      const embedded = item.type === "image/png" ? await merged.embedPng(bytes) : await merged.embedJpg(bytes);
+      const page = merged.addPage([embedded.width, embedded.height]);
+      page.drawImage(embedded, { x: 0, y: 0, width: embedded.width, height: embedded.height });
+    }
+  }
+
+  const outBytes = await merged.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
 export type ImageForPdf = { file: File; type: "image/jpeg" | "image/png" };
 
 /** Builds a single PDF with one image per page, sized to the image's native pixel dimensions. */
