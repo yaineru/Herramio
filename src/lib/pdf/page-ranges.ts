@@ -39,3 +39,25 @@ export function parsePageGroups(input: string, maxPage: number): number[][] | nu
   }
   return groups;
 }
+
+/**
+ * Parses a comma-separated list of single page numbers into 0-based
+ * indices, preserving order and allowing repeats (a page number appearing
+ * twice means "duplicate this page") — unlike parsePageGroups, which groups
+ * ranges into separate output files, this always returns one flat list.
+ */
+export function parsePageOrder(input: string, maxPage: number): number[] | null {
+  const segments = input
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (segments.length === 0) return null;
+
+  const order: number[] = [];
+  for (const segment of segments) {
+    const n = Number(segment);
+    if (!Number.isInteger(n) || n < 1 || n > maxPage) return null;
+    order.push(n - 1);
+  }
+  return order;
+}

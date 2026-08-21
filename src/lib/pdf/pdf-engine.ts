@@ -86,6 +86,61 @@ export async function rotatePdfPages(
   return new Blob([outBytes as BlobPart], { type: "application/pdf" });
 }
 
+/** Rebuilds the PDF with pages in the given 0-based order — repeated indices duplicate that page. */
+export async function reorderPdfPages(file: File, order: number[]): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const src = await PDFDocument.load(bytes);
+
+  const out = await PDFDocument.create();
+  const pages = await out.copyPages(src, order);
+  pages.forEach((page) => out.addPage(page));
+
+  const outBytes = await out.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
+export type PageNumberPosition = "bottom-center" | "bottom-right" | "top-right";
+
+/** Stamps a running page number onto every page, starting from `startNumber`. */
+export async function addPageNumbers(
+  file: File,
+  position: PageNumberPosition,
+  startNumber: number,
+): Promise<Blob> {
+  const { PDFDocument, StandardFonts, rgb } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  const fontSize = 10;
+  const margin = 24;
+
+  const pages = doc.getPages();
+  pages.forEach((page, i) => {
+    const text = String(startNumber + i);
+    const { width, height } = page.getSize();
+    const textWidth = font.widthOfTextAtSize(text, fontSize);
+
+    let x: number;
+    let y: number;
+    if (position === "bottom-center") {
+      x = width / 2 - textWidth / 2;
+      y = margin / 2;
+    } else if (position === "bottom-right") {
+      x = width - margin - textWidth;
+      y = margin / 2;
+    } else {
+      x = width - margin - textWidth;
+      y = height - margin;
+    }
+
+    page.drawText(text, { x, y, size: fontSize, font, color: rgb(0.35, 0.35, 0.35) });
+  });
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
 export type ImageForPdf = { file: File; type: "image/jpeg" | "image/png" };
 
 /** Builds a single PDF with one image per page, sized to the image's native pixel dimensions. */
