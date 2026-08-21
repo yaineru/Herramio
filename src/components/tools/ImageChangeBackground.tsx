@@ -98,10 +98,22 @@ export function ImageChangeBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // putImageData overwrites raw pixels (including alpha) instead of
+    // alpha-compositing, so painting the new background with fillRect and
+    // then putImageData-ing the transparent cutout on top would erase the
+    // fill under every transparent pixel. Compositing the cutout onto an
+    // offscreen canvas first and drawImage-ing that (which does respect
+    // alpha) is what actually lets the new background color show through.
     const cutout = removeColorBackground(original.data, targetColor, tolerance);
+    const cutoutCanvas = document.createElement("canvas");
+    cutoutCanvas.width = canvas.width;
+    cutoutCanvas.height = canvas.height;
+    const cutoutCtx = cutoutCanvas.getContext("2d");
+    cutoutCtx?.putImageData(new ImageData(new Uint8ClampedArray(cutout), canvas.width, canvas.height), 0, 0);
+
     ctx.fillStyle = newBackground;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.putImageData(new ImageData(new Uint8ClampedArray(cutout), canvas.width, canvas.height), 0, 0);
+    ctx.drawImage(cutoutCanvas, 0, 0);
     setApplied(true);
   }, [targetColor, tolerance, newBackground, picking]);
 
