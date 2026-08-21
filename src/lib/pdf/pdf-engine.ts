@@ -141,6 +141,103 @@ export async function addPageNumbers(
   return new Blob([outBytes as BlobPart], { type: "application/pdf" });
 }
 
+/** Stamps a diagonal, semi-transparent text watermark across every page. */
+export async function addWatermark(file: File, text: string, opacity: number, fontSize: number): Promise<Blob> {
+  const { PDFDocument, StandardFonts, rgb, degrees } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  const font = await doc.embedFont(StandardFonts.HelveticaBold);
+
+  doc.getPages().forEach((page) => {
+    const { width, height } = page.getSize();
+    const textWidth = font.widthOfTextAtSize(text, fontSize);
+    page.drawText(text, {
+      x: width / 2 - textWidth / 2,
+      y: height / 2,
+      size: fontSize,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+      opacity: Math.min(1, Math.max(0, opacity)),
+      rotate: degrees(-45),
+    });
+  });
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
+export type SignaturePosition = "bottom-left" | "bottom-center" | "bottom-right";
+
+/** Embeds a PNG signature image onto the given page (0-based index) at a fixed corner/size. */
+export async function placeSignatureOnPdf(
+  file: File,
+  signaturePng: ArrayBuffer,
+  pageIndex: number,
+  position: SignaturePosition,
+): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  const pages = doc.getPages();
+  if (pageIndex < 0 || pageIndex >= pages.length) throw new Error("Página fuera de rango.");
+  const page = pages[pageIndex];
+
+  const signatureImage = await doc.embedPng(signaturePng);
+  const margin = 36;
+  const targetWidth = 160;
+  const targetHeight = (signatureImage.height / signatureImage.width) * targetWidth;
+  const { width: pageWidth } = page.getSize();
+
+  let x: number;
+  if (position === "bottom-left") x = margin;
+  else if (position === "bottom-right") x = pageWidth - margin - targetWidth;
+  else x = pageWidth / 2 - targetWidth / 2;
+
+  page.drawImage(signatureImage, { x, y: margin, width: targetWidth, height: targetHeight });
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
+export interface PdfMetadata {
+  title: string;
+  author: string;
+  subject: string;
+  keywords: string[];
+  producer: string;
+  creator: string;
+}
+
+/** Reads the document-info metadata a PDF carries (title, author, etc.) — none of this is page content, it's separate from what's visible when reading the document. */
+export async function readPdfMetadata(file: File): Promise<PdfMetadata> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  return {
+    title: doc.getTitle() ?? "",
+    author: doc.getAuthor() ?? "",
+    subject: doc.getSubject() ?? "",
+    keywords: doc.getKeywords()?.split(/\s+/).map((k) => k.trim()).filter(Boolean) ?? [],
+    producer: doc.getProducer() ?? "",
+    creator: doc.getCreator() ?? "",
+  };
+}
+
+/** Clears every document-info metadata field from the PDF. */
+export async function stripPdfMetadata(file: File): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  doc.setTitle("");
+  doc.setAuthor("");
+  doc.setSubject("");
+  doc.setKeywords([]);
+  doc.setProducer("");
+  doc.setCreator("");
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
 export type ImageForPdf = { file: File; type: "image/jpeg" | "image/png" };
 
 /** Builds a single PDF with one image per page, sized to the image's native pixel dimensions. */
