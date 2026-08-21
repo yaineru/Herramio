@@ -238,6 +238,53 @@ export async function stripPdfMetadata(file: File): Promise<Blob> {
   return new Blob([outBytes as BlobPart], { type: "application/pdf" });
 }
 
+export interface CropMargins {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/** Shrinks every page's visible area by the given margins (0–100, as a percent of that page's own width/height) via its crop box — the page content isn't redrawn, just what's shown/printed is clipped. */
+export async function cropPdfPages(file: File, marginsPercent: CropMargins): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+
+  const { top, bottom, left, right } = marginsPercent;
+  if ([top, bottom, left, right].some((v) => v < 0 || v >= 50)) {
+    throw new Error("Los márgenes deben estar entre 0% y 49%.");
+  }
+
+  doc.getPages().forEach((page) => {
+    const { width, height } = page.getSize();
+    const marginLeft = (left / 100) * width;
+    const marginRight = (right / 100) * width;
+    const marginTop = (top / 100) * height;
+    const marginBottom = (bottom / 100) * height;
+    page.setCropBox(marginLeft, marginBottom, width - marginLeft - marginRight, height - marginTop - marginBottom);
+  });
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
+/** Inserts a blank page at the given 0-based index, sized to match the page currently at that index (or the last page, if inserting at the end). */
+export async function insertBlankPage(file: File, index: number): Promise<Blob> {
+  const { PDFDocument } = await getPdfLib();
+  const bytes = await file.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+  const total = doc.getPageCount();
+  if (index < 0 || index > total) throw new Error("Posición fuera de rango.");
+
+  const referencePage = doc.getPage(Math.min(index, total - 1));
+  const { width, height } = referencePage.getSize();
+  doc.insertPage(index, [width, height]);
+
+  const outBytes = await doc.save();
+  return new Blob([outBytes as BlobPart], { type: "application/pdf" });
+}
+
 export type ImageForPdf = { file: File; type: "image/jpeg" | "image/png" };
 
 /** Builds a single PDF with one image per page, sized to the image's native pixel dimensions. */
