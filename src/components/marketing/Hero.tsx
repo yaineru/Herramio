@@ -65,7 +65,8 @@ export function Hero() {
           </MagneticButton>
         </div>
 
-        <p className="mt-6 text-sm text-slate-400">
+        {/* slate-500: slate-400 measures 2.63:1 on white — below WCAG AA. */}
+        <p className="mt-6 text-sm text-slate-500">
           Sin registro. Sin instalar nada. Sin límites de uso.
         </p>
       </div>

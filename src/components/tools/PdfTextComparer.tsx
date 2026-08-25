@@ -8,8 +8,8 @@ import { FileDropZone } from "@/components/tools/FileDropZone";
 import { formatBytes } from "@/lib/images/canvas-image";
 import { MAX_PDF_BYTES } from "@/lib/pdf/pdf-engine";
 import { diffWords, type DiffToken } from "@/lib/pdf/pdf-diff";
+import { TextDiffView } from "@/components/tools/TextDiffView";
 import { AnalyticsEvents } from "@/lib/analytics";
-import { cn } from "@/lib/utils";
 
 const TOOL_ID = "pdf-comparar-texto";
 
@@ -41,38 +41,20 @@ function Slot({
 }) {
   return (
     <div>
-      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">{label}</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
       {file ? (
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
           <p className="truncate text-sm font-medium text-slate-900">{file.name}</p>
-          <p className="text-xs text-slate-400">{formatBytes(file.size)}</p>
+          <p className="text-xs text-slate-500">{formatBytes(file.size)}</p>
         </div>
       ) : (
         <FileDropZone accept="application/pdf" onFiles={onFiles} label="Arrastra un PDF o haz clic" hint={`Máx. ${formatBytes(MAX_PDF_BYTES)}`} />
       )}
       {error && (
         <p className="mt-2 flex items-center gap-2 text-xs text-red-700" role="alert">
-          <FileWarning className="h-3.5 w-3.5 shrink-0" /> {error}
+          <FileWarning className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}
-    </div>
-  );
-}
-
-function DiffView({ tokens }: { tokens: DiffToken[] }) {
-  return (
-    <div className="max-h-96 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
-      {tokens.map((token, i) => (
-        <span
-          key={i}
-          className={cn(
-            token.type === "added" && "rounded bg-emerald-200 text-emerald-900",
-            token.type === "removed" && "rounded bg-red-200 text-red-900 line-through",
-          )}
-        >
-          {token.value}
-        </span>
-      ))}
     </div>
   );
 }
@@ -120,11 +102,13 @@ export function PdfTextComparer() {
     }
   }
 
-  const addedCount = tokens?.filter((t) => t.type === "added" && t.value.trim() !== "").length ?? 0;
-  const removedCount = tokens?.filter((t) => t.type === "removed" && t.value.trim() !== "").length ?? 0;
-
   return (
     <Card className="p-6">
+      {/* Politely announced so a screen-reader user knows work is happening. */}
+      <p className="sr-only" role="status">
+        {isProcessing ? "Comparando los documentos…" : ""}
+      </p>
+
       <div className="grid gap-6 sm:grid-cols-2">
         <Slot label="Documento A" file={fileA} onFiles={(f) => pickFile(f, setFileA, setErrorA)} error={errorA} />
         <Slot label="Documento B" file={fileB} onFiles={(f) => pickFile(f, setFileB, setErrorB)} error={errorB} />
@@ -138,13 +122,7 @@ export function PdfTextComparer() {
 
       {tokens && (
         <div className="mt-6">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Diferencias</p>
-            <p className="text-xs text-slate-400">
-              <span className="text-emerald-700">+{addedCount}</span> · <span className="text-red-700">-{removedCount}</span>
-            </p>
-          </div>
-          <DiffView tokens={tokens} />
+          <TextDiffView tokens={tokens} />
         </div>
       )}
 
@@ -160,7 +138,7 @@ export function PdfTextComparer() {
         )}
       </div>
 
-      <p className="mt-4 text-xs text-slate-400">
+      <p className="mt-4 text-xs text-slate-500">
         Compara el texto real de cada PDF (no imágenes ni formato) directamente en tu navegador: ningún archivo se
         sube a nuestros servidores.
       </p>

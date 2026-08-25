@@ -29,6 +29,37 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // pdf-parse (Originality's server-side PDF extraction) depends on
+  // @napi-rs/canvas, which ships a platform-specific native .node binary.
+  // Left to the default bundler behavior, Turbopack tries to statically
+  // bundle these packages for server code and drops the native binary in
+  // the process — confirmed on a real Vercel deployment: the function
+  // crashed with "Cannot find module '@napi-rs/canvas'" /
+  // "DOMMatrix is not defined" despite building and passing locally.
+  // Marking them external makes Next.js leave them as real `require()`
+  // calls resolved from node_modules at runtime instead, which is what
+  // native-binary packages need — see PRODUCTION.md for how this was
+  // diagnosed.
+  // Deliberately NOT "pdfjs-dist" here: this project also imports it
+  // client-side (src/lib/pdf/pdf-render.ts, dynamically, for the existing
+  // browser-side PDF tools) — externalizing that package name globally
+  // made Turbopack warn ("pdfjs-dist can't be external") when building
+  // that client bundle. Scoping to just the two packages that actually
+  // need it (both only ever used server-side) avoids touching code that
+  // already worked.
+  serverExternalPackages: ["@napi-rs/canvas", "pdf-parse"],
+  // Applied broadly (not just the specific originality routes) so a
+  // future route that touches PDF extraction doesn't silently regress
+  // into the same missing-native-binary failure — these files are small
+  // relative to the risk of missing one under a route-specific key that
+  // doesn't exactly match Next's internal page-path format.
+  outputFileTracingIncludes: {
+    "/**": [
+      "./node_modules/@napi-rs/canvas*/**/*",
+      "./node_modules/pdf-parse/node_modules/@napi-rs/canvas*/**/*",
+      "./node_modules/pdf-parse/node_modules/pdfjs-dist/**/*",
+    ],
+  },
   async headers() {
     // Skip CSP/security headers in dev: Next's dev tooling (HMR websocket,
     // eval-based React stack traces) conflicts with a strict CSP that is

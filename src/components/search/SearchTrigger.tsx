@@ -26,7 +26,10 @@ export function SearchTrigger({
         )}
       >
         <Search className="h-5 w-5 shrink-0 text-slate-400 transition-colors group-hover:text-slate-600" />
-        <span className="flex-1 text-slate-400">¿Qué necesitas hacer?</span>
+        {/* slate-500, not slate-400: this reads as placeholder text but is
+            the primary prompt of the whole page — slate-400 measures
+            2.63:1 on white, far below the WCAG AA floor. */}
+        <span className="flex-1 text-slate-500">¿Qué necesitas hacer?</span>
         <kbd className="hidden shrink-0 items-center rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-400 sm:inline-flex">
           Ctrl K
         </kbd>
@@ -40,7 +43,7 @@ export function SearchTrigger({
       onClick={() => openSearchPalette()}
       aria-label="Buscar herramientas"
       className={cn(
-        "flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-400 transition-colors hover:border-slate-300 hover:text-slate-600",
+        "flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-600",
         className,
       )}
     >

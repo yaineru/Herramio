@@ -12,15 +12,22 @@
     "load:test": "node tests/load/load-test.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.5",
+    "@supabase/supabase-js": "^2.112.4",
     "clsx": "^2.1.1",
     "jsqr": "^1.4.0",
     "lucide-react": "^1.32.0",
+    "mammoth": "^1.12.1",
+    "mercadopago": "^3.4.0",
     "next": "16.3.1",
     "pdf-lib": "^1.17.1",
+    "pdf-parse": "^2.4.5",
     "pdfjs-dist": "^6.2.108",
     "qr-code-styling": "^1.9.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "stripe": "^22.5.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

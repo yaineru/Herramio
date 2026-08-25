@@ -58,7 +58,8 @@ export function FileDropZone({ accept, multiple, onFiles, label, hint, className
       />
       <UploadCloud className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
       <p className="font-medium text-slate-700">{label}</p>
-      {hint && <p className="text-sm text-slate-400">{hint}</p>}
+      {/* slate-500: the hint carries real constraints (size limits, formats) — slate-400 measures 2.5:1, below WCAG AA. */}
+      {hint && <p className="text-sm text-slate-500">{hint}</p>}
     </label>
   );
 }

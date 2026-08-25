@@ -11,6 +11,8 @@ const STATIC_ROUTES: { path: string; priority: number; changeFrequency: Metadata
   { path: "/experiencia", priority: 0.5, changeFrequency: "monthly" },
   { path: "/blog", priority: 0.7, changeFrequency: "weekly" },
   { path: "/faq", priority: 0.5, changeFrequency: "monthly" },
+  { path: "/precios", priority: 0.6, changeFrequency: "monthly" },
+  { path: "/originalidad", priority: 0.6, changeFrequency: "monthly" },
   { path: "/contacto", priority: 0.3, changeFrequency: "yearly" },
   { path: "/sobre-nosotros", priority: 0.3, changeFrequency: "yearly" },
   { path: "/privacidad", priority: 0.2, changeFrequency: "yearly" },

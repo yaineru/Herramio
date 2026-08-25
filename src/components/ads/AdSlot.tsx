@@ -1,4 +1,4 @@
-import { ADS_ENABLED } from "@/lib/analytics";
+import { shouldShowAds } from "@/lib/ads/should-show-ads";
 import { cn } from "@/lib/utils";
 
 type AdSlotPlacement = "header" | "below-generator" | "in-content" | "footer";
@@ -19,9 +19,16 @@ const PLACEMENT_SIZES: Record<AdSlotPlacement, string> = {
  * Reserves ad space with a fixed min-height (even when disabled) to avoid
  * layout shift once real AdSense units are wired in. Never renders on
  * pages that opt out (e.g. tool forms mid-interaction, test/staging).
+ *
+ * Async Server Component: the single place that decides whether THIS
+ * visitor sees ads (site-wide flag + their plan, via `shouldShowAds()`).
+ * No page needs to know about plans to get this right — every one of the
+ * 129 tool pages already renders <AdSlot>, so gating happens here once.
  */
-export function AdSlot({ placement, className }: AdSlotProps) {
-  if (!ADS_ENABLED) {
+export async function AdSlot({ placement, className }: AdSlotProps) {
+  const showAds = await shouldShowAds();
+
+  if (!showAds) {
     return (
       <div
         className={cn(

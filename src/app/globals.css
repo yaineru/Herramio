@@ -5,6 +5,47 @@
   --foreground: #0f172a;
 }
 
+@theme {
+  /*
+    Brand green — the single source of truth for Herramio's accent color.
+    Overrides Tailwind's default emerald-600 (#059669) on purpose: that
+    default measures 3.0:1 against white, which fails WCAG AA (4.5:1) both
+    as a button background with white label text and as small link text on
+    white. Measured in-browser across the real pages, it was the single
+    most widespread accessibility defect in the app (63 usages).
+
+    #047857 measures 5.55:1 against white — comfortably AA — and is close
+    enough in hue that it reads as the same brand color. Overriding the
+    token rather than rewriting 63 call sites means every existing
+    `bg-emerald-600` / `text-emerald-600` (including all 129 tool pages
+    via shared components) becomes compliant without touching them.
+  */
+  --color-emerald-600: #047857;
+  /*
+    Hover/active shade. Tailwind's default emerald-500 is LIGHTER than the
+    base, which would drop a hovered button back below AA — hover goes
+    darker here instead, so contrast improves rather than degrades on
+    interaction.
+  */
+  --color-emerald-700: #065f46;
+
+  /*
+    Muted text. Tailwind's default slate-400 (#94a3b8) measures 2.63:1 on
+    white — far below the WCAG AA floor of 4.5:1 — yet it was used for
+    real, meaningful text in 290 places (file-size limits, privacy
+    notices, hero subtext, timestamps). Those are not decorative strings;
+    a user who can't read them loses actual information.
+
+    Resolving it to slate-500's value (4.78:1) fixes all 290 at once
+    instead of 290 edits that would inevitably miss some and drift again.
+    The practical consequence is that slate-400 and slate-500 now render
+    identically: that IS the design decision — this palette has no text
+    color lighter than AA-compliant. The ~38 decorative icon usages get
+    marginally darker, which only increases visibility.
+  */
+  --color-slate-400: #64748b;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

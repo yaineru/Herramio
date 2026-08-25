@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Menu, Search, Star, X } from "lucide-react";
+import { Menu, Search, Star, User, X } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/site";
 import { Button } from "@/components/ui/Button";
 import { MagneticButton } from "@/components/ui/MagneticButton";
@@ -11,10 +11,12 @@ import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { openSearchPalette } from "@/lib/search-events";
 import { AnalyticsEvents } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
+import type { NavAuthState } from "@/lib/auth/nav-state";
+import { AccountMenu } from "@/components/layout/AccountMenu";
 
 const SCROLL_THRESHOLD = 8;
 
-export function Navbar() {
+export function Navbar({ authState }: { authState: NavAuthState }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const rafRef = useRef<number | null>(null);
@@ -81,6 +83,23 @@ export function Navbar() {
               <Button size="sm">Generador QR</Button>
             </Link>
           </MagneticButton>
+          {authState.isAuthenticated ? (
+            <AccountMenu authState={authState} />
+          ) : (
+            <div className="flex items-center gap-1">
+              <Link
+                href="/iniciar-sesion"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              >
+                Iniciar sesión
+              </Link>
+              <Link href="/registro">
+                <Button size="sm" variant="outline">
+                  Registrarse
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <Link
@@ -136,6 +155,38 @@ export function Navbar() {
                 Generador QR
               </Button>
             </Link>
+            <div className="mt-2 border-t border-slate-200 pt-2">
+              {authState.isAuthenticated ? (
+                <Link
+                  href="/cuenta"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                >
+                  <User className="h-4 w-4" />
+                  Mi cuenta
+                  <span className="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">
+                    {authState.planLabel}
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex flex-col gap-1">
+                  <Link
+                    href="/iniciar-sesion"
+                    onClick={() => setOpen(false)}
+                    className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                  >
+                    Iniciar sesión
+                  </Link>
+                  <Link
+                    href="/registro"
+                    onClick={() => setOpen(false)}
+                    className="rounded-lg px-3 py-2.5 text-sm font-medium text-emerald-600 hover:bg-slate-100"
+                  >
+                    Registrarse
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         </nav>
       )}

@@ -24,7 +24,8 @@ export function Footer() {
           <FooterColumn title="Legal" links={FOOTER_LINKS.legal} />
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-400 sm:flex-row">
+        {/* slate-500: slate-400 at this size measures 2.63:1 on white, well below WCAG AA. */}
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row">
           <p>© {year} {SITE.name} — Herramientas online simples y gratuitas.</p>
           <p>Hecho para que resolver tareas rápidas sea más simple.</p>
         </div>

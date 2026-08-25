@@ -9,6 +9,7 @@ import { ProcessingBadge } from "@/components/marketing/ProcessingBadge";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { FavoriteButton } from "@/components/tools/FavoriteButton";
 import { HistoryTracker } from "@/components/tools/HistoryTracker";
+import { UsageTracker } from "@/components/tools/UsageTracker";
 import { JsonLd, faqPageSchema, howToSchema, softwareApplicationSchema } from "@/components/JsonLd";
 import type { ContentBlock } from "@/lib/blog/types";
 import { getBlogPostByTool } from "@/lib/blog/posts";
@@ -66,6 +67,7 @@ export function ToolPageShell({
       )}
 
       <HistoryTracker toolId={toolId} toolName={toolName} />
+      <UsageTracker toolId={toolId} />
 
       <Breadcrumbs
         items={[
@@ -130,7 +132,7 @@ export function ToolPageShell({
               <BookOpen className="h-5 w-5" />
             </span>
             <span>
-              <span className="block text-xs font-medium uppercase tracking-wide text-slate-400">Guía relacionada</span>
+              <span className="block text-xs font-medium uppercase tracking-wide text-slate-500">Guía relacionada</span>
               <span className="block font-medium text-slate-900">{relatedArticle.title}</span>
             </span>
           </Link>

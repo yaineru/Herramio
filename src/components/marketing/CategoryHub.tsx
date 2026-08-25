@@ -91,7 +91,7 @@ export function CategoryHub() {
               <featured.icon className="h-5 w-5" strokeWidth={1.75} />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-xs font-medium uppercase tracking-wide text-slate-400">Destacada</span>
+              <span className="block text-xs font-medium uppercase tracking-wide text-slate-500">Destacada</span>
               <span className="block truncate font-medium text-slate-900">{featured.name}</span>
             </span>
             <ArrowRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-emerald-600" />

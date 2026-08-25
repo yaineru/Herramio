@@ -7,7 +7,19 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/"],
+        disallow: [
+          "/api/",
+          "/_next/",
+          "/admin",
+          "/cuenta",
+          "/facturacion",
+          "/auth/",
+          "/iniciar-sesion",
+          "/registro",
+          "/recuperar-contrasena",
+          "/actualizar-contrasena",
+          "/originalidad/", // individual document reports are private, auth-gated — only the /originalidad landing page is public
+        ],
       },
     ],
     sitemap: `${SITE.url}/sitemap.xml`,

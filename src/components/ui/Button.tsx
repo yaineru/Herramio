@@ -5,8 +5,12 @@ type Variant = "primary" | "secondary" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
+  // Hover goes DARKER (emerald-700), not lighter: a lighter hover would
+  // drop white label text below the WCAG AA contrast floor exactly when
+  // the user is interacting with the control. See globals.css for the
+  // measured values behind these tokens.
   primary:
-    "bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm shadow-emerald-600/20",
+    "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-600/20",
   secondary: "bg-slate-900 text-white hover:bg-slate-800",
   outline: "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50",
   ghost: "text-slate-600 hover:bg-slate-100",

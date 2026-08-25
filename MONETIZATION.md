@@ -49,11 +49,11 @@ de AdSense.
 
 ## Ideas de monetización adicional (no implementadas, arquitectura compatible)
 
-Estas requieren autenticación y base de datos — fuera del alcance del MVP,
-pero el proyecto no tiene nada que lo impida a futuro:
+Estas siguen sin implementarse, pero la arquitectura SaaS de la sección
+siguiente ya tiene dónde encajarlas sin rediseñar nada:
 
 - **QR dinámicos**: un QR que apunta a una URL corta propia, editable sin
-  reimprimir (requiere backend + base de datos, ej. Supabase/PostgreSQL).
+  reimprimir. Encajaría como `premium_tools` en el plan Pro.
 - **Estadísticas de escaneo**: requiere que el QR pase por un redirector
   propio en vez de apuntar directo al destino final.
 - **Branding / marca de agua removible**: plan de pago que quita un sello
@@ -63,6 +63,371 @@ pero el proyecto no tiene nada que lo impida a futuro:
 - **Páginas de negocio / menús digitales propios**: hosting de una mini
   landing por negocio (nombre, redes, menú) en vez de depender de una URL
   externa — evolución natural de `/qr-negocio` y `/qr-menu`.
-- **Planes FREE / PRO / BUSINESS**: solo tiene sentido una vez exista una de
-  las funciones anteriores que justifique cobrar; no cobres por algo que ya
-  es gratis en el mercado (generación y personalización básica de QR).
+
+---
+
+# Arquitectura SaaS (cuentas, planes y pagos)
+
+Todo lo de esta sección **sí está implementado** (auditar con `git log` /
+el código para el estado más actual). Cubre exactamente lo que dijiste que
+necesitabas documentado: arquitectura, planes, Supabase, billing, webhooks,
+entitlements, ads, cómo cambiar precios, cómo agregar un plan o una
+herramienta premium, y cómo probar pagos en modo test.
+
+## Resumen del modelo de negocio
+
+| Plan | Precio | Anuncios | Límites | Equipos |
+|---|---|---|---|---|
+| Gratis | $0 | Sí | Estándar | No |
+| Pro | US$3.99/mes o US$29.99/año | No | Más altos | No |
+| Equipo | US$9.99/mes (hasta 5 miembros) | No | Más altos | Sí |
+| Pro fundador (oferta, inactiva por defecto) | US$0.99/mes | No | Más altos | No |
+
+Los precios y features **no están hardcodeados** en ningún componente —
+viven en la tabla `plans` de Supabase (ver abajo). Cambiar un precio es un
+`UPDATE` en esa tabla, nunca una edición de código. Un plan puede tener
+precio mensual, anual, ambos, o ninguno (el plan gratis) — no está atado a
+un único intervalo por fila.
+
+## Piezas y dónde viven
+
+| Pieza | Archivo | Qué hace |
+|---|---|---|
+| Cliente Supabase (browser) | `src/lib/supabase/client.ts` | Para Client Components (poco usado — casi todo pasa por Server Actions) |
+| Cliente Supabase (server) | `src/lib/supabase/server.ts` | Lee la sesión de las cookies; usado en Server Components, Server Actions y Route Handlers |
+| Cliente admin (service role) | `src/lib/supabase/admin.ts` | Bypasea RLS — **solo** para el webhook de Stripe y casos server-to-server equivalentes |
+| Refresco de sesión | `middleware.ts` + `src/lib/supabase/middleware.ts` | Solo refresca la cookie de sesión en cada request; nunca decide autorización |
+| Usuario actual | `src/lib/auth/current-user.ts` | `getCurrentUser()` — usa `auth.getUser()` (revalida contra Supabase), no `getSession()` |
+| Resolución de plan | `src/lib/auth/entitlements.ts` | `getEntitlements()` — LA función central: suscripción propia → suscripción del equipo → `free` por defecto |
+| Qué puede hacer el usuario | `src/lib/plans/types.ts` | `Entitlements` se deriva siempre de un `Plan`, nunca se setea aparte |
+| Anuncios | `src/lib/ads/should-show-ads.ts` | `shouldShowAds()` — combina el kill switch (`NEXT_PUBLIC_ADS_ENABLED`) con `entitlements.adsEnabled` |
+| Planes (lectura) | `src/lib/plans/queries.ts` | `getActivePlans()`, `getPlanById()`, `getPlanByProviderPriceId()` (resuelve mensual o anual) |
+| Server Actions de auth | `src/lib/auth/actions.ts` | signUp / signIn / signOut / reset / update password |
+| **Interfaz de proveedor de pagos** | `src/lib/billing/provider.ts` | `BillingProvider` — el contrato que implementa cada procesador; el resto de la app nunca llama a Stripe o Mercado Pago directamente |
+| Selección de proveedor | `src/lib/billing/get-provider.ts` | `getBillingProvider()` — único lugar que decide cuál procesador está activo (`BILLING_PROVIDER` env var) |
+| Implementación Mercado Pago | `src/lib/billing/providers/mercadopago-provider.ts` | Procesador **por defecto** — ver la comparación investigada más abajo |
+| Implementación Stripe | `src/lib/billing/providers/stripe-provider.ts` | Mantenida completa para una futura expansión internacional, no es el default |
+| Lógica de dominio del webhook | `src/lib/billing/apply-webhook-event.ts` | `applyBillingSubscriptionEvent()` — el único lugar que escribe `subscriptions`, sin importar qué procesador llamó |
+| Server Actions de billing | `src/lib/billing/actions.ts` | Checkout, portal de facturación (si el procesador lo tiene) y cancelación directa (si no) — todo vía `getBillingProvider()` |
+| Webhooks | `src/app/api/webhooks/stripe/route.ts` y `.../mercadopago/route.ts` | Verifican firma, garantizan idempotencia, delegan a `applyBillingSubscriptionEvent()` — nunca la página de éxito del checkout activa nada |
+| Límites de uso | `src/lib/plans/limits.ts` | `checkUsageLimit()` — genérico, lee el límite de `entitlements.metadata`, nunca lo hardcodea |
+| Favoritos con límite real | `src/components/tools/FavoriteButton.tsx`, `src/components/providers/EntitlementsProvider.tsx` | Único límite real hoy (favoritos autenticados) — ver la sección dedicada más abajo |
+| Uso de herramientas (real, no fingido) | `src/lib/usage/actions.ts`, `src/lib/usage/queries.ts`, `src/components/tools/UsageTracker.tsx` | Analítico, nunca gatea acceso — ver la sección dedicada |
+| Rate limiting | `src/lib/rate-limit/check.ts` | `checkRateLimit()` — solo en los Server Actions de auth; falla abierto |
+| Admin (solo lectura) | `src/lib/admin/auth.ts`, `src/lib/admin/metrics.ts`, `src/app/admin/page.tsx` | Protegido por `ADMIN_EMAILS`; 404 real para no-admins |
+
+## Supabase: esquema, RLS y estado real de la migración
+
+Migraciones en `supabase/migrations/`:
+
+- `0001_init.sql` + `0002_seed_plans.sql` — **ya aplicadas contra el
+  proyecto real** (confirmado vía REST el 2026-08-24 — las 9 tablas
+  existen y responden). Estos dos archivos se dejan intactos con su forma
+  original tal como se aplicaron — nunca se edita una migración que ya
+  corrió contra una base de datos real, sin importar si tiene commits en
+  git o no.
+- `0003_pricing_and_entitlements_rework.sql` — **ya aplicada** (confirmado
+  vía REST el 2026-08-24: `pro` = US$3.99/US$29.99, `team` = US$9.99,
+  `pro_founding` = US$0.99/inactiva, `subscriptions.billing_interval`
+  existe, RLS sigue bloqueando escrituras anónimas). Convirtió `plans` de
+  "un precio + un intervalo por fila" al esquema actual (mensual/anual,
+  `metadata` jsonb, ids de precio por intervalo).
+- `0004_rate_limiting.sql` — **todavía NO aplicada**. Agrega la tabla
+  `rate_limit_events` y la función `check_and_record_rate_limit()` que
+  protege los Server Actions de auth contra abuso (ver "Rate limiting" más
+  abajo). Sin esto, `checkRateLimit()` falla abierto automáticamente (no
+  rompe el login/registro — simplemente no limita nada todavía).
+
+**Cómo aplicar 0004** (la única pendiente):
+
+```bash
+# Opción A — CLI, si tienes la contraseña de la base de datos:
+npx supabase link --project-ref <project-ref>
+npx supabase db push
+
+# Opción B — sin CLI (la usada para 0001-0003): copia el contenido de
+# supabase/migrations/0004_rate_limiting.sql y pégalo en
+# Supabase Dashboard → SQL Editor → New query → Run.
+```
+
+Después de aplicar cualquier migración nueva, regenera los tipos (el archivo actual está escrito a
+mano para poder avanzar sin acceso directo a la base de datos):
+
+```bash
+npx supabase gen types typescript --project-id <project-ref> > src/lib/supabase/database.types.ts
+```
+
+y revisa que sigan siendo `type` (no `interface`) — ver el comentario al
+inicio de ese archivo; mezclarlo con `interface` rompe el tipado de
+`.select()` de forma silenciosa (se resuelve a `never` sin error de build).
+
+### RLS: verificado con escrituras reales, no solo revisado en código
+
+Probado directamente contra el proyecto real (no solo leído en el SQL):
+
+- `INSERT` anónimo en `subscriptions` → rechazado explícitamente:
+  `42501 new row violates row-level security policy`.
+- `PATCH` anónimo en `plans` (intentando cambiar un precio) → Postgres
+  devuelve `204` pero la fila **no cambió** — RLS bloquea la actualización
+  sin candidatos que coincidan; PostgREST igual responde `204` en un PATCH
+  sin filas afectadas, así que un `204` por sí solo no es prueba de éxito
+  al probar RLS — hay que releer la fila.
+
+## Variables de entorno
+
+Ver `.env.example` — nunca commitees valores reales:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=      # server-only, bypasea RLS
+
+BILLING_PROVIDER=mercadopago    # o "stripe" — ver get-provider.ts
+
+MERCADOPAGO_ACCESS_TOKEN=       # server-only
+MERCADOPAGO_WEBHOOK_SECRET=     # server-only
+
+STRIPE_SECRET_KEY=              # server-only, solo si BILLING_PROVIDER=stripe
+STRIPE_WEBHOOK_SECRET=          # server-only
+
+ADMIN_EMAILS=                   # server-only, lista separada por comas — ver /admin
+```
+
+Los ids de precio **no van en variables de entorno** — van en las columnas
+`provider_price_id_monthly` / `provider_price_id_annual` de la tabla
+`plans`, para poder cambiar de precio o de intervalo sin redeploy.
+
+## Proveedor de pagos: investigado, no asumido
+
+Comparación real (Colombia, agosto 2026 — ver fuentes citadas en el chat
+de esta sesión):
+
+| | Mercado Pago | Stripe | Wompi |
+|---|---|---|---|
+| Cuenta para un negocio en Colombia | Directa | Requiere incorporar empresa en EE. UU. (Stripe Atlas, US$500 + US$100/año) | Directa |
+| Motor de suscripciones nativo | Sí (`/preapproval`, planes asociados) | Sí (Billing) | No — solo tokenización, hay que construir la recurrencia propia |
+| Comisión aproximada | ~3.3–3.5% + ~800–900 COP + IVA | 2.9% + US$0.30 + 0.7% (Billing) | ~3.49% + IVA + 700 COP |
+| Efectivo en US$3.99/mes | ~10.7% | ~15% | ~variable, sin motor nativo |
+| Efectivo en US$9.99/mes | ~6.8% | ~8% | — |
+| Efectivo en US$0.99/mes (fundador) | ~30% | ~40%+ | ~30% |
+
+**Decisión: Mercado Pago como proveedor por defecto** (`BILLING_PROVIDER`
+sin configurar cae en `mercadopago`). Sin incorporación extranjera, con
+motor de suscripciones real, y con márgenes saludables a los precios
+objetivo actuales. Stripe queda completamente implementado detrás de la
+misma interfaz `BillingProvider` para una futura fase de expansión
+internacional — cambiarlo es una variable de entorno, no una reescritura.
+Wompi se descartó como *segundo* proveedor colombiano: mismo mercado que
+Mercado Pago, sin motor de suscripciones nativo.
+
+El plan "fundador" (US$0.99) sigue siendo estructuralmente poco rentable
+en cualquier procesador — la comisión fija domina a ese precio. Es
+aceptable como oferta de adquisición por tiempo limitado, no como el
+modelo de estado estable.
+
+## Cómo probar pagos en modo test (antes de cobrar de verdad)
+
+**Mercado Pago** (proveedor por defecto):
+
+1. Crea una cuenta de Mercado Pago Developers → copia las credenciales de
+   **prueba** (empiezan con `TEST-`) → `MERCADOPAGO_ACCESS_TOKEN`.
+2. Crea un plan de prueba (`preapproval_plan`) para Pro y otro para Equipo
+   desde el panel o vía API → guarda cada id en `plans.provider_price_id_monthly`
+   / `_annual` con un `UPDATE`.
+3. Developers → Tus integraciones → Webhooks → configura la URL
+   `https://<tu-dominio>/api/webhooks/mercadopago`, activa el evento
+   "Planes y suscripciones" → copia la **firma secreta** →
+   `MERCADOPAGO_WEBHOOK_SECRET`.
+4. Usa una [tarjeta de prueba de Mercado
+   Pago](https://www.mercadopago.com.co/developers/es/docs/checkout-api/additional-content/your-integrations/test/cards)
+   en `/precios`.
+5. Verifica en el panel (modo prueba) que la suscripción se autorizó, y en
+   Supabase que la fila de `subscriptions` se sincronizó vía webhook —
+   **nunca confíes en que la página de regreso del checkout por sí sola
+   significa que el usuario ya es Pro**.
+6. **Pendiente de confirmar contra una cuenta sandbox real** (no se pudo
+   probar en esta sesión sin credenciales): que `init_point` es el campo
+   correcto para redirigir en modo prueba, y que la respuesta de
+   `PreApproval.get()` realmente incluye `preapproval_plan_id` — ver los
+   comentarios en `mercadopago-provider.ts`.
+
+**Stripe** (si `BILLING_PROVIDER=stripe`): mismo flujo con claves
+`sk_test_...`/`whsec_...`, tarjeta `4242 4242 4242 4242`, y el endpoint
+`/api/webhooks/stripe`.
+
+**Nunca uses una tarjeta real ni credenciales de producción durante
+pruebas.**
+
+## Cómo cambiar un precio
+
+Nunca en código — un `UPDATE` en Supabase:
+
+```sql
+update public.plans set monthly_price_cents = 499 where id = 'pro'; -- US$4.99/mes
+update public.plans set annual_price_cents = 3999 where id = 'pro'; -- US$39.99/año
+```
+
+`monthly_price_cents` / `annual_price_cents` pueden ser independientes o
+null (un plan no tiene por qué ofrecer ambos intervalos).
+
+## Cómo agregar un plan nuevo
+
+1. `insert into public.plans (id, name, ...)` — `id` es texto libre a
+   todo nivel (base de datos y TypeScript); un plan nuevo (p. ej. una
+   oferta "pro_black_friday") es una fila, nunca un cambio de código.
+   Código que necesite tratar un plan específico distinto (no solo mostrar
+   su precio/nombre) importa una constante de `src/lib/plans/types.ts`
+   (`FREE_PLAN_ID`, `PRO_PLAN_ID`, `TEAM_PLAN_ID`) — no compara contra un
+   `enum` exhaustivo.
+2. Crea el precio/plan correspondiente en el proveedor activo y guarda su
+   id en `provider_price_id_monthly` / `_annual`.
+3. La etiqueta visible es la propia columna `name` de la fila — no hay un
+   mapa aparte que mantener sincronizado.
+
+## Cómo agregar una función o herramienta premium
+
+1. Si ya existe un flag de `Entitlements` que sirve (`premiumTools`,
+   `higherLimits`, ...), léelo donde corresponda con `await
+   getEntitlements()` — nunca reimplementes la resolución de plan.
+2. Si es un límite numérico o flag específico de un plan que no justifica
+   su propia columna (p. ej. `pdf_daily_limit`), guárdalo en la columna
+   `metadata` (jsonb) del plan y léelo vía `entitlements.metadata` — evita
+   una migración nueva por cada límite. Si en cambio es un flag que varios
+   planes comparten y que gatea una decisión estructural (como
+   `premiumTools`), sí amerita su propia columna booleana.
+3. Para gatear una herramienta específica del registro
+   (`src/lib/tools/registry.ts`), comprueba el flag en el Server Component
+   de esa página; el registro no necesita saber de planes por sí mismo a
+   menos que se decida marcar herramientas como premium ahí directamente.
+
+## Límites de uso reales — favoritos
+
+Auditado (no supuesto): las 129 herramientas son 100% del lado del
+cliente, así que fingir un límite "N usos gratis por día" no tendría
+ningún costo de servidor real detrás — sería puro teatro. El único lugar
+donde SÍ hay algo real que limitar es **favoritos**, porque ahí sí hay
+almacenamiento server-side real de por medio para usuarios autenticados.
+
+- `checkUsageLimit()` (`src/lib/plans/limits.ts`) — función pura: lee un
+  límite numérico de `entitlements.metadata[clave]` y lo compara contra un
+  conteo actual. Ausente/`null`/no-numérico = ilimitado (nunca un límite
+  inventado). Reutilizable para el próximo límite real que aparezca — no
+  hay que rediseñar nada, solo llamarla con otra clave.
+- Plan Gratis tiene `metadata.favorites_limit = 10` (visitantes anónimos
+  siguen sin límite — favoritos anónimos son 100% localStorage, sin costo
+  de servidor, y limitarlos ahí solo generaría fricción de registro sin
+  ningún ahorro real). Pro/Team no tienen la clave = ilimitados.
+- Se aplica en `FavoriteButton` (bloquea agregar más allá del límite, con
+  un mensaje breve + link a `/precios` — nunca bloquea quitar) y se
+  muestra como "X/10 favoritos" en `/favoritos`.
+- El valor de la interfaz llega server-side una sola vez (en
+  `getNavAuthState()`, dentro de `layout.tsx`) y se distribuye a
+  componentes profundos como `FavoriteButton` (usado en las 129 páginas de
+  herramientas) vía `EntitlementsProvider`/`useFavoritesLimit()` — así se
+  evita reescribir las 129 páginas para pasar el dato.
+
+Historial de uso real (no fingido) también existe: `UsageTracker` llama a
+`increment_tool_usage()` (ya existía en el esquema, ahora se usa de
+verdad) para usuarios autenticados — silencioso, nunca bloquea nada, es
+puramente analítico. Se muestra en `/cuenta` como perk real de Pro/Team
+("Uso de herramientas, últimos 30 días") y alimenta el ranking de
+herramientas más usadas en `/admin`.
+
+## Rate limiting
+
+Solo en los Server Actions de autenticación (`signUpAction`,
+`signInAction`, `requestPasswordResetAction`) — el vector de abuso real
+para este proyecto, dado que las 129 herramientas no tienen costo de
+servidor que proteger (ver arriba). Implementado con Postgres (tabla
+`rate_limit_events` + función `check_and_record_rate_limit()`, migración
+`0004_rate_limiting.sql`) — sin Redis/Upstash, el tráfico actual no lo
+justifica. Falla abierto (permite la request) ante cualquier error de
+infraestructura — un problema transitorio de Supabase nunca debe bloquear
+a un usuario real.
+
+- Registro: 5 intentos/hora por IP (el ataque real es probar muchos
+  correos distintos, no repetir uno).
+- Login: 10 intentos/15 min por correo (credential stuffing contra una
+  cuenta específica).
+- Recuperar contraseña: 3/hora por correo (evita bombardear el correo de
+  otra persona con enlaces de reseteo).
+
+## Panel de administración (`/admin`)
+
+Solo lectura. Protegido por `ADMIN_EMAILS` (lista de correos separada por
+comas, variable de entorno server-only) — deliberadamente no un rol en
+base de datos todavía; lo más simple que es real y seguro (nunca llega al
+navegador, no puede falsificarse desde el cliente). Un no-admin recibe un
+`404` real (no un redirect, que sí confirmaría que la ruta existe).
+`robots.txt` además lo excluye de indexación.
+
+Muestra: usuarios totales, MRR estimado (excluye `past_due` — pago no
+confirmado), suscripciones personales y de equipo activas por plan,
+herramientas más usadas (30 días, solo usuarios registrados), y los
+últimos eventos de webhook procesados. Usa el cliente de service role
+(`createAdminClient()`) porque agrega datos de todos los usuarios — RLS
+por diseño no permitiría esto con el cliente normal.
+
+## Eventos de analítica (funnel real, no inventado)
+
+Vía el mismo GA4 del proyecto (`AnalyticsEvents` en `src/lib/analytics.ts`)
+— no se agregó un sistema nuevo. Implementados: `signup_started`,
+`signup_completed`, `pricing_viewed`, `paywall_shown` (cuando de verdad se
+muestra un paywall, ej. el límite de favoritos), `checkout_started`, y
+`checkout_completed` (disparado al volver de la pasarela con
+`?checkout=exito` — **representa que el usuario volvió reclamando éxito,
+no que la suscripción ya está confirmada activa**, eso solo lo sabe el
+webhook).
+
+**Deliberadamente no implementados**: `subscription_active` /
+`subscription_cancelled`. Son hechos que solo el webhook conoce — GA4
+client-side no tiene forma honesta de dispararlos sin inventar el dato.
+Implementarlos de verdad requeriría el GA4 Measurement Protocol
+(server-side, necesita otro secreto de API) — no se construyó por no
+inventar infraestructura nueva sin que se pidiera explícitamente. Hoy esos
+hechos SÍ están disponibles, con datos reales: la tabla `subscriptions` y
+`/admin`.
+
+## Endurecimiento de webhooks: orden de entrega
+
+Ni Stripe ni Mercado Pago garantizan que los webhooks lleguen en el orden
+en que ocurrieron los eventos. En vez de confiar en el snapshot que trae
+cada notificación (que podría estar desactualizado si llegó tarde),
+**ambos proveedores siempre vuelven a consultar el estado actual de la
+suscripción directamente a la API** antes de escribir en Supabase
+(`stripe.subscriptions.retrieve()` / `PreApproval.get()`). Así, sin
+importar el orden de entrega — o si el mismo evento llega dos veces — el
+resultado siempre converge al estado real más reciente. Ver el comentario
+en `stripe-provider.ts` para el detalle.
+
+## Qué falta (no implementado todavía)
+
+- **Ninguna cuenta de Mercado Pago o Stripe configurada todavía** — el
+  código de checkout/portal/cancelación/webhook está completo para ambos
+  proveedores (incluyendo el endurecimiento de orden de entrega arriba)
+  pero no se ha podido probar contra credenciales reales. Ver "Cómo probar
+  pagos en modo test" arriba para los pasos exactos una vez exista una
+  cuenta.
+- **Mercado Pago: dos detalles del SDK sin confirmar contra una respuesta
+  real** — si `init_point` es el campo correcto en modo sandbox, y si
+  `preapproval_plan_id` realmente viene en la respuesta de
+  `PreApproval.get()` (el tipo que expone el SDK no lo declara, aunque la
+  API sí debería devolverlo — ver el comentario en
+  `mercadopago-provider.ts`).
+- **Equipos/workspaces**: el esquema (`workspaces`,
+  `workspace_members`, `workspace_invitations`) y la resolución de
+  entitlements ya soportan un usuario heredando el plan de su equipo, pero
+  no existe todavía la UI para crear un equipo, invitar miembros o
+  aceptar/rechazar invitaciones.
+- **Reactivar una suscripción cancelada**: deliberadamente no
+  implementado — el comportamiento real difiere entre proveedores (Stripe
+  sí permite deshacer un `cancel_at_period_end`; Mercado Pago trata
+  `cancelled` como terminal) y no quise construir un botón que finja
+  funcionar igual en ambos.
+- **`rate_limit_events` no tiene limpieza automática** — a este volumen no
+  hace falta todavía; si crece, un `pg_cron` que borre filas de más de
+  ~1 día es la solución obvia cuando haga falta.
+- **Sin rol de administrador real en base de datos** — `ADMIN_EMAILS` es
+  correcto para uno o dos operadores; si el equipo crece, migrar a una
+  columna `is_admin` + políticas RLS es el siguiente paso natural, no
+  antes.

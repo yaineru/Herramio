@@ -10,6 +10,8 @@ import { SearchPalette } from "@/components/search/SearchPalette";
 import { CursorSpotlight } from "@/components/marketing/CursorSpotlight";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE } from "@/lib/site";
+import { getNavAuthState } from "@/lib/auth/nav-state";
+import { EntitlementsProvider } from "@/components/providers/EntitlementsProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,7 +43,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const navAuthState = await getNavAuthState();
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -85,8 +88,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
         <CursorSpotlight />
-        <Navbar />
-        <main className="flex-1">{children}</main>
+        <Navbar authState={navAuthState} />
+        <EntitlementsProvider favoritesLimit={navAuthState.favoritesLimit}>
+          <main className="flex-1">{children}</main>
+        </EntitlementsProvider>
         <Footer />
         <CookieBanner />
         <Analytics />

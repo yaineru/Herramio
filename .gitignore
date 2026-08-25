@@ -43,3 +43,13 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# local test/lint run artifacts (regenerated on demand, never source of truth)
+eslint-report.json
+fullsuite.json
+fullsuite.log
+lint.log
+tsc-check.log
+vitest-full.json
+vitest-full.log
+vitest-summary.json

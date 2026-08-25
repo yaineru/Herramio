@@ -18,7 +18,10 @@ export function ToolCard({ tool }: { tool: Tool }) {
           <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors group-hover:bg-emerald-600">
             <Icon className="h-5 w-5" strokeWidth={1.75} />
           </span>
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium tracking-wide text-slate-500 uppercase">
+          {/* slate-600, not slate-500: on the slate-100 pill background
+              slate-500 measures 4.35:1, just under the WCAG AA floor of
+              4.5 for text this size. */}
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium tracking-wide text-slate-600 uppercase">
             {category.name}
           </span>
         </div>

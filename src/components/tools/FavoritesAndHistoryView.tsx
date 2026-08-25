@@ -18,6 +18,7 @@ import {
   type HistoryEntry,
 } from "@/lib/history";
 import { getToolById, type Tool } from "@/lib/tools/registry";
+import { useFavoritesLimit } from "@/components/providers/EntitlementsProvider";
 import { cn } from "@/lib/utils";
 
 type Tab = "favoritos" | "recientes";
@@ -45,9 +46,19 @@ export function FavoritesAndHistoryView() {
     .map((id) => getToolById(id))
     .filter((t): t is Tool => Boolean(t));
   const history: HistoryEntry[] = JSON.parse(historySnapshot);
+  const favoritesLimit = useFavoritesLimit();
 
   return (
     <div>
+      {tab === "favoritos" && favoritesLimit !== null && (
+        <p className="mb-3 text-xs text-slate-400">
+          {favoriteTools.length}/{favoritesLimit} favoritos usados en el plan Gratis —{" "}
+          <Link href="/precios" className="font-medium text-emerald-600 hover:underline">
+            pasa a Pro para favoritos ilimitados
+          </Link>
+          .
+        </p>
+      )}
       <div className="mb-6 inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
         <button
           type="button"

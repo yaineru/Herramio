@@ -15,6 +15,7 @@ export const SITE = {
 export const NAV_LINKS = [
   { href: "/generador-qr", label: "Generador QR" },
   { href: "/herramientas", label: "Herramientas" },
+  { href: "/originalidad", label: "Originalidad" },
   { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
 ];

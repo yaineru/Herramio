@@ -46,4 +46,35 @@ export const AnalyticsEvents = {
     trackEvent("search_result_clicked", { tool, query }),
   categorySelected: (category: string) => trackEvent("category_selected", { category }),
   ctaClicked: (cta: string) => trackEvent("cta_clicked", { cta }),
+
+  // Monetization funnel. All fired client-side (GA4 only has a browser
+  // integration in this project — see MONETIZATION.md for why
+  // subscription_active/subscription_cancelled aren't in this list: those
+  // are only known server-side, from the payment webhook, and firing them
+  // from anywhere client-reachable would mean trusting client state for a
+  // billing fact, which this project deliberately never does).
+  signupStarted: () => trackEvent("signup_started"),
+  signupCompleted: () => trackEvent("signup_completed"),
+  pricingViewed: () => trackEvent("pricing_viewed"),
+  paywallShown: (reason: string) => trackEvent("paywall_shown", { reason }),
+  checkoutStarted: (planId: string, interval: string) => trackEvent("checkout_started", { plan_id: planId, interval }),
+  // Fired on return from the processor's checkout — reflects that the user
+  // came back claiming success, NOT that the subscription is confirmed
+  // active (only the webhook knows that; see /admin for real MRR/counts).
+  checkoutReturnedSuccess: (planId: string) => trackEvent("checkout_completed", { plan_id: planId }),
+
+  // Originality analysis funnel. analysisStarted/Completed/Failed are
+  // fired client-side off an OBSERVED status change from polling the
+  // document's real row (see DocumentStatusPoller) — never fired
+  // optimistically before the server has actually recorded that status.
+  originalityViewed: () => trackEvent("originality_viewed"),
+  documentUploadStarted: () => trackEvent("document_upload_started"),
+  documentUploaded: (documentId: string) => trackEvent("document_uploaded", { document_id: documentId }),
+  analysisStarted: (documentId: string) => trackEvent("analysis_started", { document_id: documentId }),
+  analysisCompleted: (documentId: string) => trackEvent("analysis_completed", { document_id: documentId }),
+  analysisFailed: (documentId: string) => trackEvent("analysis_failed", { document_id: documentId }),
+  reportViewed: (documentId: string) => trackEvent("report_viewed", { document_id: documentId }),
+  sourceClicked: (documentId: string, matchId: number) =>
+    trackEvent("source_clicked", { document_id: documentId, match_id: matchId }),
+  upgradeFromOriginality: () => trackEvent("upgrade_from_originality"),
 };
