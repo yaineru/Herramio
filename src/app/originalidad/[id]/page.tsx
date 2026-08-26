@@ -54,11 +54,25 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
           <Card className="p-6">
             <h1 className="text-xl font-bold text-slate-900">No se pudo analizar este documento</h1>
             <p className="mt-2 text-sm text-slate-600">{document.failureReason ?? "Ocurrió un error inesperado."}</p>
-            <Link href="/originalidad" className="mt-4 inline-block">
-              <Button size="sm" variant="outline">
-                Volver
-              </Button>
-            </Link>
+            {/* Deleting has to be reachable from the failed state too. It
+                used to offer only "Volver", which left the user with an
+                upload they could not remove and a file sitting in storage
+                with nothing pointing at it. */}
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <Link href="/originalidad">
+                <Button size="sm" variant="outline">
+                  Volver
+                </Button>
+              </Link>
+              {isOwner && (
+                <form action={deleteDocumentAction.bind(null, id)}>
+                  <Button type="submit" size="sm" variant="ghost">
+                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                    Eliminar documento
+                  </Button>
+                </form>
+              )}
+            </div>
           </Card>
         </div>
       </div>
