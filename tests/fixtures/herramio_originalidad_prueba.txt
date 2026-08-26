@@ -1,0 +1,121 @@
+Herramio - documento de prueba para análisis de originalidad Página 1
+
+Análisis de la inteligencia artificial en la educación
+
+universitaria
+
+Documento de prueba para Herramio Originalidad - incluye similitud, cita, referencia y fragmentos deliberadamente
+
+relacionados.
+
+Resumen
+
+La inteligencia artificial está transformando la educación universitaria al modificar la forma en que estudiantes y
+
+docentes buscan información, organizan contenidos y reciben retroalimentación. Sin embargo, su incorporación
+
+exige criterios claros de transparencia, evaluación y responsabilidad académica. Este documento examina
+
+beneficios y riesgos de la inteligencia artificial en contextos universitarios y propone combinar innovación tecnológica
+
+con normas de integridad académica.
+
+1. Introducción
+
+Durante los últimos años, las universidades han incorporado herramientas digitales capaces de apoyar la búsqueda
+
+de información, la escritura y la personalización del aprendizaje. La inteligencia artificial puede ayudar a identificar
+
+patrones en grandes cantidades de información y facilitar respuestas adaptadas a las necesidades de cada
+
+estudiante. El reto no consiste solamente en adoptar nuevas herramientas, sino en definir cómo utilizarlas sin
+
+sustituir el razonamiento humano.
+
+2. Beneficios potenciales
+
+Uno de los principales beneficios es la posibilidad de ofrecer retroalimentación rápida. Un sistema puede señalar
+
+errores frecuentes, sugerir recursos adicionales y ayudar a organizar un proceso de estudio. También puede apoyar
+
+a los docentes en tareas administrativas y en la clasificación inicial de grandes volúmenes de información.
+
+La inteligencia artificial puede ampliar el acceso a determinados recursos educativos cuando se utiliza como apoyo
+
+y no como sustituto del proceso de aprendizaje. Su valor aumenta cuando el estudiante debe interpretar,
+
+contrastar y explicar la información recibida.
+
+3. Riesgos y desafíos
+
+El uso de sistemas generativos también introduce riesgos. Entre ellos se encuentran la información incorrecta, la
+
+dependencia excesiva de respuestas automáticas y la dificultad para determinar la procedencia de determinados
+
+textos. Una universidad necesita políticas que indiquen cuándo el uso de inteligencia artificial es permitido, cómo
+
+debe declararse y qué responsabilidades conserva el estudiante.
+
+4. Cita y atribución
+
+Como señala UNESCO (2023), las instituciones educativas deben promover un uso responsable de la inteligencia
+
+artificial y desarrollar capacidades que permitan comprender sus beneficios, límites y riesgos.
+
+5. Conclusión
+
+La inteligencia artificial puede convertirse en una herramienta útil para la educación universitaria siempre que su
+
+incorporación se acompañe de criterios pedagógicos, transparencia y responsabilidad. La tecnología no elimina la
+
+necesidad de investigar, contrastar fuentes y construir argumentos propios. Por ello, las instituciones deben buscar
+
+un equilibrio entre innovación y preservación de la integridad académica.
+
+6. Segundo bloque de prueba: fragmento relacionado
+
+La incorporación de sistemas inteligentes en la universidad puede mejorar la retroalimentación, apoyar la
+
+organización de información y facilitar experiencias educativas personalizadas. No obstante, la adopción tecnológica
+
+Herramio - documento de prueba para análisis de originalidad Página 2
+
+debe acompañarse de reglas de transparencia y responsabilidad para evitar una dependencia excesiva de
+
+respuestas automáticas.
+
+7. Fragmento deliberadamente similar
+
+La inteligencia artificial puede ayudar a estudiantes y docentes a organizar información, recibir retroalimentación
+
+rápida y personalizar determinadas experiencias de aprendizaje. Su incorporación, sin embargo, requiere criterios de
+
+transparencia, evaluación y responsabilidad académica.
+
+8. Referencias
+
+[1] UNESCO (2023). Guidance for generative AI in education and research. UNESCO.
+
+[2] Luckin, R., Holmes, W., Griffiths, M., & Forcier, L. B. (2016). Intelligence Unleashed: An argument for AI in education. Pearson.
+
+[3] Russell, S., & Norvig, P. (2021). Artificial Intelligence: A Modern Approach (4th ed.). Pearson.
+
+Nota de prueba para Herramio
+
+Este documento contiene intencionalmente texto original, una cita atribuida, un fragmento relacionado y referencias bibliográficas. Su
+
+objetivo es comprobar extracción, chunking, coincidencia léxica, análisis de citas y verificación de referencias. No debe interpretarse como
+
+una evaluación académica real.
+
+Caso Qué debería ayudar a comprobar
+
+Texto original Baja similitud frente a fuentes no relacionadas.
+
+Cita atribuida Reconocimiento de coincidencia correctamente citada.
+
+Fragmento similar Detección de similitud léxica / semántica.
+
+Referencia [1] Verificación bibliográfica conservadora.
+
+Documento completo Extracción, chunking y generación del informe.

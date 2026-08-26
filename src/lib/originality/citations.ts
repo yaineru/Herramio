@@ -139,3 +139,30 @@ export function detectReferences(fullText: string): DetectedReference[] {
   }
   return results;
 }
+
+/**
+ * Finds the in-text citations across a document's chunks, stopping at the
+ * bibliography.
+ *
+ * The boundary is stateful, which is why it lives here rather than being
+ * re-derived per chunk: a long reference list spans several chunks and
+ * only the first one carries the heading. Detecting per chunk would let
+ * every later chunk contribute phantom citations again — the exact bug
+ * this function exists to prevent.
+ *
+ * Returns the chunk index alongside each citation so the caller can
+ * attach it to the right stored row.
+ */
+export function detectInTextCitations(chunkTexts: string[]): { chunkIndex: number; citation: DetectedCitation }[] {
+  const found: { chunkIndex: number; citation: DetectedCitation }[] = [];
+  let pastReferences = false;
+
+  for (const [chunkIndex, text] of chunkTexts.entries()) {
+    if (pastReferences) break;
+    const { body, foundHeading } = splitAtReferencesHeading(text);
+    if (foundHeading) pastReferences = true;
+    for (const citation of detectCitations(body)) found.push({ chunkIndex, citation });
+  }
+
+  return found;
+}

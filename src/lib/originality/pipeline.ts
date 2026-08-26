@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { extractDocumentText } from "@/lib/originality/extract";
 import { chunkText } from "@/lib/originality/chunk";
-import { detectCitations, detectReferences, splitAtReferencesHeading } from "@/lib/originality/citations";
+import { detectInTextCitations, detectReferences } from "@/lib/originality/citations";
 import { compareChunks } from "@/lib/originality/similarity";
 import { computeReportScore, ENGINE_VERSION, type ChunkBestMatch } from "@/lib/originality/report-score";
 import { verifyReferenceViaCrossref } from "@/lib/originality/providers/crossref";
@@ -113,16 +113,10 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
     // Measured on the QA document, that turned one real in-text citation
     // into five, and the citation graph then computed its orphan and
     // uncited counts from the phantoms.
-    let pastReferences = false;
-    const allCitations = chunks.flatMap((chunk, idx) => {
-      // Chunks after the bibliography starts hold nothing but entries; a
-      // long reference list spans several of them and none carries the
-      // heading, so the boundary has to be remembered, not re-detected.
-      if (pastReferences) return [];
-      const { body, foundHeading } = splitAtReferencesHeading(chunk.text);
-      if (foundHeading) pastReferences = true;
-      return detectCitations(body).map((c) => ({ ...c, chunkId: insertedChunks[idx]?.id ?? null }));
-    });
+    const allCitations = detectInTextCitations(chunks.map((c) => c.text)).map(({ chunkIndex, citation }) => ({
+      ...citation,
+      chunkId: insertedChunks[chunkIndex]?.id ?? null,
+    }));
     if (allCitations.length > 0) {
       await admin.from("citations").insert(
         allCitations.map((c) => ({
