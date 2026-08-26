@@ -64,6 +64,11 @@ export async function submitFeedbackAction(_prev: FeedbackState, formData: FormD
   try {
     const admin = createAdminClient();
     const { error } = await admin.from("feedback").insert({
+      // user_id is passed EXPLICITLY, including when it is null. Verified
+      // against the live table: omitting the column entirely makes the
+      // insert policy reject the row (42501), while sending null passes.
+      // This path uses the service role and so bypasses RLS anyway, but
+      // any future client-side insert must send it the same way.
       user_id: user?.id ?? null,
       kind,
       message,
