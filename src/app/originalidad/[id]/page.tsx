@@ -76,6 +76,12 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
             </div>
           </Card>
         </div>
+
+        {/* A failed analysis is the single most valuable moment to hear
+            from someone during a beta: they hit the problem, they have
+            the context, and they are about to give up. Mounting the
+            widget only on the completed report had it backwards. */}
+        <FeedbackWidget />
       </div>
     );
   }
@@ -93,6 +99,11 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
             </div>
           </Card>
         </div>
+
+        {/* Also here: an analysis that sits in "processing" longer than
+            someone expected is a complaint we want to receive while they
+            are still watching it, not after they have left. */}
+        <FeedbackWidget />
       </div>
     );
   }
