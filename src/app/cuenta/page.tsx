@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Star, BarChart3, Lock, Sparkles, Clock3, ArrowUpRight } from "lucide-react";
 import { CheckoutReturnTracker } from "@/components/billing/CheckoutReturnTracker";
+import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { buildMetadata } from "@/lib/seo";
@@ -241,6 +242,11 @@ export default async function CuentaPage() {
           </Button>
         </form>
       </div>
+
+      {/* Beta channel. Lives on the workspace because this is where
+          someone lands after using the product, which is when they
+          actually have something to say. */}
+      <FeedbackWidget />
     </div>
   );
 }

@@ -168,6 +168,18 @@ export type DocumentChunkRow = {
  * it is written as a JSON-encoded array string and comes back the same
  * way over PostgREST, which is why the type is string rather than number[].
  */
+/** Mirrors 0008_feedback.sql. Beta feedback channel. */
+export type FeedbackRow = {
+  id: string;
+  user_id: string | null;
+  kind: "comment" | "problem" | "idea";
+  message: string;
+  page_path: string | null;
+  context: Record<string, unknown>;
+  status: "new" | "reviewed" | "resolved";
+  created_at: string;
+};
+
 export type DocumentChunkEmbeddingRow = {
   chunk_id: number;
   model: string;
@@ -343,6 +355,12 @@ export type Database = {
           embedding: string;
         };
         Update: Partial<DocumentChunkEmbeddingRow>;
+        Relationships: [];
+      };
+      feedback: {
+        Row: FeedbackRow;
+        Insert: Partial<FeedbackRow> & { message: string };
+        Update: Partial<FeedbackRow>;
         Relationships: [];
       };
       citations: {

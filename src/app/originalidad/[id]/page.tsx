@@ -23,6 +23,7 @@ import { ScoreCard } from "@/components/originality/ScoreCard";
 import { EngineStatusBanner, ExternalSearchNotice } from "@/components/originality/EngineStatusBanner";
 import { ReferenceStatusBadge, ReferenceStatusLegend } from "@/components/originality/ReferenceStatusBadge";
 import { AnalyticsPageEvent } from "@/components/AnalyticsPageEvent";
+import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 
 export const metadata: Metadata = buildMetadata({
   title: "Informe de originalidad",
@@ -285,6 +286,11 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
           {references.length > 0 && <ReferenceStatusLegend />}
         </Card>
       </div>
+
+      {/* The report is where a misunderstanding is most costly and most
+          likely: someone is deciding what a similarity figure means about
+          their own work. Reaching us should not require leaving the page. */}
+      <FeedbackWidget />
     </div>
   );
 }
