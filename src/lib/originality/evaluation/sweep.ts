@@ -67,14 +67,17 @@ export interface StableZone {
  */
 export function findStableZone(rows: SweepRow[]): StableZone | null {
   if (rows.length === 0) return null;
-  const bestF1 = Math.max(...rows.map((r) => r.f1));
+  // A null F1 means the threshold flagged nothing at all — that is not a
+  // candidate for "best", so it is floored to 0 rather than propagated.
+  const f1Of = (row: SweepRow) => row.f1 ?? 0;
+  const bestF1 = Math.max(...rows.map(f1Of));
   if (bestF1 === 0) return null;
 
   let best: { start: number; end: number } | null = null;
   let start: number | null = null;
 
   rows.forEach((row, index) => {
-    const isBest = Math.abs(row.f1 - bestF1) < 1e-9;
+    const isBest = Math.abs(f1Of(row) - bestF1) < 1e-9;
     if (isBest && start === null) start = index;
     if ((!isBest || index === rows.length - 1) && start !== null) {
       const end = isBest ? index : index - 1;
@@ -90,13 +93,18 @@ export function findStableZone(rows: SweepRow[]): StableZone | null {
   return { low, high, midpoint: (low + high) / 2, bestF1, width: high - low };
 }
 
+/** "  n/a" when a metric is undefined because nothing was flagged. */
+function fmt(value: number | null): string {
+  return value === null ? "  n/a" : value.toFixed(3);
+}
+
 /** Renders the sweep as a fixed-width table for test output. */
 export function formatSweep(rows: SweepRow[]): string {
   const header = "  thr    P      R      F1     TP TN FP FN  misses";
   const body = rows.map((r) => {
     const misses = [...r.falsePositiveIds.map((id) => `+${id}`), ...r.falseNegativeIds.map((id) => `-${id}`)];
     return (
-      `  ${r.threshold.toFixed(2)}   ${r.precision.toFixed(3)}  ${r.recall.toFixed(3)}  ${r.f1.toFixed(3)}  ` +
+      `  ${r.threshold.toFixed(2)}   ${fmt(r.precision)}  ${fmt(r.recall)}  ${fmt(r.f1)}  ` +
       `${String(r.truePositives).padStart(2)} ${String(r.trueNegatives).padStart(2)} ` +
       `${String(r.falsePositives).padStart(2)} ${String(r.falseNegatives).padStart(2)}  ${misses.join(" ")}`
     );
