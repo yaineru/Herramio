@@ -169,6 +169,36 @@ export class SemanticSimilarityEngine {
   }
 }
 
+/**
+ * Cosine similarity at or above which a passage is treated as plausibly
+ * derived from the source.
+ *
+ * Measured, not guessed. scripts/semantic-benchmark.mjs runs the golden
+ * dataset through real text-embedding-3-small vectors and sweeps every
+ * threshold from 0.50 to 0.95; results in tests/fixtures/semantic-benchmark.json.
+ * F1 peaks at 98.2% across a 0.525–0.625 plateau, and 0.575 is its
+ * midpoint.
+ *
+ * Two things worth knowing about this number:
+ *
+ * 1. It is deliberately biased toward precision. On this dataset the two
+ *    classes OVERLAP — the lowest genuinely-derived case scores 0.4221
+ *    (one sentence copied into a long original, where the copied part is
+ *    diluted by the surrounding text) while the highest independently
+ *    written case scores 0.5112 (a textbook definition of the same term).
+ *    No threshold separates them cleanly, so this one sits above both:
+ *    it gives up that fragment rather than accuse someone who wrote a
+ *    standard definition.
+ *
+ * 2. Giving it up costs nothing overall, because the LEXICAL engine
+ *    catches that exact case by containment (0.3636, over its 0.25 bar).
+ *    That is the whole argument for running both: lexical finds verbatim
+ *    fragments buried in longer text, semantic finds whole passages that
+ *    were reworded, and hybrid scored 100% precision AND 100% recall on
+ *    the derivation question where lexical alone reached 82.1% recall.
+ */
+export const SEMANTIC_MATCH_THRESHOLD = 0.575;
+
 export function classifySemanticThreshold(similarity: number): SemanticThreshold {
   if (similarity >= 0.85) return "high";
   if (similarity >= 0.7) return "moderate";

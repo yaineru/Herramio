@@ -55,7 +55,28 @@ export interface GoldenCase {
   shouldMatch: boolean;
   /** True when only a semantic engine could plausibly catch this — documents a known lexical limitation. */
   semanticOnly?: boolean;
+  /**
+   * What a SEMANTIC engine should conclude. Defaults to `shouldMatch`.
+   *
+   * These are two different questions and conflating them produces
+   * nonsense metrics. `shouldMatch` asks "is there shared wording?" — a
+   * paraphrase answers no, correctly. The semantic question is "was this
+   * text derived from the source?", and a paraphrase answers yes. The
+   * first benchmark run scored every paraphrase the semantic engine
+   * caught as a false positive, which measured the engine against the
+   * wrong ground truth and made it look far worse than it is.
+   *
+   * The line is derivation, not topic: a passage rewritten from the
+   * source should match; a passage written independently about the same
+   * subject should not, however similar the vocabulary.
+   */
+  semanticShouldMatch?: boolean;
   note: string;
+}
+
+/** Ground truth for the semantic engine, falling back to the lexical label. */
+export function expectedSemanticMatch(c: GoldenCase): boolean {
+  return c.semanticShouldMatch ?? c.shouldMatch;
 }
 
 export const SOURCE_TEXT = `Artificial intelligence is transforming higher education around the world today.
@@ -168,6 +189,7 @@ I personally believe this shift raises important questions for students everywhe
 Academic institutions increasingly deploy software that assists scholars and teaching staff.`,
     shouldMatch: false,
     semanticOnly: true,
+    semanticShouldMatch: true,
     note: "Paráfrasis real: mismo significado, palabras distintas. Un motor léxico NO puede detectarlo — limitación declarada.",
   },
   {
@@ -234,6 +256,7 @@ These birds experience more daylight than any other creature on the planet.`,
     text: `Smith (2024) argues that machine learning is reshaping university teaching and institutions are adopting digital tools to support research and instruction.`,
     shouldMatch: false,
     semanticOnly: true,
+    semanticShouldMatch: true,
     note: "Paráfrasis con cita — la atribución ayuda, pero el motor léxico sigue sin detectar la reescritura.",
   },
   {
@@ -267,6 +290,7 @@ Universities are adopting new instruments to support learners and faculty in res
 Colleges are embracing fresh instruments to assist pupils and staff in study and instruction.`,
     shouldMatch: false,
     semanticOnly: true,
+    semanticShouldMatch: true,
     note: "Sustitución de casi todos los términos — fuera del alcance léxico por diseño; sólo un motor semántico lo alcanzaría.",
   },
   {
@@ -300,6 +324,7 @@ No previous study in this region combined household surveys with school administ
 Institutions of higher learning are embracing novel instruments to aid learners and academics in scholarship and instruction.`,
     shouldMatch: false,
     semanticOnly: true,
+    semanticShouldMatch: true,
     note: "Paráfrasis por sinónimos — límite léxico conocido y documentado.",
   },
   {
@@ -308,6 +333,7 @@ Institutions of higher learning are embracing novel instruments to aid learners 
     text: `Across universities worldwide, a shift is underway: the tools now being adopted to help both faculty and students with teaching and research are driven by artificial intelligence.`,
     shouldMatch: false,
     semanticOnly: true,
+    semanticShouldMatch: true,
     note: "Misma idea reestructurada en una sola oración — límite léxico conocido.",
   },
   {

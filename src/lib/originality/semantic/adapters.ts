@@ -1,5 +1,4 @@
 import {
-  EmbeddingDimensionMismatchError,
   EmbeddingModelMetadata,
   EmbeddingProvider,
   EmbeddingResult,
@@ -185,72 +184,5 @@ export class VoyageEmbeddingAdapter extends BaseEmbeddingAdapter {
   async embed(): Promise<EmbeddingResult[]> {
     this.requireApiKey("Voyage", this.config.apiKey);
     throw new Error("Voyage provider adapter is prepared but no real API credential is configured in this environment.");
-  }
-}
-
-export function safeEmbeddingProviderFactory(config: EmbeddingProviderConfig): EmbeddingProvider {
-  if ((config.provider ?? config.model).toLowerCase().includes("openai") || config.model.toLowerCase().includes("openai")) {
-    return new OpenAIEmbeddingAdapter(config);
-  }
-  if ((config.provider ?? config.model).toLowerCase().includes("cohere") || config.model.toLowerCase().includes("cohere")) {
-    return new CohereEmbeddingAdapter(config);
-  }
-  if ((config.provider ?? config.model).toLowerCase().includes("voyage") || config.model.toLowerCase().includes("voyage")) {
-    return new VoyageEmbeddingAdapter(config);
-  }
-  return new MockEmbeddingAdapter(config);
-}
-
-export function buildEmbeddingProviderFromEnv(): EmbeddingProvider | null {
-  const provider = (process.env.EMBEDDING_PROVIDER ?? "").trim().toLowerCase();
-  const apiKey = (process.env.EMBEDDING_PROVIDER_API_KEY ?? "").trim();
-
-  if (!provider) return null;
-  if (provider === "mock") {
-    return new MockEmbeddingAdapter({ provider: "mock", model: "mock-embedding-v1", version: "v1" });
-  }
-  if (provider === "openai" && apiKey) {
-    return new OpenAIEmbeddingAdapter({
-      provider: "openai",
-      apiKey,
-      model: "text-embedding-3-small",
-      version: "v1",
-      dimensions: STORED_EMBEDDING_DIMENSIONS,
-      batchSize: 32,
-      timeoutMs: 10000,
-      maxRetries: 2,
-    });
-  }
-  if (provider === "cohere" && apiKey) {
-    return new CohereEmbeddingAdapter({
-      provider: "cohere",
-      apiKey,
-      model: "embed-v3.0",
-      version: "v3",
-      dimensions: STORED_EMBEDDING_DIMENSIONS,
-      batchSize: 16,
-      timeoutMs: 10000,
-      maxRetries: 2,
-    });
-  }
-  if (provider === "voyage" && apiKey) {
-    return new VoyageEmbeddingAdapter({
-      provider: "voyage",
-      apiKey,
-      model: "voyage-3",
-      version: "v1",
-      dimensions: STORED_EMBEDDING_DIMENSIONS,
-      batchSize: 16,
-      timeoutMs: 10000,
-      maxRetries: 2,
-    });
-  }
-
-  return null;
-}
-
-export function validateEmbeddingDimensions(provider: EmbeddingProvider): void {
-  if (provider.metadata.dimensions !== STORED_EMBEDDING_DIMENSIONS) {
-    throw new EmbeddingDimensionMismatchError(provider.metadata.model, provider.metadata.dimensions);
   }
 }

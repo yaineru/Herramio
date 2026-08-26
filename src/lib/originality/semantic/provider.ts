@@ -65,60 +65,6 @@ export class MockEmbeddingProvider implements EmbeddingProvider {
  */
 export const STORED_EMBEDDING_DIMENSIONS = 1536;
 
-/** Provider names that have a REAL adapter implemented. Empty until one is written. */
-const IMPLEMENTED_PROVIDERS: readonly string[] = [];
-
-/**
- * Resolves the configured embedding provider, or null when semantic
- * analysis is genuinely unavailable.
- *
- * Two rules this function exists to enforce, both of which were violated
- * by an earlier version that returned a `MockEmbeddingProvider` labelled
- * `openai-text-embedding-3-small` whenever an API key was present:
- *
- *  1. The mock NEVER stands in for a real provider. Its vectors are
- *     deterministic nonsense derived from string length — similarity
- *     computed from them is meaningless. Returning it under a real
- *     model's name would put fabricated numbers in front of a user who
- *     is deciding whether someone plagiarised, and would persist those
- *     vectors into `document_chunk_embeddings` under a real model name,
- *     silently poisoning the corpus for the day a real adapter IS
- *     connected.
- *  2. The mock never activates in production, even if explicitly asked
- *     for — a stray env var must not be able to turn fake analysis on
- *     for real users.
- *
- * Naming a provider with no adapter yet returns null and logs why, which
- * surfaces as an honest "semantic analysis unavailable" in the report.
- */
-export function buildEmbeddingProviderFromEnv(): EmbeddingProvider | null {
-  const provider = (process.env.EMBEDDING_PROVIDER ?? "").trim().toLowerCase();
-  if (!provider) return null;
-
-  if (provider === "mock") {
-    if (process.env.NODE_ENV === "production") {
-      console.error(
-        "EMBEDDING_PROVIDER=mock ignorado en producción: el proveedor mock genera vectores falsos y nunca debe " +
-          "producir resultados que un usuario pueda interpretar como reales.",
-      );
-      return null;
-    }
-    return new MockEmbeddingProvider();
-  }
-
-  if (!IMPLEMENTED_PROVIDERS.includes(provider)) {
-    console.warn(
-      `EMBEDDING_PROVIDER="${provider}" no tiene un adaptador real implementado todavía. ` +
-        `El análisis semántico permanece desactivado (no se inventan embeddings). Ver ORIGINALITY.md.`,
-    );
-    return null;
-  }
-
-  // Unreachable while IMPLEMENTED_PROVIDERS is empty. A real adapter is
-  // constructed here — and only here — once written.
-  return null;
-}
-
 export class EmbeddingDimensionMismatchError extends Error {
   constructor(model: string, actual: number) {
     super(
@@ -127,29 +73,4 @@ export class EmbeddingDimensionMismatchError extends Error {
     );
     this.name = "EmbeddingDimensionMismatchError";
   }
-}
-
-/**
- * Returns the configured embedding provider, or null when none is set up.
- *
- * Null is a first-class, expected state — not an error. Callers MUST
- * treat it as "semantic analysis unavailable" and say so in the report,
- * never substitute a fabricated similarity score. No provider is
- * configured today: connecting one means implementing `EmbeddingProvider`
- * here and supplying its API key. See ORIGINALITY.md.
- */
-export function getEmbeddingProvider(): EmbeddingProvider | null {
-  return buildEmbeddingProviderFromEnv();
-}
-
-export function requireEmbeddingProvider(): EmbeddingProvider {
-  const provider = getEmbeddingProvider();
-  if (!provider) {
-    throw new SemanticProviderNotConfiguredError();
-  }
-  return provider;
-}
-
-export function isSemanticAnalysisAvailable(): boolean {
-  return getEmbeddingProvider() !== null;
 }

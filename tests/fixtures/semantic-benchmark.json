@@ -1,0 +1,775 @@
+{
+  "measuredAt": "2026-08-26T17:43:16.367Z",
+  "model": "text-embedding-3-small",
+  "dimensions": 1536,
+  "cases": 36,
+  "lexicalThreshold": 0.25,
+  "semanticThreshold": 0.575,
+  "semanticPlateau": [
+    0.525,
+    0.625
+  ],
+  "strategies": {
+    "lexical": {
+      "tp": 23,
+      "tn": 13,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "falsePositives": [],
+      "falseNegatives": []
+    },
+    "lexical (semantic q.)": {
+      "tp": 23,
+      "tn": 8,
+      "fp": 0,
+      "fn": 5,
+      "precision": 1,
+      "recall": 0.8214285714285714,
+      "f1": 0.9019607843137255,
+      "falsePositives": [],
+      "falseNegatives": [
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "synonym_paraphrase",
+        "restructured_paraphrase"
+      ]
+    },
+    "semantic": {
+      "tp": 27,
+      "tn": 8,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.9642857142857143,
+      "f1": 0.9818181818181818,
+      "falsePositives": [],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    "hybrid": {
+      "tp": 28,
+      "tn": 8,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "falsePositives": [],
+      "falseNegatives": []
+    }
+  },
+  "semanticSweep": [
+    {
+      "threshold": 0.5,
+      "tp": 27,
+      "tn": 7,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.9642857142857143,
+      "recall": 0.9642857142857143,
+      "f1": 0.9642857142857143,
+      "falsePositives": [
+        "common_definition"
+      ],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.525,
+      "tp": 27,
+      "tn": 8,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.9642857142857143,
+      "f1": 0.9818181818181818,
+      "falsePositives": [],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.55,
+      "tp": 27,
+      "tn": 8,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.9642857142857143,
+      "f1": 0.9818181818181818,
+      "falsePositives": [],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.575,
+      "tp": 27,
+      "tn": 8,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.9642857142857143,
+      "f1": 0.9818181818181818,
+      "falsePositives": [],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.6,
+      "tp": 27,
+      "tn": 8,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.9642857142857143,
+      "f1": 0.9818181818181818,
+      "falsePositives": [],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.625,
+      "tp": 27,
+      "tn": 8,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1,
+      "recall": 0.9642857142857143,
+      "f1": 0.9818181818181818,
+      "falsePositives": [],
+      "falseNegatives": [
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.65,
+      "tp": 25,
+      "tn": 8,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1,
+      "recall": 0.8928571428571429,
+      "f1": 0.9433962264150945,
+      "falsePositives": [],
+      "falseNegatives": [
+        "short_fragment",
+        "paraphrase_with_citation",
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.675,
+      "tp": 25,
+      "tn": 8,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1,
+      "recall": 0.8928571428571429,
+      "f1": 0.9433962264150945,
+      "falsePositives": [],
+      "falseNegatives": [
+        "short_fragment",
+        "paraphrase_with_citation",
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.7,
+      "tp": 25,
+      "tn": 8,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1,
+      "recall": 0.8928571428571429,
+      "f1": 0.9433962264150945,
+      "falsePositives": [],
+      "falseNegatives": [
+        "short_fragment",
+        "paraphrase_with_citation",
+        "fragment_in_unique_text"
+      ]
+    },
+    {
+      "threshold": 0.725,
+      "tp": 23,
+      "tn": 8,
+      "fp": 0,
+      "fn": 5,
+      "precision": 1,
+      "recall": 0.8214285714285714,
+      "f1": 0.9019607843137255,
+      "falsePositives": [],
+      "falseNegatives": [
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "fragment_in_unique_text",
+        "synonym_paraphrase"
+      ]
+    },
+    {
+      "threshold": 0.75,
+      "tp": 21,
+      "tn": 8,
+      "fp": 0,
+      "fn": 7,
+      "precision": 1,
+      "recall": 0.75,
+      "f1": 0.8571428571428571,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase"
+      ]
+    },
+    {
+      "threshold": 0.775,
+      "tp": 20,
+      "tn": 8,
+      "fp": 0,
+      "fn": 8,
+      "precision": 1,
+      "recall": 0.7142857142857143,
+      "f1": 0.8333333333333333,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.8,
+      "tp": 20,
+      "tn": 8,
+      "fp": 0,
+      "fn": 8,
+      "precision": 1,
+      "recall": 0.7142857142857143,
+      "f1": 0.8333333333333333,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.825,
+      "tp": 20,
+      "tn": 8,
+      "fp": 0,
+      "fn": 8,
+      "precision": 1,
+      "recall": 0.7142857142857143,
+      "f1": 0.8333333333333333,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.85,
+      "tp": 18,
+      "tn": 8,
+      "fp": 0,
+      "fn": 10,
+      "precision": 1,
+      "recall": 0.6428571428571429,
+      "f1": 0.782608695652174,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "multiple_fragments",
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "restructured_paraphrase",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.875,
+      "tp": 17,
+      "tn": 8,
+      "fp": 0,
+      "fn": 11,
+      "precision": 1,
+      "recall": 0.6071428571428571,
+      "f1": 0.7555555555555554,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "multiple_fragments",
+        "short_fragment",
+        "paraphrase",
+        "paraphrase_with_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "restructured_paraphrase",
+        "uncited_reference",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.9,
+      "tp": 13,
+      "tn": 8,
+      "fp": 0,
+      "fn": 15,
+      "precision": 1,
+      "recall": 0.4642857142857143,
+      "f1": 0.6341463414634146,
+      "falsePositives": [],
+      "falseNegatives": [
+        "embedded_copy",
+        "multiple_fragments",
+        "short_fragment",
+        "paraphrase",
+        "cited_copy",
+        "uncited_copy",
+        "paraphrase_with_citation",
+        "misattributed_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "restructured_paraphrase",
+        "orphan_citation",
+        "uncited_reference",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.925,
+      "tp": 11,
+      "tn": 8,
+      "fp": 0,
+      "fn": 17,
+      "precision": 1,
+      "recall": 0.39285714285714285,
+      "f1": 0.5641025641025641,
+      "falsePositives": [],
+      "falseNegatives": [
+        "exact_long",
+        "embedded_copy",
+        "multiple_fragments",
+        "short_fragment",
+        "paraphrase",
+        "cited_copy",
+        "uncited_copy",
+        "paraphrase_with_citation",
+        "misattributed_citation",
+        "heavy_substitutions",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "restructured_paraphrase",
+        "voice_change",
+        "orphan_citation",
+        "uncited_reference",
+        "mixed_document"
+      ]
+    },
+    {
+      "threshold": 0.95,
+      "tp": 8,
+      "tn": 8,
+      "fp": 0,
+      "fn": 20,
+      "precision": 1,
+      "recall": 0.2857142857142857,
+      "f1": 0.4444444444444445,
+      "falsePositives": [],
+      "falseNegatives": [
+        "exact_long",
+        "case_variation",
+        "embedded_copy",
+        "multiple_fragments",
+        "short_fragment",
+        "paraphrase",
+        "cited_copy",
+        "uncited_copy",
+        "paraphrase_with_citation",
+        "misattributed_citation",
+        "reordered_clauses",
+        "heavy_substitutions",
+        "formatting_changes",
+        "fragment_in_unique_text",
+        "synonym_paraphrase",
+        "restructured_paraphrase",
+        "voice_change",
+        "orphan_citation",
+        "uncited_reference",
+        "mixed_document"
+      ]
+    }
+  ],
+  "perCase": [
+    {
+      "id": "exact",
+      "kind": "exact_copy",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 1
+    },
+    {
+      "id": "exact_long",
+      "kind": "exact_copy_long",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.9212
+    },
+    {
+      "id": "case_variation",
+      "kind": "case_variation",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.9456
+    },
+    {
+      "id": "one_word_changed",
+      "kind": "inserted_words",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.8636,
+      "semantic": 0.9978
+    },
+    {
+      "id": "words_inserted",
+      "kind": "inserted_words",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.8182,
+      "semantic": 0.9745
+    },
+    {
+      "id": "words_deleted",
+      "kind": "deleted_words",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.6842,
+      "semantic": 0.9689
+    },
+    {
+      "id": "punctuation_changed",
+      "kind": "punctuation_only",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.9711
+    },
+    {
+      "id": "split_sentences",
+      "kind": "split_sentences",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.9805
+    },
+    {
+      "id": "merged_sentences",
+      "kind": "merged_sentences",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.9805
+    },
+    {
+      "id": "embedded_copy",
+      "kind": "embedded_copy",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.7304
+    },
+    {
+      "id": "multiple_fragments",
+      "kind": "multiple_fragments",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.9091,
+      "semantic": 0.8309
+    },
+    {
+      "id": "short_fragment",
+      "kind": "short_fragment",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.7692,
+      "semantic": 0.6437
+    },
+    {
+      "id": "paraphrase",
+      "kind": "paraphrase",
+      "expected": false,
+      "expectedSemantic": true,
+      "semanticOnly": true,
+      "lexical": 0,
+      "semantic": 0.703
+    },
+    {
+      "id": "semantic_related",
+      "kind": "semantic_related",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0,
+      "semantic": 0.4083
+    },
+    {
+      "id": "generic_heading",
+      "kind": "generic_heading",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0,
+      "semantic": 0.1686
+    },
+    {
+      "id": "common_heading",
+      "kind": "common_heading",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0,
+      "semantic": 0.1324
+    },
+    {
+      "id": "generic_academic",
+      "kind": "generic_academic",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0,
+      "semantic": 0.4655
+    },
+    {
+      "id": "independent_concept",
+      "kind": "independent_concept",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0,
+      "semantic": 0.4341
+    },
+    {
+      "id": "unrelated",
+      "kind": "unrelated",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0,
+      "semantic": 0.0967
+    },
+    {
+      "id": "cited_copy",
+      "kind": "cited_copy",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.8978
+    },
+    {
+      "id": "uncited_copy",
+      "kind": "uncited_copy",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.8831
+    },
+    {
+      "id": "paraphrase_with_citation",
+      "kind": "paraphrase_with_citation",
+      "expected": false,
+      "expectedSemantic": true,
+      "semanticOnly": true,
+      "lexical": 0.0526,
+      "semantic": 0.6407
+    },
+    {
+      "id": "misattributed_citation",
+      "kind": "misattributed_citation",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.8868
+    },
+    {
+      "id": "reordered_clauses",
+      "kind": "reordered",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.7273,
+      "semantic": 0.9338
+    },
+    {
+      "id": "synonym_substitutions",
+      "kind": "substitutions",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.5909,
+      "semantic": 0.955
+    },
+    {
+      "id": "heavy_substitutions",
+      "kind": "substitutions",
+      "expected": false,
+      "expectedSemantic": true,
+      "semanticOnly": true,
+      "lexical": 0,
+      "semantic": 0.7373
+    },
+    {
+      "id": "formatting_changes",
+      "kind": "formatting_changes",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.9321
+    },
+    {
+      "id": "fragment_in_unique_text",
+      "kind": "fragment_in_unique_text",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.3636,
+      "semantic": 0.4221
+    },
+    {
+      "id": "synonym_paraphrase",
+      "kind": "synonym_paraphrase",
+      "expected": false,
+      "expectedSemantic": true,
+      "semanticOnly": true,
+      "lexical": 0,
+      "semantic": 0.7179
+    },
+    {
+      "id": "restructured_paraphrase",
+      "kind": "restructured_paraphrase",
+      "expected": false,
+      "expectedSemantic": true,
+      "semanticOnly": true,
+      "lexical": 0,
+      "semantic": 0.8472
+    },
+    {
+      "id": "voice_change",
+      "kind": "voice_change",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.5909,
+      "semantic": 0.9114
+    },
+    {
+      "id": "common_definition",
+      "kind": "common_definition",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0.0588,
+      "semantic": 0.5112
+    },
+    {
+      "id": "short_common_phrase",
+      "kind": "short_common_phrase",
+      "expected": false,
+      "expectedSemantic": false,
+      "semanticOnly": false,
+      "lexical": 0.2222,
+      "semantic": 0.3052
+    },
+    {
+      "id": "orphan_citation",
+      "kind": "orphan_citation",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.884
+    },
+    {
+      "id": "uncited_reference",
+      "kind": "uncited_reference",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 1,
+      "semantic": 0.8645
+    },
+    {
+      "id": "mixed_document",
+      "kind": "mixed_document",
+      "expected": true,
+      "expectedSemantic": true,
+      "semanticOnly": false,
+      "lexical": 0.9091,
+      "semantic": 0.7574
+    }
+  ],
+  "usage": {
+    "apiCalls": 2,
+    "apiTokens": 1121,
+    "cacheHits": 0,
+    "cacheMisses": 37,
+    "embedMs": 1413,
+    "estimatedCostUsd": 0.00002242
+  }
+}

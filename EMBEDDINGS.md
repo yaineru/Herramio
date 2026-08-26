@@ -1,8 +1,8 @@
 # Proveedor de embeddings — investigación y decisión
 
-Estado: **PREPARED, NOT CONFIGURED**. La arquitectura está lista y probada; falta
-una API key para activarla. Este documento existe para que esa activación sea una
-decisión tomada con datos, no en el momento.
+Estado: **PROVIDER ACTIVO Y MEDIDO** en local. El adaptador real de OpenAI está
+conectado, el benchmark corrió con vectores reales, y el umbral está calibrado por
+sweep. Pendiente: integrarlo en el pipeline de análisis y desplegarlo.
 
 ## Recomendación
 
@@ -47,48 +47,78 @@ los 8 191 de OpenAI sobran por más de un orden de magnitud.
 
 ## Coste real medido
 
-No estimado sobre un documento hipotético: calculado sobre
-`tests/fixtures/herramio_originalidad_prueba.pdf`, el documento de QA real.
+Medido con `scripts/measure-document-cost.mjs`, que corre la extracción y el
+chunking reales sobre `tests/fixtures/herramio_originalidad_prueba.pdf` y usa el
+contador de tokens que devuelve la propia API de OpenAI. No es una estimación por
+caracteres: la estimación previa daba 1 197–1 368 tokens y el número real es **958**,
+un 25 % menos.
 
 ```
-633 palabras embebibles · 4 785 caracteres · 3 de 3 chunks superan el mínimo
-Tokens estimados: 1 197 – 1 368
+2 paginas · 611 palabras · 3 chunks · 3 embebibles · 0 omitidos
+
+1a pasada (fria)      1 llamada   958 tokens   cacheMiss=3   1393ms   $0.00001916
+2a pasada (cacheada)  0 llamadas    0 tokens   cacheHit=3       0ms   $0.00000000
 ```
 
-El rango existe porque el español consume más tokens por carácter que el inglés
-(acentos, palabras más largas); se acota por ambos extremos en vez de fingir una
-cifra exacta.
+| | Medido |
+|---|---|
+| Coste de este documento | **$0.00001916** |
+| Por 1 000 documentos | **$0.0192** |
+| Documentos que cubre un Pro de $3.99 | **208 246** |
+| Ahorro del caché al reanalizar | **100 %** (0 llamadas) |
+| Llamadas por documento | **1** (3 chunks en un solo lote) |
 
-| Proveedor | Coste / documento | Coste / 1 000 documentos | Documentos que cubre un Pro de $3.99 |
-|---|---|---|---|
-| **OpenAI 3-small** | **$0.000024 – $0.000027** | **$0.027** | **145 833** |
-| OpenAI 3-small (Batch) | $0.000012 – $0.000014 | $0.014 | 291 666 |
-| Cohere embed-v4 | $0.000144 – $0.000164 | $0.164 | 24 305 |
-| Voyage-4-large | $0.000215 – $0.000246 | $0.246 | 16 203 |
+Comparado con las alternativas al mismo volumen: Cohere embed-v4 costaría
+~$0.115 / 1 000 documentos y Voyage-4-large ~$0.172 / 1 000 — seis y nueve veces más
+por una mejora que este corpus no recibe.
 
-La conclusión operativa: con OpenAI, los embeddings **no son el factor limitante
-del margen**. Un plan Pro absorbe seis cifras de documentos antes de que el coste
-de embeddings importe. Lo que sí puede doler es la capa de análisis con LLM, que
-es dos a tres órdenes de magnitud más cara por documento — por eso esa capa está
-diseñada como opcional y bajo control de cuota.
+La conclusión operativa: los embeddings **no son el factor limitante del margen**.
+Lo que sí puede doler es la capa de análisis con LLM, dos a tres órdenes de magnitud
+más cara por documento — por eso esa capa se diseña como opcional y con cuota.
 
-El caché reduce esto aún más: la clave es
-`sha256(provider:model:version:normalizedText)`, así que reanalizar un documento
-sin cambios, o dos documentos que compartan un pasaje, cuesta un embedding y no
-varios.
+## Resultados del benchmark
 
-## Qué falta para activarlo
+Medido con `scripts/semantic-benchmark.mjs` sobre los 36 casos del golden dataset,
+con vectores reales. Resultados completos en `tests/fixtures/semantic-benchmark.json`
+y fijados por `tests/unit/originality-semantic-benchmark.test.ts`.
 
-1. `EMBEDDING_PROVIDER=openai` y `EMBEDDING_PROVIDER_API_KEY=…` en Vercel.
-2. Escribir el adaptador real en `src/lib/originality/semantic/provider.ts` y
-   añadir `"openai"` a `IMPLEMENTED_PROVIDERS`, que hoy está vacío
-   deliberadamente.
-3. Ejecutar el benchmark semántico contra el golden dataset (léxico vs semántico
-   vs híbrido) antes de mostrar nada al usuario.
-4. Recalibrar el umbral con el sweep, igual que se hizo con el léxico.
+| Strategy | Precision | Recall | F1 | FP | FN |
+|---|---|---|---|---|---|
+| lexical (pregunta léxica) | 100.0 % | 100.0 % | 100.0 % | 0 | 0 |
+| lexical (pregunta semántica) | 100.0 % | 82.1 % | 90.2 % | 0 | 5 |
+| semantic | 100.0 % | 96.4 % | 98.2 % | 0 | 1 |
+| **hybrid** | **100.0 %** | **100.0 %** | **100.0 %** | **0** | **0** |
 
-Hasta que eso ocurra el sistema reporta `semantic_unavailable` y no inventa
-ningún número. Esa es la conducta correcta y está cubierta por tests.
+La segunda fila es la que justifica el gasto: el mismo motor léxico, evaluado contra
+la pregunta que importa ("¿este texto deriva de la fuente?"), pierde las cinco
+paráfrasis. El semántico las recupera **sin coste en precisión**.
+
+**Umbral semántico: 0.575**, punto medio de la meseta 0.525–0.625 donde F1 es máximo.
+
+Un matiz que conviene no esconder: en este dataset las dos clases **se solapan**. El
+caso derivado más bajo puntúa 0.4221 (una frase copiada dentro de un documento largo,
+diluida en el embedding del conjunto) y el no-derivado más alto puntúa 0.5112 (una
+definición de manual del mismo término). Ningún umbral los separa limpiamente, así
+que 0.575 se sitúa por encima de ambos: sacrifica ese fragmento antes que acusar a
+quien escribió una definición estándar. No cuesta nada en conjunto porque el motor
+léxico sí lo atrapa por containment (0.3636). Ese es todo el argumento para correr
+los dos.
+
+## Qué falta
+
+Hecho: adaptador real, resolución endurecida, benchmark, umbral calibrado, coste
+medido, tests de regresión.
+
+Pendiente:
+
+1. **Integrar en el pipeline.** `runOriginalityPipeline` todavía no genera ni
+   persiste embeddings, y `semanticRatio` está fijo en 0. El motor está validado
+   pero aún no toca un documento de usuario.
+2. **Desplegar en Preview** con `EMBEDDING_PROVIDER=openai` y la key, y correr el
+   flujo real allí antes de tocar producción.
+
+Mientras el paso 1 no exista, el sistema sigue reportando `semantic_unavailable`,
+que es la conducta correcta y está cubierta por tests.
 
 ## Riesgo a vigilar cuando se active
 

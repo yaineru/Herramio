@@ -1,12 +1,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { embedChunks, isWorthEmbedding } from "@/lib/originality/semantic/embed-chunks";
 import { EmbeddingCache } from "@/lib/originality/semantic/engine";
-import {
-  getEmbeddingProvider,
-  isSemanticAnalysisAvailable,
-  STORED_EMBEDDING_DIMENSIONS,
-  type EmbeddingProvider,
-} from "@/lib/originality/semantic/provider";
+import { STORED_EMBEDDING_DIMENSIONS, type EmbeddingProvider } from "@/lib/originality/semantic/provider";
+import { getEmbeddingProvider, isSemanticAnalysisAvailable } from "@/lib/originality/semantic/resolve";
 
 function makeMockProvider(overrides: Partial<EmbeddingProvider["metadata"]> = {}): {
   provider: EmbeddingProvider;
@@ -41,19 +37,62 @@ describe("semantic provider configuration — anti-fabrication guarantees", () =
     vi.stubEnv("NODE_ENV", originalNodeEnv as string);
   });
 
-  it("NEVER returns a mock dressed up as a real provider when an API key is present", () => {
+  it("resolves openai to the REAL adapter, never to a mock wearing its name", () => {
     // Regression test for a real bug: naming a real provider with any API
     // key used to return a MockEmbeddingProvider labelled
     // "openai-text-embedding-3-small". That would have shown fabricated
     // similarity to a user judging plagiarism AND persisted junk vectors
     // into document_chunk_embeddings under a real model name, poisoning
-    // the corpus for whenever a genuine adapter is finally connected.
-    for (const name of ["openai", "cohere", "voyage"]) {
+    // the corpus for whenever a genuine adapter was finally connected.
+    //
+    // Now that OpenAI IS implemented the assertion inverts: it must
+    // resolve, and what it resolves to must be the real adapter. The
+    // property being protected is the same one — the thing behind a real
+    // provider name is never fake.
+    process.env.EMBEDDING_PROVIDER = "openai";
+    process.env.EMBEDDING_PROVIDER_API_KEY = "sk-looks-real-but-unused";
+    const provider = getEmbeddingProvider();
+
+    expect(provider).not.toBeNull();
+    expect(provider!.constructor.name).toBe("OpenAIEmbeddingAdapter");
+    expect(provider!.metadata.provider).toBe("openai");
+    expect(provider!.metadata.model).toBe("text-embedding-3-small");
+    expect(provider!.metadata.model).not.toContain("mock");
+    // Must match the column the vectors are stored in, or persistence
+    // would silently mix dimensionalities.
+    expect(provider!.metadata.dimensions).toBe(1536);
+  });
+
+  it("returns null for a provider that is named but has no adapter yet", () => {
+    // Cohere and Voyage have prepared classes that throw rather than
+    // embed. Resolution must not hand one of those out as if semantic
+    // analysis were available — the report would then fail mid-analysis
+    // instead of honestly reporting the capability as off.
+    for (const name of ["cohere", "voyage", "somethingelse"]) {
       process.env.EMBEDDING_PROVIDER = name;
       process.env.EMBEDDING_PROVIDER_API_KEY = "sk-looks-real-but-unused";
-      const provider = getEmbeddingProvider();
-      expect(provider, `${name} must not resolve to a fake provider`).toBeNull();
+      expect(getEmbeddingProvider(), `${name} has no adapter and must resolve to null`).toBeNull();
     }
+  });
+
+  it("returns null when the provider is configured but the key is missing", () => {
+    // A configured provider with no credential is "unavailable". It must
+    // never be a reason to fall back to the mock.
+    process.env.EMBEDDING_PROVIDER = "openai";
+    delete process.env.EMBEDDING_PROVIDER_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    expect(getEmbeddingProvider()).toBeNull();
+    expect(isSemanticAnalysisAvailable()).toBe(false);
+  });
+
+  it("accepts the key under OPENAI_API_KEY as well as the generic name", () => {
+    // OpenAI's own convention is OPENAI_API_KEY. A key arriving under the
+    // obvious name and being silently ignored is a worse failure than
+    // supporting two spellings.
+    process.env.EMBEDDING_PROVIDER = "openai";
+    delete process.env.EMBEDDING_PROVIDER_API_KEY;
+    process.env.OPENAI_API_KEY = "sk-looks-real-but-unused";
+    expect(getEmbeddingProvider()).not.toBeNull();
   });
 
   it("refuses to enable the mock provider in production even when explicitly configured", () => {
