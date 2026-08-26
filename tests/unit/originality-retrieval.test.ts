@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   deduplicateCandidates,
   getSearchProviders,
@@ -25,16 +25,40 @@ function candidate(overrides: Partial<SourceCandidate> = {}): SourceCandidate {
   };
 }
 
+const QUERY = { text: "una frase distintiva para buscar", qualityScore: 0.8, chunkSequence: 0, reason: "test" };
+
 describe("source providers — nothing is fabricated", () => {
   it("reports no external retrieval configured, which is the truth today", () => {
     expect(getSearchProviders()).toEqual([]);
     expect(isExternalRetrievalAvailable()).toBe(false);
   });
 
-  it("OpenAlex throws instead of returning empty results when unconfigured", async () => {
-    // Throwing makes a misconfiguration loud. Returning [] would be
-    // indistinguishable from "searched and genuinely found nothing".
-    await expect(new OpenAlexSearchProvider(null).search()).rejects.toThrow(SourceProviderNotConfiguredError);
+  it("OpenAlex throws instead of returning empty results when the API cannot serve us", async () => {
+    // Throwing makes an outage loud. Returning [] would be
+    // indistinguishable from "searched and genuinely found nothing", and
+    // that difference matters in a report a human acts on.
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 429, json: async () => ({}), text: async () => "" })));
+    await expect(new OpenAlexSearchProvider().search(QUERY)).rejects.toThrow(SourceProviderNotConfiguredError);
+    vi.unstubAllGlobals();
+  });
+
+  it("OpenAlex returns candidates when the API answers", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ results: [{ display_name: "Un paper", publication_year: 2021 }] }),
+        text: async () => "",
+      })),
+    );
+    const found = await new OpenAlexSearchProvider().search(QUERY);
+    // Candidates, never verifications: OpenAlex full-text search ranks by
+    // topic, so identifying the actual source is our similarity check's job.
+    expect(found).toHaveLength(1);
+    expect(found[0].providerName).toBe("openalex");
+    expect(found[0].kind).toBe("academic");
+    vi.unstubAllGlobals();
   });
 
   it("web search throws instead of returning empty results when unconfigured", async () => {

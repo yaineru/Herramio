@@ -41,21 +41,40 @@ export class SourceProviderNotConfiguredError extends Error {
 }
 
 /**
- * OpenAlex adapter. Researched, not guessed: OpenAlex now requires a free
- * account and API key for production use (it previously did not), so the
- * adapter is written but stays inactive until a key exists. It throws
- * rather than returning empty results, so a misconfiguration is loud
- * instead of silently reporting "no sources found".
+ * OpenAlex — a free, open index of ~250M scholarly works, verified live
+ * rather than assumed. Public write-ups claim a key became mandatory in
+ * February 2026; the live API answers 200 with no credential today, so
+ * this runs keyless and degrades if that changes.
+ *
+ * One constraint learned by testing it against the QA document's own
+ * three references, and it shapes how this provider may be used:
+ *
+ *   OpenAlex full-text search is a TOPIC-RELEVANCE engine, not an exact
+ *   title matcher. Searching the exact title of the UNESCO guidance
+ *   returned three plausible, well-ranked papers on generative AI in
+ *   education — and not the UNESCO document, which is in the index and
+ *   which a DOI lookup finds instantly.
+ *
+ * So its results are CANDIDATES to be scored by our own similarity, never
+ * verifications. Treating a top hit as "the source" would reproduce the
+ * Crossref score bug this project already fixed once, where a confident
+ * ranking was mistaken for a correct identification.
  */
 export class OpenAlexSearchProvider implements SearchProvider {
   readonly name = "openalex";
   readonly kind: SourceKind = "academic";
 
-  constructor(private readonly apiKey: string | null) {}
+  constructor(private readonly maxResults = 5) {}
 
-  async search(): Promise<SourceCandidate[]> {
-    if (!this.apiKey) throw new SourceProviderNotConfiguredError(this.name);
-    throw new SourceProviderNotConfiguredError(this.name);
+  async search(query: SourceQuery): Promise<SourceCandidate[]> {
+    const { searchOpenAlex } = await import("@/lib/originality/retrieval/openalex");
+    const result = await searchOpenAlex(query.text, this.maxResults);
+    if (result.unavailableReason) {
+      // Loud, not silent: "we could not ask" must never be recorded as
+      // "we asked and there was nothing".
+      throw new SourceProviderNotConfiguredError(`${this.name} (${result.unavailableReason})`);
+    }
+    return result.candidates;
   }
 }
 
@@ -73,12 +92,16 @@ export class WebSearchProvider implements SearchProvider {
 }
 
 /**
- * Returns the configured search providers. Empty today, which the report
- * surfaces as "no external sources were consulted" — an accurate
- * statement, not a failure.
+ * Returns the configured search providers.
+ *
+ * OpenAlex is opt-in via ORIGINALITY_ACADEMIC_SEARCH=openalex rather than
+ * on by default. Turning it on changes every analysis from "no outbound
+ * calls" to "one call per generated query", and that is a product
+ * decision with a latency cost, not a flag to flip implicitly.
  */
 export function getSearchProviders(): SearchProvider[] {
-  return [];
+  const enabled = (process.env.ORIGINALITY_ACADEMIC_SEARCH ?? "").trim().toLowerCase();
+  return enabled === "openalex" ? [new OpenAlexSearchProvider()] : [];
 }
 
 export function isExternalRetrievalAvailable(): boolean {
