@@ -1,66 +1,74 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f5f7fb;
   --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-elevated: #f8fafc;
+  --surface-highlight: #ecfdf5;
+  --surface-soft: #f1f5f9;
+  --primary: #0f172a;
+  --primary-strong: #0b1120;
+  --secondary: #0f766e;
+  --secondary-strong: #115e59;
+  --accent: #10b981;
+  --accent-soft: #d1fae5;
+  --success: #15803d;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #2563eb;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --focus: #047857;
+  --shadow-soft: 0 18px 48px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 12px 28px rgba(15, 23, 42, 0.06);
+  --shadow-lift: 0 22px 50px rgba(15, 23, 42, 0.12);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --transition-fast: 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-base: 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-slow: 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme {
-  /*
-    Brand green — the single source of truth for Herramio's accent color.
-    Overrides Tailwind's default emerald-600 (#059669) on purpose: that
-    default measures 3.0:1 against white, which fails WCAG AA (4.5:1) both
-    as a button background with white label text and as small link text on
-    white. Measured in-browser across the real pages, it was the single
-    most widespread accessibility defect in the app (63 usages).
-
-    #047857 measures 5.55:1 against white — comfortably AA — and is close
-    enough in hue that it reads as the same brand color. Overriding the
-    token rather than rewriting 63 call sites means every existing
-    `bg-emerald-600` / `text-emerald-600` (including all 129 tool pages
-    via shared components) becomes compliant without touching them.
-  */
   --color-emerald-600: #047857;
-  /*
-    Hover/active shade. Tailwind's default emerald-500 is LIGHTER than the
-    base, which would drop a hovered button back below AA — hover goes
-    darker here instead, so contrast improves rather than degrades on
-    interaction.
-  */
   --color-emerald-700: #065f46;
-
+  --color-slate-400: #5b6674;
   /*
-    Muted text. Tailwind's default slate-400 (#94a3b8) measures 2.63:1 on
-    white — far below the WCAG AA floor of 4.5:1 — yet it was used for
-    real, meaningful text in 290 places (file-size limits, privacy
-    notices, hero subtext, timestamps). Those are not decorative strings;
-    a user who can't read them loses actual information.
+    Muted body text, re-measured after the redesign moved the page
+    background from #ffffff to the tinted #f5f7fb.
 
-    Resolving it to slate-500's value (4.78:1) fixes all 290 at once
-    instead of 290 edits that would inevitably miss some and drift again.
-    The practical consequence is that slate-400 and slate-500 now render
-    identically: that IS the design decision — this palette has no text
-    color lighter than AA-compliant. The ~38 decorative icon usages get
-    marginally darker, which only increases visibility.
-  */
-  --color-slate-400: #64748b;
+    That tint is only slightly off-white, but it was enough: slate-500
+    measures 4.76:1 on pure white and 4.44:1 on the tint, so text that had
+    been compliant quietly dropped below the AA floor the moment the
+    surface changed. #5b6674 restores it to 5.44:1 on the tint (5.84:1 on
+    white) while staying visually muted — the point of the shade is to
+    recede, not to disappear.
 
-  /*
-    Motion. Centralised so timing is a design decision rather than a value
-    retyped per component. Tailwind's duration utilities still work; these
-    exist for the places that need a named intent.
+    slate-400 above resolves to the OLD slate-500 value, so it is bumped
+    with it; both remain the "muted text" shade and both now clear AA on
+    the surface the app actually renders on.
   */
+  --color-slate-500: #5b6674;
   --duration-instant: 90ms;
   --duration-fast: 150ms;
   --duration-base: 250ms;
   --duration-slow: 400ms;
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-
-  /*
-    Focus ring. One definition, applied globally below, so no interactive
-    element ends up relying on the browser's default outline — which
-    differs per browser and disappears entirely against some backgrounds.
-  */
   --focus-ring-color: #047857;
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
@@ -72,15 +80,44 @@
   --font-sans: var(--font-inter);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.11), transparent 26%),
+    radial-gradient(circle at right, rgba(14, 116, 144, 0.08), transparent 22%),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--foreground);
 }
 
 @layer utilities {
   .container-page {
-    @apply mx-auto max-w-6xl px-4 sm:px-6;
+    @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-kicker {
+    @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-700;
+  }
+
+  .surface-panel {
+    @apply rounded-[var(--radius-xl)] border border-slate-200 bg-white shadow-[var(--shadow-card)];
+  }
+
+  .surface-muted {
+    @apply rounded-[var(--radius-lg)] border border-slate-200 bg-slate-50;
+  }
+
+  .surface-glow {
+    @apply rounded-[var(--radius-xl)] border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/30 to-slate-50 shadow-[var(--shadow-soft)];
   }
 }
 

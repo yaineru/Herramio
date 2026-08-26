@@ -101,11 +101,57 @@ export default function HomePage() {
 
       <section className="container-page py-16">
         <Reveal>
-          <h2 className="text-2xl font-bold text-slate-900">¿Qué quieres hacer?</h2>
-          <p className="mt-1 text-slate-500">Explora por categoría — nuevas herramientas llegan seguido.</p>
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Navegación</p>
+              <h2 className="mt-2 text-3xl font-bold tracking-[-0.04em] text-slate-900">¿Qué quieres hacer?</h2>
+            </div>
+            <p className="hidden text-sm text-slate-500 md:block">Explora por categoría y encuentra la herramienta adecuada en segundos.</p>
+          </div>
         </Reveal>
         <Reveal delay={100} className="mt-8">
           <CategoryGrid />
+        </Reveal>
+      </section>
+
+      <section className="container-page pb-16">
+        <Reveal>
+          <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_20px_40px_rgba(15,23,42,0.05)] sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Producto estrella</p>
+                <h2 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-slate-900">Originalidad, diseñada como un producto serio.</h2>
+                <p className="mt-3 max-w-xl text-base text-slate-600">
+                  Revisa coincidencias, citas y referencias antes de entregar un trabajo. La experiencia está pensada para interpretación humana, transparencia y claridad.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link href="/originalidad">
+                    <Button size="md" variant="secondary">Ver Originalidad</Button>
+                  </Link>
+                </div>
+              </div>
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Resumen</span>
+                  <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white">14.2%</span>
+                </div>
+                <div className="mt-5 space-y-3 text-sm text-slate-600">
+                  <div className="rounded-2xl bg-white p-3">
+                    <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Coincidencias</div>
+                    <div className="mt-2 font-semibold text-slate-900">6 fuentes relevantes</div>
+                  </div>
+                  <div className="rounded-2xl bg-white p-3">
+                    <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Citas</div>
+                    <div className="mt-2 font-semibold text-slate-900">31 correctamente atribuidas</div>
+                  </div>
+                  <div className="rounded-2xl bg-white p-3">
+                    <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Estado</div>
+                    <div className="mt-2 font-semibold text-slate-900">Requiere revisión humana</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </Reveal>
       </section>
 

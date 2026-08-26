@@ -76,27 +76,32 @@ export function ToolPageShell({
         ]}
       />
 
-      <div className="mt-4 max-w-2xl">
-        <div className="flex items-center justify-between gap-3">
+      <div className="mt-6 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_38px_rgba(15,23,42,0.06)] sm:p-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             {tool && (
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]">
                 <tool.icon className="h-5 w-5" strokeWidth={1.75} />
               </span>
             )}
-            <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
-              {eyebrow}
-            </span>
+            <div>
+              <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-800">
+                {eyebrow}
+              </span>
+              <h1 className="mt-3 text-3xl font-bold tracking-[-0.05em] text-slate-900 sm:text-4xl">{toolName}</h1>
+            </div>
           </div>
           <FavoriteButton toolId={toolId} />
         </div>
-        <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">{toolName}</h1>
-        <p className="mt-3 text-slate-500">{intro}</p>
-        {tool && (
-          <div className="mt-3">
-            <ProcessingBadge local={isLocalProcessing(tool)} />
-          </div>
-        )}
+
+        <div className="mt-5 flex flex-col gap-4 border-t border-slate-200 pt-5 sm:flex-row sm:items-end sm:justify-between">
+          <p className="max-w-2xl text-base leading-relaxed text-slate-600">{intro}</p>
+          {tool && (
+            <div className="sm:text-right">
+              <ProcessingBadge local={isLocalProcessing(tool)} />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mt-8">{children}</div>

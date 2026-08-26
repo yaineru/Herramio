@@ -26,11 +26,11 @@ export function ScoreCard({ ratio, exactRatio, nearRatio, semanticAvailable, cla
 
   return (
     <section
-      className={cn("rounded-2xl border border-slate-200 bg-white p-6 sm:p-8", className)}
+      className={cn("rounded-[28px] border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 p-6 sm:p-8", className)}
       aria-labelledby="score-heading"
     >
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 rounded-full border border-slate-200 bg-white p-2 shadow-[0_12px_26px_rgba(15,23,42,0.04)]">
           <svg
             width="128"
             height="128"
@@ -51,8 +51,6 @@ export function ScoreCard({ ratio, exactRatio, nearRatio, semanticAvailable, cla
               strokeDashoffset={dashOffset}
             />
           </svg>
-          {/* aria-hidden: the accessible value already lives on the svg's
-              aria-label, so a screen reader would otherwise read it twice. */}
           <div className="absolute inset-0 flex flex-col items-center justify-center" aria-hidden="true">
             <span className="text-3xl font-bold tabular-nums text-slate-900">{pct}%</span>
             <span className="text-[11px] font-medium uppercase tracking-wide text-slate-500">similitud</span>
@@ -60,16 +58,16 @@ export function ScoreCard({ ratio, exactRatio, nearRatio, semanticAvailable, cla
         </div>
 
         <div className="min-w-0 flex-1 text-center sm:text-left">
-          <h2 id="score-heading" className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Índice de similitud
-          </h2>
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+            <h2 id="score-heading" className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Índice de similitud
+            </h2>
+            <span className={cn("rounded-full border px-2.5 py-1 text-xs font-semibold", severity.textClass, severity.bgClass, severity.borderClass)}>
+              {severity.label}
+            </span>
+          </div>
 
-          {/* Colour is never the only signal: the same status is stated in text. */}
-          <p className={cn("mt-2 inline-flex items-center rounded-full border px-3 py-1 text-sm font-semibold", severity.textClass, severity.bgClass, severity.borderClass)}>
-            {severity.label}
-          </p>
-
-          <p className="mt-3 text-sm text-slate-600">{severity.guidance}</p>
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">{severity.guidance}</p>
 
           <p className="mt-3 text-xs leading-relaxed text-slate-500">
             Un índice de similitud <strong>no determina por sí solo la existencia de plagio</strong>. Incluye citas

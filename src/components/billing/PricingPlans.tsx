@@ -30,12 +30,12 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
   return (
     <div>
       {anyAnnual && (
-        <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1">
+        <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
           <button
             type="button"
             onClick={() => setInterval("month")}
             className={cn(
-              "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+              "rounded-full px-4 py-1.5 text-sm font-medium transition-all",
               interval === "month" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500",
             )}
           >
@@ -45,7 +45,7 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
             type="button"
             onClick={() => setInterval("year")}
             className={cn(
-              "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+              "rounded-full px-4 py-1.5 text-sm font-medium transition-all",
               interval === "year" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500",
             )}
           >
@@ -54,14 +54,12 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
         </div>
       )}
 
-      <div className="mx-auto mt-8 grid max-w-4xl gap-6 sm:grid-cols-3">
+      <div className="mx-auto mt-8 grid max-w-5xl gap-6 lg:grid-cols-3">
         {plans.map((plan) => {
           const isCurrent = currentPlanId === plan.id;
           const isFree = plan.id === FREE_PLAN_ID;
           const isHighlighted = plan.id === PRO_PLAN_ID;
 
-          // Fall back to whichever interval the plan actually offers, e.g.
-          // Team currently has no annual price.
           const effectiveInterval: BillingInterval =
             interval === "year" && plan.annualPriceCents === null ? "month" : interval;
           const priceCents = effectiveInterval === "year" ? plan.annualPriceCents : plan.monthlyPriceCents;
@@ -69,20 +67,28 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
           return (
             <Card
               key={plan.id}
-              className={cn("flex flex-col p-6", isHighlighted && "border-emerald-500 ring-1 ring-emerald-500/30")}
+              className={cn(
+                "flex flex-col p-6 transition-all",
+                isHighlighted && "border-emerald-500 bg-gradient-to-b from-emerald-50/50 via-white to-white shadow-[0_24px_42px_rgba(16,185,129,0.12)] ring-1 ring-emerald-500/30",
+              )}
             >
-              <h2 className="text-lg font-semibold text-slate-900">{plan.name}</h2>
-              <p className="mt-1 text-sm text-slate-500">{plan.description}</p>
-              <p className="mt-4">
-                <span className="text-3xl font-bold text-slate-900">
+              {isHighlighted && (
+                <span className="mb-4 w-fit rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                  Recomendado
+                </span>
+              )}
+              <h2 className="text-xl font-semibold tracking-[-0.03em] text-slate-900">{plan.name}</h2>
+              <p className="mt-2 text-sm text-slate-600">{plan.description}</p>
+              <p className="mt-5 flex items-end gap-1">
+                <span className="text-4xl font-bold tracking-[-0.05em] text-slate-900">
                   {isFree || priceCents === null ? "Gratis" : formatCurrencyFromCents(priceCents, plan.currency)}
                 </span>
                 {!isFree && priceCents !== null && (
-                  <span className="text-sm text-slate-500">/{effectiveInterval === "month" ? "mes" : "año"}</span>
+                  <span className="pb-1 text-sm text-slate-500">/{effectiveInterval === "month" ? "mes" : "año"}</span>
                 )}
               </p>
 
-              <ul className="mt-5 flex-1 space-y-2 text-sm text-slate-600">
+              <ul className="mt-6 flex-1 space-y-2.5 text-sm text-slate-700">
                 {(PLAN_FEATURES[plan.id] ?? []).map((feature) => (
                   <li key={feature} className="flex items-start gap-2">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -91,7 +97,7 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
                 ))}
               </ul>
 
-              <div className="mt-6">
+              <div className="mt-7">
                 <PlanCheckoutButton planId={plan.id} interval={effectiveInterval} isCurrent={isCurrent} isFree={isFree} />
               </div>
             </Card>

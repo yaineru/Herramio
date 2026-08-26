@@ -26,8 +26,8 @@ export function Footer() {
 
         {/* slate-500: slate-400 at this size measures 2.63:1 on white, well below WCAG AA. */}
         <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row">
-          <p>© {year} {SITE.name} — Herramientas online simples y gratuitas.</p>
-          <p>Hecho para que resolver tareas rápidas sea más simple.</p>
+          <p>© {year} {SITE.name} — Herramientas útiles para tu día a día.</p>
+          <p>Diseñado para resolver tareas rápidas sin fricción.</p>
         </div>
       </div>
     </footer>

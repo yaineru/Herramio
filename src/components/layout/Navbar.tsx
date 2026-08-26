@@ -40,8 +40,8 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b bg-white/85 backdrop-blur transition-[border-color,box-shadow] duration-200",
-        scrolled ? "border-slate-200 shadow-sm shadow-slate-900/[0.03]" : "border-slate-200/80",
+        "sticky top-0 z-40 border-b bg-white/85 backdrop-blur-xl transition-[border-color,box-shadow,background-color] duration-200",
+        scrolled ? "border-slate-200 shadow-[0_12px_30px_rgba(15,23,42,0.04)]" : "border-slate-200/80",
       )}
     >
       <div
@@ -50,11 +50,11 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
           scrolled ? "h-14" : "h-16",
         )}
       >
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold text-slate-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold tracking-[-0.03em] text-slate-900">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white shadow-[0_10px_20px_rgba(15,23,42,0.18)]">
             <BrandMark className="h-4 w-4" />
           </span>
-          {SITE.shortName}
+          <span className="text-[15px]">{SITE.shortName}</span>
         </Link>
 
         {/* xl, not lg: measured at 1024px the logo + links + search +
@@ -66,7 +66,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
             >
               {link.label}
             </Link>

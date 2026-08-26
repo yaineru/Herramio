@@ -21,16 +21,15 @@ export function SearchTrigger({
         type="button"
         onClick={() => openSearchPalette()}
         className={cn(
-          "group flex w-full items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm shadow-slate-900/[0.03] transition-all hover:border-slate-300 hover:shadow-md",
+          "group flex w-full items-center gap-3 rounded-[22px] border border-slate-200 bg-white/90 px-5 py-4 text-left shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-all duration-200 hover:border-slate-300 hover:shadow-[0_24px_52px_rgba(15,23,42,0.12)]",
           className,
         )}
       >
-        <Search className="h-5 w-5 shrink-0 text-slate-400 transition-colors group-hover:text-slate-600" />
-        {/* slate-500, not slate-400: this reads as placeholder text but is
-            the primary prompt of the whole page — slate-400 measures
-            2.63:1 on white, far below the WCAG AA floor. */}
-        <span className="flex-1 text-slate-500">¿Qué necesitas hacer?</span>
-        <kbd className="hidden shrink-0 items-center rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-400 sm:inline-flex">
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 transition-colors group-hover:bg-emerald-100">
+          <Search className="h-4 w-4" />
+        </span>
+        <span className="flex-1 text-base font-medium text-slate-600">¿Qué necesitas hacer?</span>
+        <kbd className="hidden shrink-0 items-center rounded-md border border-slate-200 bg-slate-50 px-2 py-1 font-mono text-xs text-slate-500 sm:inline-flex">
           Ctrl K
         </kbd>
       </button>

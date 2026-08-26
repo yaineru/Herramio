@@ -19,30 +19,33 @@ export interface EngineStatus {
 export function EngineStatusBanner({ engines, className }: { engines: EngineStatus[]; className?: string }) {
   return (
     <section
-      className={cn("rounded-2xl border border-slate-200 bg-white p-5", className)}
+      className={cn("rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.02)]", className)}
       aria-labelledby="engines-heading"
     >
-      <h2 id="engines-heading" className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-        Motores de análisis
-      </h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="engines-heading" className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+          Motores de análisis
+        </h2>
+      </div>
 
-      <ul className="mt-3 flex flex-wrap gap-2">
+      <ul className="mt-4 grid gap-3 md:grid-cols-3">
         {engines.map((engine) => {
           const p = enginePresentation(engine.state, engine.name);
           return (
-            <li key={engine.name}>
+            <li key={engine.name} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+              <div className="flex items-center gap-2">
+                <span className={cn("h-2.5 w-2.5 shrink-0 rounded-full", p.dotClass)} aria-hidden="true" />
+                <span className="text-sm font-semibold text-slate-800">{engine.name}</span>
+              </div>
               <span
                 className={cn(
-                  "inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium",
+                  "mt-3 inline-flex w-full items-center justify-center rounded-full border px-2.5 py-1 text-[11px] font-semibold",
                   p.textClass,
                   p.bgClass,
                   p.borderClass,
                 )}
               >
-                <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", p.dotClass)} aria-hidden="true" />
-                <span className="truncate">{engine.name}</span>
-                <span className="shrink-0 opacity-70">·</span>
-                <span className="shrink-0">{engine.detail}</span>
+                {engine.detail}
               </span>
             </li>
           );

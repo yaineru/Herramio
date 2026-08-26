@@ -12,22 +12,19 @@ export function ToolCard({ tool }: { tool: Tool }) {
     <TiltWrapper>
       <Link
         href={tool.href}
-        className="group relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-900/5"
+        className="group relative flex h-full flex-col rounded-[24px] border border-slate-200 bg-white/90 p-5 shadow-[0_12px_24px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_20px_40px_rgba(16,185,129,0.08)]"
       >
         <div className="flex items-start justify-between gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white transition-colors group-hover:bg-emerald-600">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white transition-colors group-hover:bg-emerald-600">
             <Icon className="h-5 w-5" strokeWidth={1.75} />
           </span>
-          {/* slate-600, not slate-500: on the slate-100 pill background
-              slate-500 measures 4.35:1, just under the WCAG AA floor of
-              4.5 for text this size. */}
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium tracking-wide text-slate-600 uppercase">
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-600">
             {category.name}
           </span>
         </div>
-        <h3 className="mt-4 font-semibold text-slate-900">{tool.name}</h3>
-        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-500">{tool.description}</p>
-        <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-slate-900">
+        <h3 className="mt-4 text-base font-semibold tracking-[-0.02em] text-slate-900">{tool.name}</h3>
+        <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-600">{tool.description}</p>
+        <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-sm font-medium text-slate-900 transition group-hover:border-emerald-200 group-hover:bg-emerald-50 group-hover:text-emerald-700">
           Usar herramienta
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
         </span>

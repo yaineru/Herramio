@@ -20,25 +20,24 @@ const EXAMPLES = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden border-b border-slate-100 bg-white">
+    <section className="relative overflow-hidden border-b border-slate-200 bg-white">
       <HeroBackground />
       <div className="container-page relative flex flex-col items-center py-20 text-center sm:py-28">
-        <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-          {SITE.name} · herramientas gratuitas
-        </span>
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-800 shadow-[0_8px_18px_rgba(16,185,129,0.12)]">
+          <ShieldCheck className="h-3.5 w-3.5" /> {SITE.name}
+        </div>
 
-        <h1 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-          Todo lo que necesitas. En un solo lugar.
+        <h1 className="mt-6 max-w-4xl text-4xl font-bold tracking-[-0.06em] text-slate-900 sm:text-5xl lg:text-6xl">
+          Herramientas profesionales para resolver el trabajo real.
         </h1>
-        <p className="mt-4 max-w-xl text-lg text-slate-500">
-          Herramientas online gratuitas para convertir, calcular, crear y resolver tareas en
-          segundos.
+        <p className="mt-5 max-w-2xl text-base text-slate-600 sm:text-lg">
+          De PDF y QR a análisis, comparadores y productividad: todo funciona rápido, claro y sin fricción.
         </p>
-        <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700">
-          <ShieldCheck className="h-4 w-4" /> Todo se procesa en tu navegador — nada se sube a un servidor.
+        <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-slate-700">
+          <ShieldCheck className="h-4 w-4 text-emerald-700" /> Procesamiento local, seguro y pensado para uso diario.
         </p>
 
-        <div className="mt-8 w-full max-w-lg">
+        <div className="mt-8 w-full max-w-2xl">
           <SearchTrigger variant="large" />
         </div>
 
@@ -48,27 +47,35 @@ export function Hero() {
               key={example.label}
               type="button"
               onClick={() => openSearchPalette(example.query)}
-              className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-700"
+              className="rounded-full border border-slate-200 bg-white/80 px-3.5 py-1.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900"
             >
               {example.label}
             </button>
           ))}
         </div>
 
-        <div className="mt-7">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <MagneticButton>
             <Link href="/herramientas" onClick={() => AnalyticsEvents.ctaClicked("hero_explore")}>
-              <Button size="lg">
+              <Button size="lg" variant="secondary">
                 Explorar las {TOOLS.length} herramientas <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </MagneticButton>
+          <Link
+            href="/originalidad"
+            onClick={() => AnalyticsEvents.ctaClicked("hero_originality")}
+            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white/90 px-6 py-3 text-sm font-medium text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          >
+            Ver Originalidad
+          </Link>
         </div>
 
-        {/* slate-500: slate-400 measures 2.63:1 on white — below WCAG AA. */}
-        <p className="mt-6 text-sm text-slate-500">
-          Sin registro. Sin instalar nada. Sin límites de uso.
-        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm text-slate-600">
+          <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5">Sin registro</span>
+          <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5">Sin instalar nada</span>
+          <span className="rounded-full border border-slate-200 bg-white px-3 py-1.5">129 herramientas</span>
+        </div>
       </div>
     </section>
   );
