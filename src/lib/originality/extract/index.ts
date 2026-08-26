@@ -1,6 +1,7 @@
 import "server-only";
 import { extractPdfTextServer } from "@/lib/originality/extract/pdf";
 import { extractDocxTextServer } from "@/lib/originality/extract/docx";
+import { stripRunningHeaders } from "@/lib/originality/extract/running-headers";
 
 export const SUPPORTED_MIME_TYPES = [
   "application/pdf",
@@ -31,7 +32,10 @@ export interface ExtractionResult {
 export async function extractDocumentText(bytes: Uint8Array, mimeType: string): Promise<ExtractionResult> {
   if (mimeType === "application/pdf") {
     const { pages } = await extractPdfTextServer(bytes);
-    const text = pages.join("\n\n");
+    // Running headers/footers are template boilerplate, not authored
+    // text. Left in, they make any two documents sharing a faculty
+    // template look similar — see running-headers.ts.
+    const text = stripRunningHeaders(pages).join("\n\n");
     return { text, pageCount: pages.length, isEmpty: text.trim().length === 0 };
   }
 

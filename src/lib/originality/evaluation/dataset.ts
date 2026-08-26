@@ -17,6 +17,17 @@ export type CaseKind =
   | "inserted_words"
   | "deleted_words"
   | "reordered"
+  | "substitutions"
+  | "formatting_changes"
+  | "fragment_in_unique_text"
+  | "synonym_paraphrase"
+  | "restructured_paraphrase"
+  | "voice_change"
+  | "common_definition"
+  | "short_common_phrase"
+  | "orphan_citation"
+  | "uncited_reference"
+  | "mixed_document"
   | "punctuation_only"
   | "split_sentences"
   | "merged_sentences"
@@ -49,6 +60,13 @@ export interface GoldenCase {
 
 export const SOURCE_TEXT = `Artificial intelligence is transforming higher education around the world today.
 Universities are adopting new tools to support students and faculty in research and teaching.`;
+
+/**
+ * The two sentences of SOURCE_TEXT, derived rather than retyped so a case
+ * built from a fragment can never drift out of sync with the source it is
+ * supposed to be copying.
+ */
+const [S1, S2] = SOURCE_TEXT.split("\n");
 
 export const GOLDEN_CASES: GoldenCase[] = [
   {
@@ -224,5 +242,130 @@ These birds experience more daylight than any other creature on the planet.`,
     text: `According to Jones (2022), artificial intelligence is transforming higher education around the world today. Universities are adopting new tools to support students and faculty in research and teaching.`,
     shouldMatch: true,
     note: "Cita que no corresponde a la referencia: el contenido sigue siendo copia, pero la atribución es incorrecta y debe resolverse en la capa de citas, no en el motor léxico.",
+  },
+// ---- NEAR: substitutions, reordering, formatting ----
+  {
+    id: "reordered_clauses",
+    kind: "reordered",
+    text: `Around the world today, artificial intelligence is transforming higher education.
+To support students and faculty in research and teaching, universities are adopting new tools.`,
+    shouldMatch: true,
+    note: "Cláusulas reordenadas — mismas palabras, distinto orden. El shingling de 3 pierde los límites reordenados pero conserva los tramos internos.",
+  },
+  {
+    id: "synonym_substitutions",
+    kind: "substitutions",
+    text: `Artificial intelligence is transforming university education around the world today.
+Universities are adopting new instruments to support learners and faculty in research and teaching.`,
+    shouldMatch: true,
+    note: "Tres sustituciones léxicas dispersas — evasión típica de buscar-y-reemplazar.",
+  },
+  {
+    id: "heavy_substitutions",
+    kind: "substitutions",
+    text: `Machine intelligence is reshaping tertiary schooling across the planet nowadays.
+Colleges are embracing fresh instruments to assist pupils and staff in study and instruction.`,
+    shouldMatch: false,
+    semanticOnly: true,
+    note: "Sustitución de casi todos los términos — fuera del alcance léxico por diseño; sólo un motor semántico lo alcanzaría.",
+  },
+  {
+    id: "formatting_changes",
+    kind: "formatting_changes",
+    text: `   Artificial   intelligence  is transforming   higher education around the world today.
+
+	 Universities are adopting new tools to support students   and faculty in research and teaching.   `,
+    shouldMatch: true,
+    note: "Sólo cambia el espaciado/tabulación — la normalización debe absorberlo por completo.",
+  },
+
+  // ---- PARTIAL ----
+  {
+    id: "fragment_in_unique_text",
+    kind: "fragment_in_unique_text",
+    text: `My dissertation examines rural connectivity and its effect on secondary schooling outcomes.
+Fieldwork was carried out over eleven months across four provinces with limited infrastructure.
+${S1}
+The remaining chapters develop an original framework for evaluating those outcomes locally.
+No previous study in this region combined household surveys with school administrative records.`,
+    shouldMatch: true,
+    note: "Una sola frase copiada dentro de texto propio extenso — el caso que containment debe rescatar y Jaccard puro pierde.",
+  },
+
+  // ---- PARAPHRASE ----
+  {
+    id: "synonym_paraphrase",
+    kind: "synonym_paraphrase",
+    text: `Machine learning is altering university-level education globally.
+Institutions of higher learning are embracing novel instruments to aid learners and academics in scholarship and instruction.`,
+    shouldMatch: false,
+    semanticOnly: true,
+    note: "Paráfrasis por sinónimos — límite léxico conocido y documentado.",
+  },
+  {
+    id: "restructured_paraphrase",
+    kind: "restructured_paraphrase",
+    text: `Across universities worldwide, a shift is underway: the tools now being adopted to help both faculty and students with teaching and research are driven by artificial intelligence.`,
+    shouldMatch: false,
+    semanticOnly: true,
+    note: "Misma idea reestructurada en una sola oración — límite léxico conocido.",
+  },
+  {
+    id: "voice_change",
+    kind: "voice_change",
+    text: `Higher education around the world today is being transformed by artificial intelligence.
+New tools to support students and faculty in research and teaching are being adopted by universities.`,
+    shouldMatch: true,
+    note: "Activa a pasiva conservando el vocabulario — quedan tramos contiguos suficientes para el motor léxico.",
+  },
+
+  // ---- FALSE POSITIVE ----
+  {
+    id: "common_definition",
+    kind: "common_definition",
+    text: `Artificial intelligence is the field of computer science concerned with building systems that perform tasks normally requiring human intelligence.`,
+    shouldMatch: false,
+    note: "Definición estándar de un término — comparte vocabulario con la fuente pero es lenguaje común, no copia. Un falso positivo aquí destruiría la credibilidad del informe.",
+  },
+  {
+    id: "short_common_phrase",
+    kind: "short_common_phrase",
+    text: `In recent years, around the world today, many things have changed.`,
+    shouldMatch: false,
+    note: "Frase corta y común que solapa con la fuente por casualidad — no debe puntuar.",
+  },
+
+  // ---- CITATION ----
+  {
+    id: "orphan_citation",
+    kind: "orphan_citation",
+    text: `As Martinez (2019) demonstrates, ${S1}
+${S2}`,
+    shouldMatch: true,
+    note: "Cita cuya referencia no aparece en la bibliografía — el texto sigue siendo copia; lo huérfano se resuelve en el grafo de citas, no en el motor léxico.",
+  },
+  {
+    id: "uncited_reference",
+    kind: "uncited_reference",
+    text: `${S1}
+${S2}
+Referencias
+Martinez, L. (2019). Digital transformation in universities. Academic Press.`,
+    shouldMatch: true,
+    note: "Referencia listada pero nunca citada en el cuerpo — la copia se detecta igual; la referencia sin citar es señal informativa aparte.",
+  },
+
+  // ---- MIXED ----
+  {
+    id: "mixed_document",
+    kind: "mixed_document",
+    text: `Introduction
+This chapter sets out the scope of the study and its methodological commitments in detail.
+${S1}
+Machine learning is altering university-level education globally, according to several observers.
+As Smith (2024) notes, "${S2}"
+The analysis that follows is entirely my own and draws on data collected during fieldwork.`,
+    shouldMatch: true,
+    note: "Documento mixto: texto original + copia literal + paráfrasis + cita atribuida en un solo pasaje. Debe coincidir por los tramos literales sin que el resto los diluya.",
   },
 ];

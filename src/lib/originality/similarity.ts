@@ -5,12 +5,27 @@ export interface ChunkComparisonResult {
   score: number;
 }
 
-// Calibrated against tests/unit/originality-golden-dataset.test.ts, which
-// measures this engine on controlled copy/paraphrase/unrelated documents.
-// On that set, non-copies score exactly 0 while real copies score 0.45+,
-// so the threshold sits in a wide empty gap rather than on a cliff edge —
-// changing it slightly wouldn't flip any case either way.
-const NEAR_EXACT_THRESHOLD = 0.5;
+// Chosen by measurement, not intuition. tests/unit/originality-threshold-sweep.test.ts
+// runs the whole golden dataset at every threshold from 0.05 to 0.95 and
+// prints the table; the value below is the midpoint of the widest plateau
+// where F1 is at its maximum:
+//
+//   0.05 – 0.10  precision drops (a stock phrase gets flagged)
+//   0.15 – 0.35  F1 = 1.000  ← plateau, width 0.20
+//   0.40 +       recall drops ("one sentence copied into a long original"
+//                scores 0.364 and goes unreported)
+//
+// 0.25 is the midpoint, so it is maximally far from a behaviour change in
+// either direction. It replaced 0.50, which sat outside the plateau and
+// silently missed that sentence-in-a-long-document case — the single most
+// realistic form of copying this engine has to catch.
+//
+// Verified against real prose, not only the synthetic set: on the QA
+// document, genuinely uncopied Spanish academic text scores 0.000 even
+// when written on the IDENTICAL topic, and the highest score between two
+// non-copied chunks of the same real document is 0.059. The nearest real
+// false positive is therefore ~0.19 below this bar.
+const NEAR_EXACT_THRESHOLD = 0.25;
 
 // 3-word n-grams. Calibrated by running the full golden dataset at sizes
 // 3, 4 and 5 and reading the real numbers rather than picking a value

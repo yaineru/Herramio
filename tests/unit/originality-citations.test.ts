@@ -78,3 +78,45 @@ describe("detectReferences", () => {
     }
   });
 });
+
+describe("detectReferences with numbered bibliographies", () => {
+  // IEEE and Vancouver number every entry. Before the label was stripped,
+  // REFERENCE_ENTRY anchored on an author-like token at the start of the
+  // line, so an entire numbered bibliography matched nothing and the
+  // report told the user the document had no references at all.
+  const body = "Texto del trabajo.\n\nReferencias\n";
+
+  it("detects entries labelled with square brackets", () => {
+    const refs = detectReferences(
+      `${body}[1] UNESCO (2023). Guidance for generative AI in education and research. UNESCO.\n` +
+        `[2] Russell, S., & Norvig, P. (2021). Artificial Intelligence: A Modern Approach. Pearson.`,
+    );
+    expect(refs).toHaveLength(2);
+    expect(refs[0].parsedYear).toBe("2023");
+    expect(refs[1].parsedYear).toBe("2021");
+  });
+
+  it("detects entries labelled with a bare number and a dot or paren", () => {
+    const refs = detectReferences(
+      `${body}1. Luckin, R. (2016). Intelligence Unleashed. Pearson.\n2) Holmes, W. (2019). Artificial Intelligence in Education. Center.`,
+    );
+    expect(refs).toHaveLength(2);
+  });
+
+  it("keeps the label in rawText so Crossref still searches the full entry", () => {
+    // Crossref verification queries rawText; a truncated entry verifies
+    // worse than one carrying a harmless leading number.
+    const refs = detectReferences(`${body}[1] UNESCO (2023). Guidance for generative AI in education. UNESCO.`);
+    expect(refs[0].rawText).toMatch(/^\[1\] UNESCO/);
+  });
+
+  it("still ignores a numbered line that carries no year", () => {
+    const refs = detectReferences(`${body}[1] Una nota suelta sin ningun anio indicado aqui.`);
+    expect(refs).toHaveLength(0);
+  });
+
+  it("still detects unnumbered APA entries", () => {
+    const refs = detectReferences(`${body}Russell, S. (2021). Artificial Intelligence: A Modern Approach. Pearson.`);
+    expect(refs).toHaveLength(1);
+  });
+});

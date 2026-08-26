@@ -54,6 +54,16 @@ function addUnique(results: DetectedCitation[], seen: Set<string>, rawText: stri
 // logical line, and the heading is what actually matters here, not
 // whatever precedes it.
 const REFERENCES_HEADING = /(?:^|\.\s+)(references|bibliography|referencias|bibliograf[ií]a)\s*$/i;
+// Numbered-bibliography label: "[1] ", "(1) ", "1. ", "1) ". IEEE and
+// Vancouver number every entry this way, and those are among the most
+// common styles in engineering and medical writing. Stripped before the
+// entry pattern runs, because REFERENCE_ENTRY anchors on an author-like
+// token at the start of the line — without this, an entire numbered
+// bibliography matched nothing and the report claimed the document had no
+// references at all. `rawText` still keeps the original, unstripped line:
+// Crossref verification searches on it, and the number is harmless there
+// while a truncated entry would not be.
+const REFERENCE_LABEL = /^\s*(?:\[\d{1,3}\]|\(\d{1,3}\)|\d{1,3}[.)])\s+/;
 // Loose heuristic: a reference entry usually starts with an author-like
 // token and contains a 4-digit year, often parenthesized.
 const REFERENCE_ENTRY = /^([A-ZÀ-Ý][\wÀ-ÿ,.\s&'-]{2,80}?)\.?\s*\(?(\d{4})\)?\.?\s*(.*)$/;
@@ -76,7 +86,7 @@ export function detectReferences(fullText: string): DetectedReference[] {
   const results: DetectedReference[] = [];
   for (const line of lines.slice(headingIndex + 1)) {
     if (line.length < 15) continue;
-    const match = line.match(REFERENCE_ENTRY);
+    const match = line.replace(REFERENCE_LABEL, "").match(REFERENCE_ENTRY);
     if (!match) continue;
     results.push({
       rawText: line,
