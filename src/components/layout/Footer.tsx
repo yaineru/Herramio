@@ -38,10 +38,18 @@ function FooterColumn({ title, links }: { title: string; links: { href: string; 
   return (
     <div>
       <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-      <ul className="mt-3 space-y-2">
+      <ul className="mt-3 space-y-1">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="text-sm text-slate-500 hover:text-slate-900">
+            {/* inline-flex + min-h-6: a footer link list is not running
+                prose, so it does not get WCAG 2.2's inline-target
+                exemption. At 17px tall these were awkward to tap on a
+                320px screen; the padding lifts them past the 24px floor
+                without changing how the list looks. */}
+            <Link
+              href={link.href}
+              className="inline-flex min-h-6 items-center py-0.5 text-sm text-slate-500 hover:text-slate-900"
+            >
               {link.label}
             </Link>
           </li>

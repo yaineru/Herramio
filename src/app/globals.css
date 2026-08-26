@@ -44,6 +44,26 @@
     marginally darker, which only increases visibility.
   */
   --color-slate-400: #64748b;
+
+  /*
+    Motion. Centralised so timing is a design decision rather than a value
+    retyped per component. Tailwind's duration utilities still work; these
+    exist for the places that need a named intent.
+  */
+  --duration-instant: 90ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /*
+    Focus ring. One definition, applied globally below, so no interactive
+    element ends up relying on the browser's default outline — which
+    differs per browser and disappears entirely against some backgrounds.
+  */
+  --focus-ring-color: #047857;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
 }
 
 @theme inline {
@@ -61,5 +81,51 @@ body {
 @layer utilities {
   .container-page {
     @apply mx-auto max-w-6xl px-4 sm:px-6;
+  }
+}
+
+/*
+  Baseline focus indicator for everything focusable.
+
+  Audited the rendered pages and found interactive elements with no
+  focus-visible class of their own, falling back to the browser's default
+  outline. That default varies per browser and vanishes against some
+  backgrounds, so keyboard users could lose their place. This gives every
+  focusable element one consistent, high-contrast ring; components that
+  define their own focus-visible styling still win, because a utility
+  class is more specific than this element selector.
+*/
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/*
+  Reduced motion (WCAG 2.3.3).
+
+  29 `animate-*` usages across the tool components had no reduced-motion
+  handling, and covering them one by one across 129 pages would drift
+  again. Collapsing durations globally is the standard reset.
+
+  The deliberate exception: a spinner is not decoration, it is the only
+  signal that work is in progress. Stopping it would remove information
+  from the users this rule is meant to help, so looping progress
+  indicators keep turning — just slowly enough not to provoke the
+  vestibular symptoms the preference exists to avoid.
+*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-spin,
+  .animate-pulse {
+    animation-duration: 1.6s !important;
+    animation-iteration-count: infinite !important;
   }
 }

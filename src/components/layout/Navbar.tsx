@@ -57,7 +57,11 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
           {SITE.shortName}
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        {/* xl, not lg: measured at 1024px the logo + links + search +
+            auth buttons need 1160px, so switching the desktop bar on at
+            lg (1024) made every page scroll sideways. xl (1280) is the
+            first width where the full bar fits. */}
+        <nav className="hidden items-center gap-1 xl:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -69,7 +73,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
           ))}
         </nav>
 
-        <div className="ml-auto hidden items-center gap-2 lg:flex">
+        <div className="ml-auto hidden items-center gap-2 xl:flex">
           <SearchTrigger className="w-56" />
           <Link
             href="/favoritos"
@@ -104,7 +108,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
 
         <Link
           href="/favoritos"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
           aria-label="Favoritos y recientes"
         >
           <Star className="h-5 w-5" />
@@ -113,7 +117,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
         <button
           type="button"
           onClick={() => openSearchPalette()}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
           aria-label="Buscar herramientas"
         >
           <Search className="h-5 w-5" />
@@ -122,7 +126,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
           aria-label="Abrir menú"
           aria-expanded={open}
         >
@@ -131,7 +135,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
       </div>
 
       {open && (
-        <nav className="border-t border-slate-200 bg-white px-4 py-3 lg:hidden">
+        <nav className="border-t border-slate-200 bg-white px-4 py-3 xl:hidden">
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <Link
