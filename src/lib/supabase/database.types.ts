@@ -163,6 +163,19 @@ export type DocumentChunkRow = {
   created_at: string;
 };
 
+/**
+ * Mirrors 0007_semantic_embeddings.sql. `embedding` is a pgvector column:
+ * it is written as a JSON-encoded array string and comes back the same
+ * way over PostgREST, which is why the type is string rather than number[].
+ */
+export type DocumentChunkEmbeddingRow = {
+  chunk_id: number;
+  model: string;
+  dimensions: number;
+  embedding: string;
+  created_at: string;
+};
+
 export type CitationRow = {
   id: number;
   document_id: string;
@@ -222,6 +235,12 @@ export type OriginalityReportRow = {
   citation_count: number;
   reference_count: number;
   engine_version: string;
+  // Added by 0007_semantic_embeddings.sql for cost/observability. The
+  // generated types were never refreshed after that migration, so every
+  // query touching these resolved to `never`.
+  embeddings_generated: number;
+  source_queries_run: number;
+  processing_ms: number | null;
   status: OriginalityReportStatus;
   created_at: string;
 };
@@ -313,6 +332,17 @@ export type Database = {
           normalized_text: string;
         };
         Update: Partial<DocumentChunkRow>;
+        Relationships: [];
+      };
+      document_chunk_embeddings: {
+        Row: DocumentChunkEmbeddingRow;
+        Insert: Partial<DocumentChunkEmbeddingRow> & {
+          chunk_id: number;
+          model: string;
+          dimensions: number;
+          embedding: string;
+        };
+        Update: Partial<DocumentChunkEmbeddingRow>;
         Relationships: [];
       };
       citations: {

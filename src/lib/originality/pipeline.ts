@@ -4,7 +4,8 @@ import { extractDocumentText } from "@/lib/originality/extract";
 import { chunkText } from "@/lib/originality/chunk";
 import { detectInTextCitations, detectReferences } from "@/lib/originality/citations";
 import { compareChunks } from "@/lib/originality/similarity";
-import { computeReportScore, ENGINE_VERSION, type ChunkBestMatch } from "@/lib/originality/report-score";
+import { computeReportScore, ENGINE_VERSION, strongerMatch, type ChunkBestMatch } from "@/lib/originality/report-score";
+import { analyseSemantically, type CorpusEmbedding } from "@/lib/originality/semantic/analyse-document";
 import { verifyReferenceViaCrossref } from "@/lib/originality/providers/crossref";
 
 // Bounds worst-case comparison cost — this is O(newChunks × corpusChunks)
@@ -180,12 +181,15 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
       matched_text: string;
     }[] = [];
 
+    let corpusChunkIndex: { id: number; document_id: string; text: string }[] = [];
+
     if (corpusDocs && corpusDocs.length > 0) {
       const corpusDocIds = corpusDocs.map((d) => d.id);
       const { data: corpusChunks } = await admin
         .from("document_chunks")
         .select("id, document_id, text, normalized_text")
         .in("document_id", corpusDocIds);
+      corpusChunkIndex = (corpusChunks ?? []).map((c) => ({ id: c.id, document_id: c.document_id, text: c.text }));
 
       for (const chunk of insertedChunks) {
         bestMatchPerChunk.set(chunk.id, { type: null });
@@ -203,15 +207,82 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
           });
 
           const current = bestMatchPerChunk.get(chunk.id)!;
-          if (result.type === "exact" || (result.type === "near_exact" && current.type !== "exact")) {
-            bestMatchPerChunk.set(chunk.id, { type: result.type });
-          }
+          bestMatchPerChunk.set(chunk.id, { type: strongerMatch(current.type, result.type) });
         }
       }
 
       if (matchRows.length > 0) await admin.from("similarity_matches").insert(matchRows);
     } else {
       for (const chunk of insertedChunks) bestMatchPerChunk.set(chunk.id, { type: null });
+    }
+
+    // ---- Semantic stage -------------------------------------------
+    // Runs after the lexical pass so a chunk already proven to be a
+    // verbatim copy keeps that stronger classification. Everything here
+    // is best-effort: analyseSemantically never throws, and a provider
+    // outage leaves a complete lexical report that says semantic analysis
+    // was unavailable rather than failing the upload.
+    const chunkTextById = new Map(insertedChunks.map((c) => [c.id, c.normalized_text]));
+    const corpusEmbeddingRows =
+      corpusChunkIndex.length > 0
+        ? (
+            await admin
+              .from("document_chunk_embeddings")
+              .select("chunk_id, embedding")
+              .in(
+                "chunk_id",
+                corpusChunkIndex.map((c) => c.id),
+              )
+          ).data ?? []
+        : [];
+
+    const corpusDocByChunk = new Map(corpusChunkIndex.map((c) => [c.id, c.document_id]));
+    const corpusTextByChunk = new Map(corpusChunkIndex.map((c) => [c.id, c.text]));
+    const corpusVectors: CorpusEmbedding[] = corpusEmbeddingRows.flatMap((row) => {
+      // pgvector comes back over PostgREST as a JSON string, not an array.
+      const vector = typeof row.embedding === "string" ? safeParseVector(row.embedding) : (row.embedding as number[] | null);
+      const documentId = corpusDocByChunk.get(row.chunk_id);
+      if (!vector || !documentId) return [];
+      return [{ chunkId: row.chunk_id, documentId, vector }];
+    });
+
+    const semantic = await analyseSemantically(
+      insertedChunks.map((c) => ({ id: c.id, text: chunkTextById.get(c.id) ?? "", normalizedText: c.normalized_text })),
+      corpusVectors,
+    );
+
+    if (semantic.embeddings.length > 0 && semantic.model) {
+      // Stored under the real model name, only ever real vectors. Upsert
+      // so re-running the pipeline for a document replaces rather than
+      // duplicating (chunk_id + model is the primary key).
+      await admin.from("document_chunk_embeddings").upsert(
+        semantic.embeddings.map((e) => ({
+          chunk_id: e.chunkId,
+          model: semantic.model as string,
+          dimensions: e.vector.length,
+          embedding: JSON.stringify(e.vector),
+        })),
+        { onConflict: "chunk_id,model" },
+      );
+    }
+
+    if (semantic.matches.length > 0) {
+      await admin.from("similarity_matches").insert(
+        semantic.matches.map((m) => ({
+          document_id: documentId,
+          chunk_id: m.chunkId,
+          matched_document_id: m.matchedDocumentId,
+          match_type: "semantic" as const,
+          similarity_score: m.similarity,
+          matched_text: corpusTextByChunk.get(m.matchedChunkId) ?? "",
+        })),
+      );
+
+      for (const m of semantic.matches) {
+        const current = bestMatchPerChunk.get(m.chunkId);
+        if (!current) continue;
+        bestMatchPerChunk.set(m.chunkId, { type: strongerMatch(current.type, "semantic") });
+      }
     }
 
     const score = computeReportScore([...bestMatchPerChunk.values()]);
@@ -224,6 +295,7 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
       semantic_ratio: score.semanticRatio,
       citation_count: allCitations.length,
       reference_count: references.length,
+      embeddings_generated: semantic.embeddingsGenerated,
       engine_version: ENGINE_VERSION,
       status: "completed",
     });
@@ -238,5 +310,19 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
         failure_reason: error instanceof Error ? error.message : "Error desconocido durante el análisis.",
       })
       .eq("id", documentId);
+  }
+}
+
+/**
+ * pgvector values arrive from PostgREST as a bracketed string. A malformed
+ * one is skipped rather than thrown on: a corrupt stored vector must not
+ * take down an analysis that the lexical engine can still complete.
+ */
+function safeParseVector(raw: string): number[] | null {
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.every((n) => typeof n === "number") ? parsed : null;
+  } catch {
+    return null;
   }
 }
