@@ -78,6 +78,48 @@ const REFERENCE_ENTRY = /^([A-ZÀ-Ý][\wÀ-ÿ,.\s&'-]{2,80}?)\.?\s*\(?(\d{4})\)?
  * more reliable unit to search on. Never invents author/year/title when
  * the pattern doesn't clearly provide one — leaves the field null instead.
  */
+// The heading as it survives chunking. chunkText() collapses every run of
+// whitespace to a single space, so by the time a chunk exists the heading
+// is no longer on a line of its own — it reads "...académica. 8.
+// Referencias [1] UNESCO (2023)...". REFERENCES_HEADING anchors on end of
+// line and therefore cannot match there, which is why the first version of
+// this guard silently did nothing.
+//
+// Matching a bare "Referencias" mid-sentence would be far too eager, so
+// this requires the heading to be followed by something that actually
+// opens a bibliography entry: a numeric label, or a "Surname," / "Surname
+// (Year)" opener. "consultamos varias referencias durante el estudio"
+// does not qualify.
+const REFERENCES_HEADING_INLINE =
+  /(?:^|[.\d]\s+)(references|bibliography|referencias|bibliograf[ií]a)\s+(?=\[\d|\(\d|\d{1,3}[.)]\s|[A-ZÀ-Ý][\wÀ-ÿ'-]+,|[A-ZÀ-Ý][\wÀ-ÿ'-]+\s\()/i;
+
+/**
+ * Returns the part of `text` that precedes the bibliography, and whether a
+ * heading was found at all.
+ *
+ * The pipeline uses this to stop looking for in-text citations once the
+ * reference list starts. Without the boundary every entry is counted twice
+ * over — "UNESCO (2023). Guidance for..." matches the APA narrative
+ * pattern and "[1]" matches the numeric one — so the QA document, which
+ * has exactly one in-text citation, reported five, and the citation graph
+ * then derived its orphan and uncited counts from those phantoms.
+ *
+ * A citation is in-text by definition; a line in the reference list is a
+ * reference. Truncating rather than dropping the whole chunk matters
+ * because the chunk holding the heading usually starts with real body
+ * prose, and any citations in that part are genuine.
+ */
+export function splitAtReferencesHeading(text: string): { body: string; foundHeading: boolean } {
+  const lines = text.split(/\n/);
+  const lineIndex = lines.findIndex((line) => REFERENCES_HEADING.test(line.trim()));
+  if (lineIndex !== -1) return { body: lines.slice(0, lineIndex).join("\n"), foundHeading: true };
+
+  const inline = text.match(REFERENCES_HEADING_INLINE);
+  if (inline && inline.index !== undefined) return { body: text.slice(0, inline.index), foundHeading: true };
+
+  return { body: text, foundHeading: false };
+}
+
 export function detectReferences(fullText: string): DetectedReference[] {
   const lines = fullText.split(/\n+/).map((line) => line.trim());
   const headingIndex = lines.findIndex((line) => REFERENCES_HEADING.test(line));

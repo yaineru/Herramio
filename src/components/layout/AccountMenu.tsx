@@ -38,7 +38,11 @@ export function AccountMenu({ authState }: { authState: NavAuthState }) {
         <span
           className={cn(
             "rounded-full px-2 py-0.5 text-xs font-semibold",
-            authState.planId === FREE_PLAN_ID ? "bg-slate-100 text-slate-500" : "bg-emerald-100 text-emerald-700",
+            // slate-600, not slate-500: on the slate-100 pill the lighter
+            // shade measures 4.35:1, just under the AA floor. Only visible
+            // while signed in, which is why the anonymous page audits
+            // never caught it.
+            authState.planId === FREE_PLAN_ID ? "bg-slate-100 text-slate-600" : "bg-emerald-100 text-emerald-700",
           )}
         >
           {authState.planLabel}

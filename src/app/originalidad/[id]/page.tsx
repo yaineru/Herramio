@@ -21,6 +21,7 @@ import { DocumentStatusPoller } from "@/components/originality/DocumentStatusPol
 import { EvidenceViewer } from "@/components/originality/EvidenceViewer";
 import { ScoreCard } from "@/components/originality/ScoreCard";
 import { EngineStatusBanner, ExternalSearchNotice } from "@/components/originality/EngineStatusBanner";
+import { ReferenceStatusBadge, ReferenceStatusLegend } from "@/components/originality/ReferenceStatusBadge";
 import { AnalyticsPageEvent } from "@/components/AnalyticsPageEvent";
 
 export const metadata: Metadata = buildMetadata({
@@ -230,24 +231,9 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
           ) : (
             <ul className="mt-3 space-y-2 text-sm text-slate-600">
               {references.map((r) => (
-                <li key={r.id} className="flex items-start gap-2">
-                  <span className="mt-0.5 shrink-0">
-                    {r.verificationStatus === "verified" ? (
-                      <span title="Encontramos un trabajo indexado en Crossref que coincide" className="text-emerald-600">
-                        🟢
-                      </span>
-                    ) : r.verificationStatus === "not_found" ? (
-                      <span
-                        title="No encontramos coincidencia en Crossref — esto NO significa que la referencia sea falsa; muchos libros y trabajos no están indexados ahí"
-                        className="text-amber-500"
-                      >
-                        🟡
-                      </span>
-                    ) : (
-                      <span className="text-slate-300">⚪</span>
-                    )}
-                  </span>
-                  <span>
+                <li key={r.id} className="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:gap-2">
+                  <ReferenceStatusBadge status={r.verificationStatus} className="mt-0.5" />
+                  <span className="min-w-0 break-words">
                     {r.rawText}
                     {r.verificationStatus === "verified" && r.matchedUrl && (
                       <>
@@ -267,12 +253,7 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
               ))}
             </ul>
           )}
-          {references.length > 0 && (
-            <p className="mt-3 text-xs text-slate-400">
-              🟢 Verificada en Crossref (índice académico gratuito y abierto) · 🟡 No encontrada — no significa que
-              sea falsa, muchas fuentes reales no están indexadas ahí.
-            </p>
-          )}
+          {references.length > 0 && <ReferenceStatusLegend />}
         </Card>
       </div>
     </div>

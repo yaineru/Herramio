@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { extractDocumentText } from "@/lib/originality/extract";
 import { chunkText } from "@/lib/originality/chunk";
-import { detectCitations, detectReferences } from "@/lib/originality/citations";
+import { detectCitations, detectReferences, splitAtReferencesHeading } from "@/lib/originality/citations";
 import { compareChunks } from "@/lib/originality/similarity";
 import { computeReportScore, ENGINE_VERSION, type ChunkBestMatch } from "@/lib/originality/report-score";
 import { verifyReferenceViaCrossref } from "@/lib/originality/providers/crossref";
@@ -105,9 +105,24 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
     if (chunksError || !insertedChunks) throw new Error(`No se pudieron guardar los fragmentos: ${chunksError?.message}`);
 
     // Citations + references (regex-based, no external calls).
-    const allCitations = chunks.flatMap((chunk, idx) =>
-      detectCitations(chunk.text).map((c) => ({ ...c, chunkId: insertedChunks[idx]?.id ?? null })),
-    );
+    //
+    // Citation detection stops at the bibliography. Everything from the
+    // "Referencias" heading onwards is a reference list, and scanning it
+    // for citations double-counts every entry: the author-year part
+    // matches the APA pattern and the "[1]" label matches the numeric one.
+    // Measured on the QA document, that turned one real in-text citation
+    // into five, and the citation graph then computed its orphan and
+    // uncited counts from the phantoms.
+    let pastReferences = false;
+    const allCitations = chunks.flatMap((chunk, idx) => {
+      // Chunks after the bibliography starts hold nothing but entries; a
+      // long reference list spans several of them and none carries the
+      // heading, so the boundary has to be remembered, not re-detected.
+      if (pastReferences) return [];
+      const { body, foundHeading } = splitAtReferencesHeading(chunk.text);
+      if (foundHeading) pastReferences = true;
+      return detectCitations(body).map((c) => ({ ...c, chunkId: insertedChunks[idx]?.id ?? null }));
+    });
     if (allCitations.length > 0) {
       await admin.from("citations").insert(
         allCitations.map((c) => ({
