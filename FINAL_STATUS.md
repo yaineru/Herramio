@@ -16,15 +16,30 @@ desactivado y queda fuera de alcance hasta después de la beta.
 
 ## DESIGN
 
-Rediseño desplegado: tokens de color, tipografía escalada, superficies con
-elevación, radios y sombras sobrias. Contraste WCAG AA verificado con auditor
-propio en Home, `/precios`, `/originalidad`, `/favoritos` y `/pdf-unir`, a
-375/768/1280/1440: **0 fallos**. Sin scroll lateral, sin botones sin nombre
-accesible, sin imágenes sin `alt`.
+Sistema visual consolidado. Dos defectos medidos, no opinados, y corregidos:
+la escala de radios estaba **desordenada** (`rounded-2xl` renderizaba 16px
+mientras `rounded-xl` renderizaba 28px, porque las variables del proyecto pisaban
+el espacio de nombres de Tailwind v4), y **no existía sistema de elevación** —
+34 valores de sombra distintos usados 35 veces. Detalle y medidas en
+`DESIGN_SYSTEM.md`.
 
-**Limitación honesta**: el panel del navegador de esta sesión mide layout y color
-pero no captura imágenes. La calidad visual está verificada *estructuralmente*,
-no inspeccionada a ojo. `VISUAL POLISH: PENDING VISUAL INSPECTION`.
+Verificado en el navegador real en `/`, `/precios`, `/originalidad`,
+`/herramientas`, `/pdf-unir` y `/favoritos`, a **320 / 375 / 390 / 414 / 768 /
+1024 / 1280 / 1440 / 1600**:
+
+| Métrica | Resultado |
+|---|---|
+| Fallos de contraste WCAG AA | **0** |
+| Scroll horizontal | ninguno |
+| Radios fuera de la escala | ninguno |
+| Niveles de elevación en uso | 5–6 |
+| Controles bajo 24×24 en móvil | 0 |
+| Botones sin nombre accesible · imágenes sin `alt` | 0 · 0 |
+
+**Limitación honesta**: el panel del navegador de esta sesión **no compone
+frames**, así que no hay ni una captura. Forma, profundidad, contraste, desbordes
+y objetivos táctiles están *medidos*; si el conjunto **se ve** premium es un
+juicio que requiere ojos. `VISUAL POLISH: PENDING VISUAL INSPECTION`.
 
 ## ORIGINALITY
 
@@ -166,12 +181,19 @@ Guion de prueba y limitaciones para el grupo beta en `BETA_LAUNCH.md`.
 
 ## MONETIZATION
 
-`DEFERRED`. Mercado Pago no se tocó. Precios definidos y servidos desde Supabase
-(US$ 3,99 / US$ 9,99) pero el cobro está desactivado.
+`NOT BILLING READY` — ver la sección Mercado Pago. Nadie puede pagar todavía, y
+eso es correcto: no se ha ejecutado ni un checkout de prueba porque no hay planes
+creados contra los que hacerlo.
 
-Economía unitaria conocida por el lado del coste: embeddings $0.019/1 000
-documentos. El coste de la capa LLM no se puede calcular todavía porque no está
-integrada.
+Precios definidos y servidos desde Supabase (US$ 3,99 / US$ 9,99). Falta decidir
+el importe en COP, que es lo único que una cuenta colombiana de Mercado Pago
+puede cobrar.
+
+Economía unitaria por el lado del coste: embeddings **$0.019 / 1 000 documentos**
+(medido). La capa de IA reporta tokens exactos por análisis (~1 000 entrada /
+~670 salida medidos) pero **no** un coste, porque el precio del modelo no se
+adivina: se calcula solo si se configuran `AI_PRICE_INPUT_PER_MTOK` y
+`AI_PRICE_OUTPUT_PER_MTOK`.
 
 ---
 
