@@ -32,19 +32,50 @@ const CREATE = process.argv.includes("--create");
 const FORCE_REAL = process.argv.includes("--i-understand-this-is-a-real-account");
 
 /**
- * COP amounts.
+ * The approved COP prices — the single source for BOTH sides.
  *
- * The plans table prices in USD but a Colombian Mercado Pago account can
- * only charge COP, so a conversion has to happen somewhere. It happens
- * HERE, explicitly, rather than being buried in the app, because it is a
- * pricing decision and not an exchange-rate lookup: what Pro costs in
- * Colombia is a product question. Confirm these before charging anyone.
+ * Each entry drives the Mercado Pago plan that charges the money AND the
+ * `plans` row the pricing page renders from. They cannot drift apart
+ * because there is only one number: a site advertising 29.900 while the
+ * checkout charges something else is the one billing bug users notice
+ * immediately and never forgive.
+ *
+ * A Colombian Mercado Pago account can only charge COP, which is why
+ * these are not conversions of the old USD figures — they are prices,
+ * decided as prices.
+ *
+ * `cents` is what the database stores (COP has no minor unit in practice,
+ * but the column is integer cents for every currency, so 29.900 COP is
+ * 2 990 000).
  */
 const PLANS = [
-  { planId: "pro", interval: "month", reason: "Herramio Pro (mensual)", amount: 16000, frequency: 1 },
-  { planId: "pro", interval: "year", reason: "Herramio Pro (anual)", amount: 120000, frequency: 12 },
-  { planId: "team", interval: "month", reason: "Herramio Equipos (mensual)", amount: 40000, frequency: 1 },
+  {
+    planId: "pro",
+    interval: "month",
+    reference: "HERRAMIO_PRO_MONTHLY",
+    reason: "Herramio Pro Mensual",
+    amount: 29900,
+    frequency: 1,
+  },
+  {
+    planId: "pro",
+    interval: "year",
+    reference: "HERRAMIO_PRO_YEARLY",
+    reason: "Herramio Pro Anual",
+    amount: 299000,
+    frequency: 12,
+  },
+  {
+    planId: "team",
+    interval: "month",
+    reference: "HERRAMIO_TEAM_MONTHLY",
+    reason: "Herramio Team Mensual",
+    amount: 79900,
+    frequency: 1,
+  },
 ];
+
+const CURRENCY = "COP";
 
 const state = (v) => (v ? "configurado" : "FALTA");
 
@@ -142,34 +173,51 @@ for (const plan of PLANS) {
       method: "POST",
       body: JSON.stringify({
         reason: plan.reason,
+        // Identifies the PLAN. Not to be confused with the
+        // external_reference on a subscription, which carries the Herramio
+        // user id and is how the webhook attributes a payment to a person.
+        external_reference: plan.reference,
         auto_recurring: {
           frequency: plan.frequency,
           frequency_type: "months",
           transaction_amount: plan.amount,
-          currency_id: "COP",
+          currency_id: CURRENCY,
         },
         back_url: "https://herramio.com/cuenta?checkout=exito",
       }),
     });
     if (!res.ok) {
-      console.error(`  x ${plan.reason}: HTTP ${res.status} ${JSON.stringify(res.json).slice(0, 200)}`);
+      console.error(`  x ${plan.reason}: HTTP ${res.status} ${JSON.stringify(res.json).slice(0, 240)}`);
       continue;
     }
     id = res.json.id;
     console.log(`  + ${plan.reason}: ${id}`);
   }
 
+  // Both sides written from the same constant: the provider plan id AND
+  // the price the site displays. This is what makes a mismatch between
+  // the pricing page and the checkout impossible rather than unlikely.
   const column = plan.interval === "year" ? "provider_price_id_annual" : "provider_price_id_monthly";
+  const priceColumn = plan.interval === "year" ? "annual_price_cents" : "monthly_price_cents";
+  const patch = {
+    [column]: id,
+    [priceColumn]: plan.amount * 100,
+    provider: "mercadopago",
+    currency: CURRENCY.toLowerCase(),
+  };
   const upd = await supabase(`plans?id=eq.${plan.planId}`, {
     method: "PATCH",
     headers: { Prefer: "return=representation" },
-    body: JSON.stringify({ [column]: id, provider: "mercadopago" }),
+    body: JSON.stringify(patch),
   });
   // PostgREST answers a filtered-out update with success and an empty
   // body, so the write is confirmed by reading the row back, never by
   // the status code.
-  const wrote = Array.isArray(upd.json) && upd.json[0]?.[column] === id;
-  console.log(`    ${wrote ? "guardado en Supabase" : "NO se guardó — revisa " + column}`);
+  const row = Array.isArray(upd.json) ? upd.json[0] : null;
+  const wrote = row?.[column] === id && row?.[priceColumn] === plan.amount * 100;
+  console.log(
+    `    ${wrote ? `guardado: ${column}=${id}, ${priceColumn}=${plan.amount * 100} (${CURRENCY})` : "NO se guardó — revisa " + column}`,
+  );
 }
 
 console.log("\nListo. Falta MERCADOPAGO_WEBHOOK_SECRET para que el webhook valide firmas.");

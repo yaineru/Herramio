@@ -3,7 +3,7 @@
 Medido, no estimado. Cada afirmación de aquí tiene una prueba detrás; lo que no
 la tiene está marcado como no verificado.
 
-**Commit**: `0777e79` · **Tests**: 1000 / 132 ficheros / 0 fallos / 0 skips ·
+**Tests**: 1038 / 136 ficheros / 0 fallos / 0 skips ·
 **Lint**: 0/0 · **TypeScript**: PASS · **Build**: 190/190
 
 ---
@@ -128,12 +128,39 @@ prefijo no prueba nada y confundirlos significa cobrar dinero real.
 |---|---|
 | Access token | configurado (cuenta de prueba, válido) |
 | Public key | configurado |
-| `MERCADOPAGO_WEBHOOK_SECRET` | **falta** — sin él el webhook no valida firmas |
-| Planes en Mercado Pago | **ninguno** |
-| `provider_price_id` en Supabase | **NULL en todos los planes** |
+| `MERCADOPAGO_WEBHOOK_SECRET` | **falta** — sin él el webhook rechaza todo |
+| Planes en Mercado Pago | **3 creados** en TEST |
+| `provider_price_id` en Supabase | **asignados** |
 
-Con los ids en NULL el checkout no puede ni empezar: redirige a
-`plan_no_disponible`. Ese es el bloqueador real, no el código.
+### Planes creados (TEST)
+
+| Plan | Precio | Frecuencia | Mercado Pago plan id | Herramio |
+|---|---|---|---|---|
+| Herramio Pro Mensual | $ 29.900 COP | 1 mes | `f752a4e49c70436e9c6b4a453035a606` | `pro` / `month` |
+| Herramio Pro Anual | $ 299.000 COP | 12 meses | `3d37fa0a6fea499a802aae7b2628ce4b` | `pro` / `year` |
+| Herramio Team Mensual | $ 79.900 COP | 1 mes | `fc83cd823f3648c88d159a68ea7fbe44` | `team` / `month` |
+
+Verificado abriendo el checkout real de Mercado Pago en un navegador: la
+página muestra «tu suscripción para **Herramio Pro Mensual** será de
+**$ 29.900** — Se debitará de forma mensual», y lo equivalente para los otros
+dos. Ningún plan cruzado.
+
+`scripts/verify-billing-mapping.mjs` comprueba contra datos vivos que lo que
+muestra la web es exactamente lo que cobrará Mercado Pago.
+
+### Un bug real que solo aparece contra la API de verdad
+
+`createCheckoutSession` hacía `POST /preapproval` con `payer_email`. La API
+responde **`400 card_token_id is required`** — todas las variantes, medido
+contra el endpoint real. El token de tarjeta lo genera el navegador con MP.js
+a partir de datos que este servidor nunca debe ver, así que **no existe forma
+de crear una suscripción desde el servidor**. El checkout habría fallado para
+el 100 % de los usuarios, y el `catch` del Server Action lo habría mostrado
+para siempre como «pagos_no_configurados».
+
+Corregido: ahora redirige al `init_point` del plan, que es el checkout alojado
+de Mercado Pago, con el `external_reference` del usuario añadido para que el
+webhook pueda atribuir el pago.
 
 Seguridad con evidencia (11 tests): un webhook falsificado no escribe nada; una
 notificación repetida no puede aplicarse dos veces; un pago sin usuario

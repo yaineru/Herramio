@@ -50,8 +50,18 @@ export default async function AdminPage() {
         </Card>
         <Card className="p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">MRR estimado</p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">{formatCurrencyFromCents(metrics.mrrCents, "usd")}</p>
-          <p className="mt-1 text-xs text-slate-400">Excluye suscripciones en past_due (pago no confirmado)</p>
+          {/* The currency is read from the plans that produced the figure,
+              never assumed. It was hardcoded to "usd", which would have
+              labelled Colombian pesos as dollars the moment pricing moved
+              to COP — off by roughly four thousand. */}
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {metrics.mrrCurrency ? formatCurrencyFromCents(metrics.mrrCents, metrics.mrrCurrency) : "—"}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            {metrics.mrrCurrency === null && metrics.mrrCents > 0
+              ? "Planes en monedas distintas: sumarlos no daría un número con sentido."
+              : "Excluye suscripciones en past_due (pago no confirmado)"}
+          </p>
         </Card>
         <Card className="p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Pagos pendientes (past_due)</p>

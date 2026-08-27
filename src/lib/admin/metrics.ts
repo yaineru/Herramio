@@ -15,6 +15,15 @@ export interface AdminMetrics {
   pastDueCount: number;
   /** Estimated monthly recurring revenue in cents, from active + trialing subscriptions only (past_due excluded — not confirmed collected). */
   mrrCents: number;
+  /**
+   * The currency `mrrCents` is denominated in, or null when the
+   * contributing plans do not agree on one.
+   *
+   * Null is a real outcome, not a defensive nicety: adding COP cents to
+   * USD cents produces a number with no meaning, and displaying it under
+   * either symbol would be a lie. The panel says so instead of picking.
+   */
+  mrrCurrency: string | null;
   recentWebhookEvents: { provider: string; eventId: string; eventType: string; receivedAt: string }[];
   topTools: { toolId: string; toolName: string; count: number }[];
   originality: {
@@ -49,7 +58,7 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
       .from("subscriptions")
       .select("user_id, workspace_id, plan_id, billing_interval, status")
       .in("status", ACTIVE_STATUSES),
-    admin.from("plans").select("id, monthly_price_cents, annual_price_cents"),
+    admin.from("plans").select("id, monthly_price_cents, annual_price_cents, currency"),
     admin
       .from("webhook_events")
       .select("provider, event_id, event_type, received_at")
@@ -67,16 +76,22 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
   const pastDueCount = subs.filter((s) => s.status === "past_due").length;
 
   let mrrCents = 0;
+  const mrrCurrencies = new Set<string>();
   for (const sub of subs) {
     if (sub.status === "past_due") continue; // not confirmed collected — excluded from MRR, tracked separately
     const plan = plans.get(sub.plan_id);
     if (!plan) continue;
     if (sub.billing_interval === "year" && plan.annual_price_cents) {
       mrrCents += Math.round(plan.annual_price_cents / 12);
+      mrrCurrencies.add(plan.currency);
     } else if (plan.monthly_price_cents) {
       mrrCents += plan.monthly_price_cents;
+      mrrCurrencies.add(plan.currency);
     }
   }
+  // One currency or none. Two would mean the sum above is meaningless, and
+  // the panel is told that rather than being handed a number to mislabel.
+  const mrrCurrency = mrrCurrencies.size === 1 ? [...mrrCurrencies][0] : null;
 
   const usageTotals = new Map<string, number>();
   for (const row of usageResult.data ?? []) {
@@ -98,6 +113,7 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
     teamSubscriptionsByPlan: bucketByPlan(teamSubs),
     pastDueCount,
     mrrCents,
+    mrrCurrency,
     recentWebhookEvents: (webhooksResult.data ?? []).map((e) => ({
       provider: e.provider,
       eventId: e.event_id,
