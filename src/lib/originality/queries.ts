@@ -152,6 +152,11 @@ export const getReportForDocument = cache(async (documentId: string): Promise<Or
     engineVersion: data.engine_version,
     status: data.status,
     createdAt: data.created_at,
+    embeddingsGenerated: data.embeddings_generated ?? 0,
+    // Undefined rather than null until migration 0009 is applied. Both
+    // mean the same thing to the UI: render no explanation panel.
+    aiAnalysis: data.ai_analysis ?? null,
+    aiModel: data.ai_model ?? null,
   };
 });
 

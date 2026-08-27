@@ -255,6 +255,25 @@ export type OriginalityReportRow = {
   processing_ms: number | null;
   status: OriginalityReportStatus;
   created_at: string;
+  // Added by 0009_ai_analysis.sql. Null on every report generated before
+  // the AI layer was switched on, and on any report where the layer was
+  // unavailable or its output failed validation — a report without prose
+  // is a normal, complete report.
+  ai_analysis: AiAnalysisJson | null;
+  ai_model: string | null;
+  ai_input_tokens: number | null;
+  ai_output_tokens: number | null;
+  ai_cost_usd: number | null;
+  ai_duration_ms: number | null;
+};
+
+/** Shape stored in originality_reports.ai_analysis. Mirrors AiExplanation minus the usage metadata, which lives in its own columns. */
+export type AiAnalysisJson = {
+  summary: string;
+  findings: { title: string; detail: string; severity: "info" | "review" | "attention" }[];
+  recommendations: string[];
+  uncertainty: string;
+  promptInjectionNoticed: boolean;
 };
 
 export type Database = {

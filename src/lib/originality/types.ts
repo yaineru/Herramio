@@ -7,7 +7,10 @@ import type {
   SourceType,
 } from "@/lib/supabase/database.types";
 
+import type { AiAnalysisJson } from "@/lib/supabase/database.types";
+
 export type { CitationStyle, DocumentStatus, MatchType, OriginalityReportStatus, ReferenceVerificationStatus, SourceType };
+export type { AiAnalysisJson };
 
 export interface OriginalityDocument {
   id: string;
@@ -82,4 +85,9 @@ export interface OriginalityReport {
   engineVersion: string;
   status: OriginalityReportStatus;
   createdAt: string;
+  /** Vectors actually generated for this document. >0 is the evidence that the semantic pass ran; the UI must not claim it did on any other basis. */
+  embeddingsGenerated: number;
+  /** Prose explaining the evidence above. Null whenever the AI layer was off, failed, or produced output that did not pass validation — the report is complete either way. */
+  aiAnalysis: AiAnalysisJson | null;
+  aiModel: string | null;
 }

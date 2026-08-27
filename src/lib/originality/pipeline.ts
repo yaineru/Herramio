@@ -7,6 +7,7 @@ import { compareChunks } from "@/lib/originality/similarity";
 import { computeReportScore, ENGINE_VERSION, strongerMatch, type ChunkBestMatch } from "@/lib/originality/report-score";
 import { analyseSemantically, type CorpusEmbedding } from "@/lib/originality/semantic/analyse-document";
 import { verifyReferenceViaCrossref } from "@/lib/originality/providers/crossref";
+import { explainEvidence } from "@/lib/originality/ai/explain";
 
 // Bounds worst-case comparison cost — this is O(newChunks × corpusChunks)
 // pure-CPU work (no external calls), but an unbounded corpus would still
@@ -130,6 +131,9 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
     }
 
     const references = detectReferences(extraction.text);
+    // Counted here so the AI stage can describe reference health without
+    // re-querying what was just written.
+    const referenceStatusCounts = new Map<string, number>();
     if (references.length > 0) {
       // Real verification against Crossref's free, keyless metadata index
       // — never fabricated, and 'not_found' is stored as exactly that,
@@ -139,6 +143,8 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
       await admin.from("document_references").insert(
         references.map((r, idx) => {
           const verification = verifications.get(idx);
+          const status = verification?.status ?? "unverified";
+          referenceStatusCounts.set(status, (referenceStatusCounts.get(status) ?? 0) + 1);
           return {
             document_id: documentId,
             raw_text: r.rawText,
@@ -287,20 +293,101 @@ export async function runOriginalityPipeline(documentId: string): Promise<void> 
 
     const score = computeReportScore([...bestMatchPerChunk.values()]);
 
-    await admin.from("originality_reports").insert({
-      document_id: documentId,
-      similarity_index: score.similarityIndex,
-      exact_ratio: score.exactRatio,
-      near_exact_ratio: score.nearExactRatio,
-      semantic_ratio: score.semanticRatio,
-      citation_count: allCitations.length,
-      reference_count: references.length,
-      embeddings_generated: semantic.embeddingsGenerated,
-      engine_version: ENGINE_VERSION,
-      status: "completed",
-    });
+    const { data: insertedReport } = await admin
+      .from("originality_reports")
+      .insert({
+        document_id: documentId,
+        similarity_index: score.similarityIndex,
+        exact_ratio: score.exactRatio,
+        near_exact_ratio: score.nearExactRatio,
+        semantic_ratio: score.semanticRatio,
+        citation_count: allCitations.length,
+        reference_count: references.length,
+        embeddings_generated: semantic.embeddingsGenerated,
+        engine_version: ENGINE_VERSION,
+        status: "completed",
+      })
+      .select("id")
+      .single();
 
     await admin.from("documents").update({ status: "completed" }).eq("id", documentId);
+
+    // ---- AI explanation stage -------------------------------------
+    // Deliberately last, and deliberately after the document is already
+    // marked completed. The report is finished and readable at this
+    // point; everything below is prose that explains it. If the provider
+    // is off, slow, or broken, the user still has their analysis — they
+    // just don't get the commentary.
+    //
+    // Note what is passed: measured scores and the specific passages that
+    // were flagged. Never the document. The model explains evidence it is
+    // given; it does not go looking, and it does not decide anything.
+    if (insertedReport) {
+      const rawTextBySequence = new Map(chunks.map((c) => [c.sequence, c.text]));
+      const rawTextByChunkId = new Map(
+        insertedChunks.map((c) => [c.id, rawTextBySequence.get(c.sequence) ?? c.normalized_text]),
+      );
+
+      const evidenceMatches = [
+        ...matchRows.map((m) => ({
+          similarity: m.similarity_score,
+          matchType: m.match_type as string,
+          documentExcerpt: rawTextByChunkId.get(m.chunk_id) ?? "",
+          sourceExcerpt: m.matched_text,
+          sourceLabel: "documento anterior del propio usuario",
+        })),
+        ...semantic.matches.map((m) => ({
+          similarity: m.similarity,
+          matchType: "semantic",
+          documentExcerpt: rawTextByChunkId.get(m.chunkId) ?? "",
+          sourceExcerpt: corpusTextByChunk.get(m.matchedChunkId) ?? "",
+          sourceLabel: "documento anterior del propio usuario",
+        })),
+      ].sort((a, b) => b.similarity - a.similarity);
+
+      const explanation = await explainEvidence({
+        similarityIndex: score.similarityIndex,
+        exactRatio: score.exactRatio,
+        nearExactRatio: score.nearExactRatio,
+        semanticRatio: score.semanticRatio,
+        semanticAvailable: semantic.unavailableReason === null,
+        wordCount: document.word_count ?? null,
+        citationCount: allCitations.length,
+        references: {
+          total: references.length,
+          verified: referenceStatusCounts.get("verified") ?? 0,
+          notFound: referenceStatusCounts.get("not_found") ?? 0,
+          unverified: referenceStatusCounts.get("unverified") ?? 0,
+        },
+        matches: evidenceMatches,
+      });
+
+      if (explanation) {
+        // A separate update, on purpose: if migration 0009 has not been
+        // applied yet these columns do not exist, and this write fails
+        // while the report above stays intact and complete.
+        const { error: aiError } = await admin
+          .from("originality_reports")
+          .update({
+            ai_analysis: {
+              summary: explanation.summary,
+              findings: explanation.findings,
+              recommendations: explanation.recommendations,
+              uncertainty: explanation.uncertainty,
+              promptInjectionNoticed: explanation.promptInjectionNoticed,
+            },
+            ai_model: explanation.model,
+            ai_input_tokens: explanation.usage.inputTokens,
+            ai_output_tokens: explanation.usage.outputTokens,
+            ai_cost_usd: explanation.usage.costUsd,
+            ai_duration_ms: explanation.usage.durationMs,
+          })
+          .eq("id", insertedReport.id);
+        if (aiError) {
+          console.error("No se pudo guardar la explicación de IA (¿falta la migración 0009?):", aiError);
+        }
+      }
+    }
   } catch (error) {
     console.error(`Originality pipeline failed for document ${documentId}:`, error);
     await admin

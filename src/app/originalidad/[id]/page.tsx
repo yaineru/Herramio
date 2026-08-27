@@ -22,6 +22,7 @@ import { EvidenceViewer } from "@/components/originality/EvidenceViewer";
 import { ScoreCard } from "@/components/originality/ScoreCard";
 import { EngineStatusBanner, ExternalSearchNotice } from "@/components/originality/EngineStatusBanner";
 import { ReferenceStatusBadge, ReferenceStatusLegend } from "@/components/originality/ReferenceStatusBadge";
+import { AiExplanationPanel } from "@/components/originality/AiExplanationPanel";
 import { AnalyticsPageEvent } from "@/components/AnalyticsPageEvent";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 
@@ -119,6 +120,8 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
   if (!report) notFound();
 
   const citationGraph = buildCitationGraph(citations, references);
+  // Vectors generated is the only honest signal that the semantic pass ran.
+  const semanticRan = report.embeddingsGenerated > 0;
 
   return (
     <div className="container-page py-10">
@@ -165,7 +168,7 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
           ratio={report.similarityIndex}
           exactRatio={report.exactRatio}
           nearRatio={report.nearExactRatio}
-          semanticAvailable={false}
+          semanticAvailable={semanticRan}
         />
 
         <EngineStatusBanner
@@ -173,11 +176,21 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
           engines={[
             { name: "Léxico", state: "active", detail: "activo" },
             { name: "Crossref", state: "verified", detail: "referencias verificadas" },
-            { name: "Semántico", state: "waiting", detail: "en espera" },
+            // Derived, never assumed: vectors were generated for this
+            // document or they were not. Hardcoding "en espera" here would
+            // have kept telling users semantic was off on the very day it
+            // was switched on.
+            semanticRan
+              ? { name: "Semántico", state: "active" as const, detail: "activo" }
+              : { name: "Semántico", state: "waiting" as const, detail: "en espera" },
           ]}
         />
 
         <ExternalSearchNotice className="mt-4" />
+
+        {report.aiAnalysis && (
+          <AiExplanationPanel className="mt-6" analysis={report.aiAnalysis} model={report.aiModel} />
+        )}
 
         <Card className="mt-6 p-6">
           <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
