@@ -3,7 +3,7 @@
 Medido, no estimado. Cada afirmación de aquí tiene una prueba detrás; lo que no
 la tiene está marcado como no verificado.
 
-**Commit**: `a8e569e` · **Tests**: 961 / 357 suites / 0 fallos / 0 skips ·
+**Commit**: `0777e79` · **Tests**: 1000 / 132 ficheros / 0 fallos / 0 skips ·
 **Lint**: 0/0 · **TypeScript**: PASS · **Build**: 190/190
 
 ---
@@ -66,16 +66,65 @@ candidatos que nuestra similitud debe puntuar, nunca verificaciones.
 
 ## AI
 
-`PREPARED`, no integrado.
+`IMPLEMENTED`, `NOT_CONFIGURED` en producción. Requiere la migración 0009.
 
-El aislamiento de contenido no confiable está construido y probado (14 tests):
-fence con 12 bytes aleatorios, preámbulo que instruye reportar una inyección en
-vez de obedecerla, truncado, y redacción de credenciales antes de enviar nada.
-El motor determinista no construye ningún prompt, así que es inmune por
-construcción.
+La capa analiza **evidencia**, nunca el documento: recibe las cifras que calculó
+nuestro propio código y los pasajes concretos que marcó, y devuelve una lectura
+estructurada — resumen, hallazgos, recomendaciones y, obligatorio, qué **no**
+puede determinar. Una salida sin límites declarados se descarta.
 
-Falta elegir modelo, escribir el adaptador y conectar. **No se hizo en esta
-misión.**
+Verificado en vivo contra `gpt-5.4-mini` con una inyección incrustada en la
+evidencia (`scripts/ai-smoke.ts`):
+
+| Comprobación | Resultado |
+|---|---|
+| La inyección se reportó como hallazgo, no se obedeció | sí (`promptInjectionNoticed = true`) |
+| Filtró credenciales o nombres de variables | no |
+| Emitió un veredicto de plagio | no |
+| Tokens / latencia | 1003 entrada · 669 salida · 4.8 s |
+
+Tres guardas, en orden de importancia: contenido no confiable tras un fence
+aleatorio por petición; escaneo del texto generado contra las afirmaciones que
+este producto nunca hace («plagio confirmado», «el estudiante copió», «100 % de
+precisión»), y una coincidencia descarta la explicación entera; y fallo suave
+siempre — sin proveedor, JSON inválido, guarda activada o timeout, el informe
+sale completo sin prosa.
+
+Apagada por defecto tras `AI_ANALYSIS`, para que una `OPENAI_API_KEY` suelta —
+que la capa semántica también lee — no empiece a gastar en prosa que nadie pidió.
+Una llamada por análisis, salida acotada, tokens exactos, y coste solo cuando hay
+un precio configurado explícitamente.
+
+## MERCADO PAGO
+
+`NOT BILLING READY`. La integración es sólida; le falta configuración.
+
+Las credenciales del `.env.local` estaban con nombres que el código no lee
+(`acces_token`, `Public Key` — esta última con un espacio, así que ningún proceso
+la habría leído nunca). Renombradas a `MERCADOPAGO_ACCESS_TOKEN` y
+`MERCADOPAGO_PUBLIC_KEY`.
+
+Son credenciales de **usuario de prueba** (`@testuser.com`, sitio MCO). Lo
+comprobé preguntándole a la API, no por el prefijo: Mercado Pago emite
+`APP_USR-` tanto a vendedores reales como a usuarios de prueba, así que el
+prefijo no prueba nada y confundirlos significa cobrar dinero real.
+
+| Elemento | Estado |
+|---|---|
+| Access token | configurado (cuenta de prueba, válido) |
+| Public key | configurado |
+| `MERCADOPAGO_WEBHOOK_SECRET` | **falta** — sin él el webhook no valida firmas |
+| Planes en Mercado Pago | **ninguno** |
+| `provider_price_id` en Supabase | **NULL en todos los planes** |
+
+Con los ids en NULL el checkout no puede ni empezar: redirige a
+`plan_no_disponible`. Ese es el bloqueador real, no el código.
+
+Seguridad con evidencia (11 tests): un webhook falsificado no escribe nada; una
+notificación repetida no puede aplicarse dos veces; un pago sin usuario
+atribuible no desbloquea a nadie; un `price_id` desconocido no resuelve al plan
+más parecido. El precio sale siempre de la base de datos y el `userId` de la
+sesión — el navegador no envía ninguno de los dos.
 
 ## SECURITY
 
@@ -141,6 +190,25 @@ Las que un usuario notaría y que hay que decirle:
 
 - **Backups de Supabase.** No consultable por API. Requiere acción manual en
   Settings → Database.
-- **Calidad visual a ojo.** Medida estructuralmente, no inspeccionada.
+- **Calidad visual a ojo.** El panel del navegador de esta sesión no compone
+  frames, así que **no hay capturas**. Forma, profundidad, contraste, desbordes y
+  objetivos táctiles están medidos en el navegador real a nueve anchos; si el
+  resultado *se ve* premium sigue siendo un juicio que requiere ojos.
 - **Paridad de entornos**: `NEXT_PUBLIC_SITE_URL` está en producción y falta en
   Preview. Sin impacto conocido, pero es una divergencia real.
+- **Checkout de extremo a extremo.** Ningún checkout se ha ejecutado, ni de
+  prueba: no existen planes en Mercado Pago contra los que hacerlo.
+
+## Pasos pendientes, en orden
+
+1. **Aplicar `0009_ai_analysis.sql`** (SQL editor de Supabase). Aditiva e
+   idempotente. Sin ella la explicación de IA no se guarda; el informe no se ve
+   afectado.
+2. **Revisar el diseño** en la Preview de la rama `design/visual-system-and-ai`
+   y decidir si se promueve a producción.
+3. **Crear los planes de Mercado Pago**: `node scripts/mercadopago-setup.mjs`
+   para auditar, `--create` para crearlos. Confirma antes los importes en COP —
+   son una decisión de precio, no una conversión de divisa.
+4. **`MERCADOPAGO_WEBHOOK_SECRET`** desde el panel de Mercado Pago al crear el
+   webhook.
+5. **Verificar los backups de Supabase.**
