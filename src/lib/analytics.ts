@@ -68,6 +68,13 @@ export const AnalyticsEvents = {
   // document's real row (see DocumentStatusPoller) — never fired
   // optimistically before the server has actually recorded that status.
   originalityViewed: () => trackEvent("originality_viewed"),
+  // Beta feedback channel. Three events, no more: opened tells us whether
+  // people notice it at all, submitted whether they finish, and failed
+  // whether we are losing messages. Anything finer would be telemetry for
+  // its own sake.
+  feedbackOpened: (pagePath: string) => trackEvent("feedback_opened", { page_path: pagePath }),
+  feedbackSubmitted: (kind: string) => trackEvent("feedback_submitted", { kind }),
+  feedbackFailed: () => trackEvent("feedback_failed"),
   documentUploadStarted: () => trackEvent("document_upload_started"),
   documentUploaded: (documentId: string) => trackEvent("document_uploaded", { document_id: documentId }),
   analysisStarted: (documentId: string) => trackEvent("analysis_started", { document_id: documentId }),

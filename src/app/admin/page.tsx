@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { isCurrentUserAdmin } from "@/lib/admin/auth";
 import { getAdminMetrics } from "@/lib/admin/metrics";
+import { listFeedback, getFeedbackCounts } from "@/lib/admin/feedback";
+import { FeedbackCenter, FeedbackSummary } from "@/components/admin/FeedbackCenter";
 import { formatCurrencyFromCents } from "@/lib/plans/format";
 
 // Deliberately not indexed and deliberately not linked from anywhere in
@@ -14,12 +16,32 @@ export default async function AdminPage() {
   // exists to anyone probing it; a 404 doesn't.
   if (!(await isCurrentUserAdmin())) notFound();
 
-  const metrics = await getAdminMetrics();
+  const [metrics, feedback, feedbackCounts] = await Promise.all([
+    getAdminMetrics(),
+    listFeedback(),
+    getFeedbackCounts(),
+  ]);
 
   return (
     <div className="container-page py-10">
       <h1 className="text-3xl font-bold text-slate-900">Panel de administración</h1>
-      <p className="mt-1 text-sm text-slate-500">Vista de solo lectura — cambios de precios/planes se hacen en Supabase.</p>
+      <p className="mt-1 text-sm text-slate-500">Métricas de solo lectura. El feedback sí se gestiona desde aquí.</p>
+
+      {/* First, above the metrics: during a beta this is the section
+          that most often turns into work, and an inbox nobody scrolls to
+          is an inbox nobody reads. */}
+      <Card className="mt-8 p-5">
+        <h2 className="text-sm font-semibold text-slate-900">Feedback de la beta</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Lo que llega desde el botón «Comentar» del workspace y de los informes.
+        </p>
+        <div className="mt-4">
+          <FeedbackSummary counts={feedbackCounts} />
+        </div>
+        <div className="mt-5">
+          <FeedbackCenter items={feedback} />
+        </div>
+      </Card>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Card className="p-5">

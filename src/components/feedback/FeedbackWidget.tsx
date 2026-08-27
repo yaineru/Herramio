@@ -4,6 +4,7 @@ import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { CheckCircle2, MessageSquare, X } from "lucide-react";
 import { submitFeedbackAction, type FeedbackKind, type FeedbackState } from "@/lib/feedback/actions";
+import { AnalyticsEvents } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 
 /**
@@ -164,7 +165,11 @@ export function FeedbackWidget() {
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          const next = !open;
+          setOpen(next);
+          if (next) AnalyticsEvents.feedbackOpened(pathname ?? "");
+        }}
         aria-expanded={open}
         aria-controls={panelId}
         className={cn(

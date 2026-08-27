@@ -55,6 +55,15 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
             <BrandMark className="h-4 w-4" />
           </span>
           <span className="text-[15px]">{SITE.shortName}</span>
+          {/* One small mark next to the wordmark, not a page-wide banner.
+              People need to know the product is young — it sets the right
+              expectation when something is rough, and it is the honest
+              framing while Originality is still gaining capabilities. A
+              dismissible strip across every page would say the same thing
+              far more loudly and get closed on sight. */}
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800">
+            Beta
+          </span>
         </Link>
 
         {/* xl, not lg: measured at 1024px the logo + links + search +
