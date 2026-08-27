@@ -30,7 +30,7 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
   return (
     <div>
       {anyAnnual && (
-        <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 shadow-[0_8px_22px_rgba(15,23,42,0.03)]">
+        <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 elevation-1">
           <button
             type="button"
             onClick={() => setInterval("month")}
@@ -69,7 +69,7 @@ export function PricingPlans({ plans, currentPlanId }: { plans: Plan[]; currentP
               key={plan.id}
               className={cn(
                 "flex flex-col p-6 transition-all",
-                isHighlighted && "border-emerald-500 bg-gradient-to-b from-emerald-50/50 via-white to-white shadow-[0_24px_42px_rgba(16,185,129,0.12)] ring-1 ring-emerald-500/30",
+                isHighlighted && "border-emerald-500 bg-gradient-to-b from-emerald-50/50 via-white to-white elevation-brand ring-1 ring-emerald-500/30",
               )}
             >
               {isHighlighted && (

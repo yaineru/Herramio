@@ -156,7 +156,7 @@ export default async function OriginalityDocumentPage({ params }: PageProps<"/or
             { label: "Referencias", value: String(references.length) },
             { label: "Coincidencias", value: String(matches.length) },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-[22px] border border-slate-200 bg-white/90 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.03)]">
+            <div key={stat.label} className="rounded-xl border border-slate-200 bg-white/90 p-4 elevation-1">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{stat.label}</p>
               <p className="mt-3 text-2xl font-bold tracking-[-0.05em] text-slate-900">{stat.value}</p>
             </div>

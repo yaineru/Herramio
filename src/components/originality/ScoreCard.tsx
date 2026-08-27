@@ -26,11 +26,11 @@ export function ScoreCard({ ratio, exactRatio, nearRatio, semanticAvailable, cla
 
   return (
     <section
-      className={cn("rounded-[28px] border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 p-6 sm:p-8", className)}
+      className={cn("rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 p-6 sm:p-8", className)}
       aria-labelledby="score-heading"
     >
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="relative shrink-0 rounded-full border border-slate-200 bg-white p-2 shadow-[0_12px_26px_rgba(15,23,42,0.04)]">
+        <div className="relative shrink-0 rounded-full border border-slate-200 bg-white p-2 elevation-1">
           <svg
             width="128"
             height="128"

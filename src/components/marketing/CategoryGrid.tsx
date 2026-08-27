@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export function CategoryGrid() {
   return (
     <div className="space-y-5">
-      <div className="rounded-[26px] border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-slate-50 p-4 shadow-[0_14px_30px_rgba(16,185,129,0.08)] sm:p-5">
+      <div className="rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-slate-50 p-4 elevation-brand sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="section-kicker">Producto estrella</p>
@@ -34,7 +34,7 @@ export function CategoryGrid() {
               href={isComingSoon ? "/herramientas" : `/categoria/${category.id}`}
               onClick={() => AnalyticsEvents.categorySelected(category.id)}
               className={cn(
-                "group flex flex-col items-start gap-3 rounded-[24px] border border-slate-200 bg-white/90 p-4 shadow-[0_10px_24px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_18px_34px_rgba(16,185,129,0.09)]",
+                "group flex flex-col items-start gap-3 rounded-2xl border border-slate-200 bg-white/90 p-4 elevation-1 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:elevation-brand",
               )}
             >
               <span

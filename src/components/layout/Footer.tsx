@@ -48,7 +48,7 @@ function FooterColumn({ title, links }: { title: string; links: { href: string; 
                 without changing how the list looks. */}
             <Link
               href={link.href}
-              className="inline-flex min-h-6 items-center py-0.5 text-sm text-slate-500 hover:text-slate-900"
+              className="-mx-1.5 inline-flex min-h-6 min-w-[24px] items-center justify-center px-1.5 py-0.5 text-sm text-slate-500 hover:text-slate-900"
             >
               {link.label}
             </Link>

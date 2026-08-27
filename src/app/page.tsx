@@ -116,7 +116,7 @@ export default function HomePage() {
 
       <section className="container-page pb-16">
         <Reveal>
-          <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-[0_20px_40px_rgba(15,23,42,0.05)] sm:p-8">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 elevation-3 sm:p-8">
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Producto estrella</p>
@@ -130,7 +130,7 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Resumen</span>
                   <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white">14.2%</span>

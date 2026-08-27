@@ -12,7 +12,7 @@ export function ToolCard({ tool }: { tool: Tool }) {
     <TiltWrapper>
       <Link
         href={tool.href}
-        className="group relative flex h-full flex-col rounded-[24px] border border-slate-200 bg-white/90 p-5 shadow-[0_12px_24px_rgba(15,23,42,0.04)] transition-all duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_20px_40px_rgba(16,185,129,0.08)]"
+        className="group relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white/90 p-5 elevation-1 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:elevation-brand"
       >
         <div className="flex items-start justify-between gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white transition-colors group-hover:bg-emerald-600">

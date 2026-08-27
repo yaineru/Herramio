@@ -76,11 +76,11 @@ export function ToolPageShell({
         ]}
       />
 
-      <div className="mt-6 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_38px_rgba(15,23,42,0.06)] sm:p-7">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 elevation-2 sm:p-7">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             {tool && (
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-white elevation-3">
                 <tool.icon className="h-5 w-5" strokeWidth={1.75} />
               </span>
             )}

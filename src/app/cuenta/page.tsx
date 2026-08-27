@@ -60,7 +60,7 @@ export default async function CuentaPage() {
             <p className="section-kicker">Workspace</p>
             <h1 className="mt-2 text-3xl font-bold tracking-[-0.05em] text-slate-900 sm:text-4xl">Mi cuenta</h1>
           </div>
-          <span className="inline-flex w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 shadow-[0_8px_18px_rgba(16,185,129,0.08)]">
+          <span className="inline-flex w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 elevation-brand">
             {entitlements.planName}
           </span>
         </div>

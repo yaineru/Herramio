@@ -23,7 +23,7 @@ export function Hero() {
     <section className="relative overflow-hidden border-b border-slate-200 bg-white">
       <HeroBackground />
       <div className="container-page relative flex flex-col items-center py-20 text-center sm:py-28">
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-800 shadow-[0_8px_18px_rgba(16,185,129,0.12)]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-800 elevation-brand">
           <ShieldCheck className="h-3.5 w-3.5" /> {SITE.name}
         </div>
 
@@ -47,7 +47,7 @@ export function Hero() {
               key={example.label}
               type="button"
               onClick={() => openSearchPalette(example.query)}
-              className="rounded-full border border-slate-200 bg-white/80 px-3.5 py-1.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-slate-200 bg-white/80 px-4 py-2.5 text-xs font-medium text-slate-600 transition-all hover:border-slate-300 hover:text-slate-900 sm:min-h-0 sm:py-1.5"
             >
               {example.label}
             </button>

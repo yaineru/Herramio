@@ -41,7 +41,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
     <header
       className={cn(
         "sticky top-0 z-40 border-b bg-white/85 backdrop-blur-xl transition-[border-color,box-shadow,background-color] duration-200",
-        scrolled ? "border-slate-200 shadow-[0_12px_30px_rgba(15,23,42,0.04)]" : "border-slate-200/80",
+        scrolled ? "border-slate-200 elevation-1" : "border-slate-200/80",
       )}
     >
       <div
@@ -51,7 +51,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
         )}
       >
         <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold tracking-[-0.03em] text-slate-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white shadow-[0_10px_20px_rgba(15,23,42,0.18)]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-950 text-white elevation-3">
             <BrandMark className="h-4 w-4" />
           </span>
           <span className="text-[15px]">{SITE.shortName}</span>
@@ -117,7 +117,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
 
         <Link
           href="/favoritos"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
           aria-label="Favoritos y recientes"
         >
           <Star className="h-5 w-5" />
@@ -126,7 +126,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
         <button
           type="button"
           onClick={() => openSearchPalette()}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
           aria-label="Buscar herramientas"
         >
           <Search className="h-5 w-5" />
@@ -135,7 +135,7 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
           aria-label="Abrir menú"
           aria-expanded={open}
         >

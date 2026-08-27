@@ -21,7 +21,7 @@ export function SearchTrigger({
         type="button"
         onClick={() => openSearchPalette()}
         className={cn(
-          "group flex w-full items-center gap-3 rounded-[22px] border border-slate-200 bg-white/90 px-5 py-4 text-left shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm transition-all duration-200 hover:border-slate-300 hover:shadow-[0_24px_52px_rgba(15,23,42,0.12)]",
+          "group flex w-full items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-5 py-4 text-left elevation-2 backdrop-blur-sm transition-all duration-200 hover:border-slate-300 hover:elevation-4",
           className,
         )}
       >

@@ -102,15 +102,15 @@ export function UploadForm() {
         handleFileSelect(file);
       }}
       className={cn(
-        "rounded-[28px] border-2 border-dashed p-6 text-left transition-all duration-200 sm:p-8",
+        "rounded-2xl border-2 border-dashed p-6 text-left transition-all duration-200 sm:p-8",
         isDragging
-          ? "border-emerald-400 bg-emerald-50/60 shadow-[0_16px_38px_rgba(16,185,129,0.12)]"
+          ? "border-emerald-400 bg-emerald-50/60 elevation-brand"
           : "border-slate-300 bg-slate-50/80 hover:border-emerald-400 hover:bg-emerald-50/30",
       )}
     >
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-[0_12px_24px_rgba(15,23,42,0.18)]">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white elevation-3">
             <UploadCloud className="h-6 w-6" />
           </div>
           <div>
@@ -141,7 +141,7 @@ export function UploadForm() {
               className={cn(
                 "rounded-2xl border p-3 text-sm transition-all",
                 isActive
-                  ? "border-emerald-200 bg-white text-slate-900 shadow-[0_8px_18px_rgba(16,185,129,0.06)]"
+                  ? "border-emerald-200 bg-white text-slate-900 elevation-brand"
                   : "border-slate-200 bg-white/70 text-slate-500",
               )}
             >
@@ -156,7 +156,7 @@ export function UploadForm() {
 
       <label
         htmlFor="originality-file"
-        className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-[22px] border border-slate-200 bg-white p-6 text-center shadow-[0_8px_18px_rgba(15,23,42,0.03)] transition hover:border-emerald-300 hover:bg-emerald-50/20"
+        className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-6 text-center elevation-1 transition hover:border-emerald-300 hover:bg-emerald-50/20"
       >
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
           {isPending ? <LoaderCircle className="h-6 w-6 animate-spin" /> : <FileUp className="h-6 w-6" />}

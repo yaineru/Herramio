@@ -52,7 +52,7 @@ export function AiExplanationPanel({
     <section
       aria-labelledby="ai-explanation-heading"
       className={cn(
-        "overflow-hidden rounded-[22px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.05)]",
+        "overflow-hidden rounded-xl border border-slate-200 bg-white elevation-1",
         className,
       )}
     >

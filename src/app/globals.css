@@ -22,13 +22,41 @@
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
   --focus: #047857;
-  --shadow-soft: 0 18px 48px rgba(15, 23, 42, 0.08);
-  --shadow-card: 0 12px 28px rgba(15, 23, 42, 0.06);
-  --shadow-lift: 0 22px 50px rgba(15, 23, 42, 0.12);
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
+  /*
+    ELEVATION — five layers, and the reason each shadow has two parts.
+
+    Audited the rendered pages and found 34 distinct shadow values used 35
+    times: every shadow in the codebase was a one-off. That is not an
+    elevation system, it is 34 unrelated opinions, and it is why the UI
+    read as flat despite having shadows everywhere — nothing sat at a
+    consistent height relative to anything else.
+
+    Each level pairs a tight contact shadow with a soft ambient one.
+    A single blur is what actually looks flat: real objects cast a sharp
+    shadow where they meet the surface and a diffuse one further out, and
+    the eye reads the pair as height. One blur reads as a grey smudge.
+
+      1  surface     a card sitting on the page
+      2  raised      a card that outranks its neighbours
+      3  interactive lifted on hover / dragged / active
+      4  overlay     modals, the command palette, popovers
+      brand          accent surfaces, tinted rather than neutral
+  */
+  --elevation-1: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 20px rgba(15, 23, 42, 0.04);
+  --elevation-2: 0 2px 4px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.06);
+  --elevation-3: 0 4px 8px rgba(15, 23, 42, 0.05), 0 18px 40px rgba(15, 23, 42, 0.1);
+  --elevation-4: 0 8px 16px rgba(15, 23, 42, 0.08), 0 28px 60px rgba(15, 23, 42, 0.16);
+  --elevation-brand: 0 2px 6px rgba(4, 120, 87, 0.16), 0 16px 36px rgba(4, 120, 87, 0.18);
+  /* Docked bars cast upward. Same system, opposite direction. */
+  --elevation-bar: 0 -1px 2px rgba(15, 23, 42, 0.04), 0 -8px 24px rgba(15, 23, 42, 0.08);
+
+  /* Retained: existing call sites reference these by name. */
+  --shadow-soft: var(--elevation-2);
+  --shadow-card: var(--elevation-1);
+  --shadow-lift: var(--elevation-3);
+
+  /* Shape lives in @theme below — see the note there. Declaring
+     --radius-* here is what broke the scale in the first place. */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -45,6 +73,43 @@
 }
 
 @theme {
+  /*
+    SHAPE LANGUAGE — one monotonic scale, declared where Tailwind reads it.
+
+    This block exists because the scale was silently broken. The project
+    declared --radius-sm/md/lg/xl in :root, which is the same namespace
+    Tailwind v4 generates its radius utilities from, so those declarations
+    overrode the framework's scale — but only the four names they happened
+    to use. Measured in the browser, the result was:
+
+      rounded-sm   0px      <- square corners, not small ones
+      rounded-md   14px
+      rounded-lg   20px
+      rounded-xl   28px
+      rounded-2xl  16px     <- SMALLER than xl
+      rounded-3xl  24px     <- also smaller than xl
+
+    The scale was not just arbitrary, it was out of order: anyone reaching
+    for rounded-2xl to get something rounder than rounded-xl got something
+    flatter. That is the actual source of the eight unrelated radii the
+    audit found on one page — the class names were lying, so corners were
+    picked by trial and error until they looked right in one place.
+
+    Now monotonic, ~1.3 between steps:
+      sm  8px   badges, chips, tight controls
+      md  12px  inputs, compact buttons
+      lg  16px  buttons, list rows
+      xl  22px  cards — the workhorse, 367 usages
+      2xl 28px  panels
+      3xl 36px  hero surfaces, large containers
+  */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+  --radius-3xl: 36px;
+
   --color-emerald-600: #047857;
   --color-emerald-700: #065f46;
   --color-slate-400: #5b6674;
@@ -99,6 +164,43 @@ body {
   color: var(--foreground);
 }
 
+/*
+  The five depth layers, as real utilities.
+
+  Named by ROLE rather than by size, so a component declares how high it
+  sits instead of which blur it wants. That is the whole difference
+  between a system and 34 opinions: `hover:elevation-3` means "lifts on
+  hover", and it keeps meaning that when the values are retuned.
+
+  Declared with @utility rather than as plain classes in @layer utilities
+  because Tailwind v4 only supports variants (hover:, focus:) and @apply
+  on utilities registered this way — `hover:elevation-4` would silently
+  do nothing otherwise.
+*/
+@utility elevation-1 {
+  box-shadow: var(--elevation-1);
+}
+
+@utility elevation-2 {
+  box-shadow: var(--elevation-2);
+}
+
+@utility elevation-3 {
+  box-shadow: var(--elevation-3);
+}
+
+@utility elevation-4 {
+  box-shadow: var(--elevation-4);
+}
+
+@utility elevation-brand {
+  box-shadow: var(--elevation-brand);
+}
+
+@utility elevation-bar {
+  box-shadow: var(--elevation-bar);
+}
+
 @layer utilities {
   .container-page {
     @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
@@ -109,15 +211,15 @@ body {
   }
 
   .surface-panel {
-    @apply rounded-[var(--radius-xl)] border border-slate-200 bg-white shadow-[var(--shadow-card)];
+    @apply rounded-2xl border border-slate-200 bg-white elevation-1;
   }
 
   .surface-muted {
-    @apply rounded-[var(--radius-lg)] border border-slate-200 bg-slate-50;
+    @apply rounded-xl border border-slate-200 bg-slate-50;
   }
 
   .surface-glow {
-    @apply rounded-[var(--radius-xl)] border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/30 to-slate-50 shadow-[var(--shadow-soft)];
+    @apply rounded-2xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/30 to-slate-50 elevation-2;
   }
 }
 
