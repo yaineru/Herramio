@@ -40,6 +40,23 @@ export interface CorpusEmbedding {
   vector: number[];
 }
 
+/**
+ * Hard ceiling on embeddings per document.
+ *
+ * File size is already capped per plan, but size and chunk count are not
+ * the same thing: a plain-text file well inside the limit can produce
+ * thousands of paragraphs, and every one of them would be a paid vector.
+ * Without a ceiling a single upload could cost more than a month of the
+ * plan that allowed it.
+ *
+ * 300 chunks is roughly a 60,000-word document — far beyond a thesis, so
+ * no legitimate user meets it. Anything longer is analysed lexically over
+ * its whole length and semantically over its first 300 chunks, and the
+ * report says the semantic pass was partial rather than pretending it
+ * covered everything.
+ */
+export const MAX_CHUNKS_PER_DOCUMENT = 300;
+
 export interface SemanticAnalysisResult {
   /** Vectors generated for this document, ready to persist. */
   embeddings: { chunkId: number; vector: number[] }[];
@@ -49,6 +66,8 @@ export interface SemanticAnalysisResult {
   model: string | null;
   /** Set when semantic analysis could not run; the report must say so. */
   unavailableReason: string | null;
+  /** True when the cost ceiling cut the pass short — the report says partial, never complete. */
+  truncated: boolean;
 }
 
 const UNAVAILABLE = (reason: string): SemanticAnalysisResult => ({
@@ -57,6 +76,7 @@ const UNAVAILABLE = (reason: string): SemanticAnalysisResult => ({
   embeddingsGenerated: 0,
   model: null,
   unavailableReason: reason,
+  truncated: false,
 });
 
 export async function analyseSemantically(
@@ -66,8 +86,13 @@ export async function analyseSemantically(
   const provider = getEmbeddingProvider();
   if (!provider) return UNAVAILABLE("no_provider_configured");
 
-  const worthEmbedding = chunks.filter(isWorthEmbedding);
-  if (worthEmbedding.length === 0) return UNAVAILABLE("no_chunk_long_enough");
+  const eligible = chunks.filter(isWorthEmbedding);
+  if (eligible.length === 0) return UNAVAILABLE("no_chunk_long_enough");
+
+  // Cost ceiling. See MAX_CHUNKS_PER_DOCUMENT: without it one oversized
+  // upload could cost more than the plan that allowed it.
+  const truncated = eligible.length > MAX_CHUNKS_PER_DOCUMENT;
+  const worthEmbedding = truncated ? eligible.slice(0, MAX_CHUNKS_PER_DOCUMENT) : eligible;
 
   let embeddings: { chunkId: number; vector: number[] }[];
   let embeddingsGenerated = 0;
@@ -105,5 +130,6 @@ export async function analyseSemantically(
     embeddingsGenerated,
     model: provider.metadata.model,
     unavailableReason: null,
+    truncated,
   };
 }
