@@ -57,6 +57,38 @@ function toNormalizedSubscription(sub: PreApprovalResource): NormalizedSubscript
   };
 }
 
+/**
+ * Resolves a recurring-charge invoice to the subscription it belongs to.
+ *
+ * Written against the HTTP API rather than the SDK because the Node SDK
+ * has no client for `/authorized_payments` — the exported clients are
+ * PreApproval and PreApprovalPlan, with nothing for invoices.
+ *
+ * Returns null rather than throwing on anything unexpected: a renewal
+ * notification we cannot resolve must degrade to "ignored", never take
+ * down the webhook endpoint and provoke Mercado Pago into retrying a
+ * request that will fail identically every time.
+ */
+async function resolveSubscriptionFromInvoice(invoiceId: string): Promise<string | null> {
+  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+  if (!accessToken) return null;
+
+  try {
+    const response = await fetch(`https://api.mercadopago.com/authorized_payments/${invoiceId}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!response.ok) {
+      console.error(`[mercadopago] No se pudo leer la cuota ${invoiceId}: HTTP ${response.status}`);
+      return null;
+    }
+    const invoice = (await response.json()) as { preapproval_id?: string };
+    return invoice.preapproval_id ?? null;
+  } catch (error) {
+    console.error(`[mercadopago] Error consultando la cuota ${invoiceId}:`, error);
+    return null;
+  }
+}
+
 export const mercadoPagoProvider: BillingProvider = {
   name: "mercadopago",
 
@@ -135,12 +167,43 @@ export const mercadoPagoProvider: BillingProvider = {
     const resourceId = dataId ?? parsedBody.data?.id;
     const providerEventId = `${resourceId ?? "unknown"}:${headers.get("x-request-id") ?? ""}`;
 
-    if (type !== "subscription_preapproval" || !resourceId) {
+    if (!resourceId) return { kind: "ignored", providerEventId };
+
+    /*
+     * Two topics reach the same place, deliberately.
+     *
+     * `subscription_preapproval` carries the subscription itself.
+     * `subscription_authorized_payment` carries an INVOICE — one recurring
+     * charge — whose id is not a subscription id, so it has to be resolved
+     * to the subscription it belongs to before anything can be done with
+     * it.
+     *
+     * What this handler pointedly does NOT do is derive subscription state
+     * from a payment. Mercado Pago retries a failed charge (status
+     * `recycling`) for up to 10 days and only then cancels the
+     * subscription itself — and that cancellation arrives as a
+     * `subscription_preapproval` event. So the preapproval stays the one
+     * source of truth for whether someone has access, and a renewal event
+     * is simply a reason to re-read it. Marking a user past_due because
+     * one charge is recycling would be inventing a state the provider is
+     * not reporting, and would cut off access Mercado Pago still considers
+     * paid for.
+     */
+    let preapprovalId: string | null = null;
+
+    if (type === "subscription_preapproval") {
+      preapprovalId = resourceId;
+    } else if (type === "subscription_authorized_payment") {
+      preapprovalId = await resolveSubscriptionFromInvoice(resourceId);
+      if (!preapprovalId) return { kind: "ignored", providerEventId };
+    } else {
+      // subscription_preapproval_plan, payment, and anything else: recorded
+      // by the route for traceability, acted on by nobody.
       return { kind: "ignored", providerEventId };
     }
 
     const client = new PreApproval(getMercadoPagoConfig());
-    const subscription = await client.get({ id: resourceId });
+    const subscription = await client.get({ id: preapprovalId });
 
     return { kind: "subscription_event", providerEventId, subscription: toNormalizedSubscription(subscription) };
   },

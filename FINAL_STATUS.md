@@ -3,7 +3,7 @@
 Medido, no estimado. Cada afirmación de aquí tiene una prueba detrás; lo que no
 la tiene está marcado como no verificado.
 
-**Tests**: 1038 / 136 ficheros / 0 fallos / 0 skips ·
+**Tests**: 1055 / 137 ficheros / 0 fallos / 0 skips ·
 **Lint**: 0/0 · **TypeScript**: PASS · **Build**: 190/190
 
 ---
@@ -112,7 +112,11 @@ un precio configurado explícitamente.
 
 ## MERCADO PAGO
 
-`NOT BILLING READY`. La integración es sólida; le falta configuración.
+`BILLING TEST VERIFIED` · `NOT PRODUCTION READY`.
+
+El ciclo completo funciona y está probado contra TEST. Lo que falta no es
+código: es el secret real del webhook, un checkout completado desde el
+navegador, y la decisión de activar producción.
 
 Las credenciales del `.env.local` estaban con nombres que el código no lee
 (`acces_token`, `Public Key` — esta última con un espacio, así que ningún proceso
@@ -167,6 +171,38 @@ notificación repetida no puede aplicarse dos veces; un pago sin usuario
 atribuible no desbloquea a nadie; un `price_id` desconocido no resuelve al plan
 más parecido. El precio sale siempre de la base de datos y el `userId` de la
 sesión — el navegador no envía ninguno de los dos.
+
+### E2E contra Mercado Pago TEST: 43/43
+
+`node scripts/billing-e2e-test.mjs`. Suscripciones reales con la tarjeta de
+prueba oficial, webhooks firmados, y cada afirmación comprobada releyendo
+Supabase — nunca por el código HTTP.
+
+Verificado: `external_reference` **sobrevive** el ciclo y atribuye al usuario
+correcto · firma inválida → 400 sin escribir · duplicado → 1 sola fila · evento
+tardío no revive una suscripción cancelada · referencia no-UUID no se la queda
+nadie · anual no colapsa en mensual · cancelación revoca el acceso ·
+reconciliación MP↔Supabase sin divergencia. Limpieza completa al terminar.
+
+Pendiente y rechazado (tarjetas CONT/OTHE) **nunca llegan**: Mercado Pago
+devuelve 400 y no crea la suscripción si la tarjeta no autoriza, así que un
+checkout impago no puede generar fila.
+
+### Renovaciones
+
+`subscription_authorized_payment` ya se procesa: la cuota se resuelve a su
+suscripción vía `GET /authorized_payments/{id}` y se **relee** el preapproval.
+El estado de acceso sale del preapproval, nunca de un pago — Mercado Pago
+reintenta un cobro rechazado hasta 10 días y solo entonces cancela. 17 tests.
+
+### Lo que NO está verificado en billing
+
+El **checkout real por navegador de la propia app**. El E2E crea las
+suscripciones por API con `card_token_id`; la app redirige al `init_point` con
+`?external_reference=`. Que Mercado Pago propague ese parámetro *de la URL* a la
+suscripción no está demostrado — requiere completar un pago en el navegador con
+contraseña. Falla de forma segura (no atribuye a nadie), pero si fallara, nadie
+recibiría su plan.
 
 ## SECURITY
 

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Star, BarChart3, Lock, Sparkles, Clock3, ArrowUpRight } from "lucide-react";
 import { CheckoutReturnTracker } from "@/components/billing/CheckoutReturnTracker";
+import { CheckoutPendingNotice } from "@/components/billing/CheckoutPendingNotice";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -55,6 +56,11 @@ export default async function CuentaPage() {
         <CheckoutReturnTracker />
       </Suspense>
       <div className="mx-auto max-w-5xl">
+        {/* Derived on the server from the real plan, so it can never claim
+            an upgrade the database has not confirmed. */}
+        <Suspense fallback={null}>
+          <CheckoutPendingNotice isPaid={entitlements.planId !== FREE_PLAN_ID} />
+        </Suspense>
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="section-kicker">Workspace</p>
