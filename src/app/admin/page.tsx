@@ -5,6 +5,8 @@ import { isCurrentUserAdmin } from "@/lib/admin/auth";
 import { getAdminMetrics } from "@/lib/admin/metrics";
 import { listFeedback, getFeedbackCounts } from "@/lib/admin/feedback";
 import { FeedbackCenter, FeedbackSummary } from "@/components/admin/FeedbackCenter";
+import { listContactMessages } from "@/lib/admin/contact";
+import { ContactCenter } from "@/components/admin/ContactCenter";
 import { formatCurrencyFromCents } from "@/lib/plans/format";
 
 // Deliberately not indexed and deliberately not linked from anywhere in
@@ -16,10 +18,11 @@ export default async function AdminPage() {
   // exists to anyone probing it; a 404 doesn't.
   if (!(await isCurrentUserAdmin())) notFound();
 
-  const [metrics, feedback, feedbackCounts] = await Promise.all([
+  const [metrics, feedback, feedbackCounts, contactMessages] = await Promise.all([
     getAdminMetrics(),
     listFeedback(),
     getFeedbackCounts(),
+    listContactMessages({ status: "all" }),
   ]);
 
   return (
@@ -43,6 +46,14 @@ export default async function AdminPage() {
         </div>
       </Card>
 
+      {/* Separate section, not merged into feedback. Someone who used the
+          contact form is waiting for a reply; someone who left feedback is
+          not. Triaging them in one queue loses that distinction, which is
+          the only thing that decides which one is urgent. */}
+      <div className="mt-8">
+        <ContactCenter messages={contactMessages} />
+      </div>
+
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Card className="p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Usuarios totales</p>
@@ -50,8 +61,18 @@ export default async function AdminPage() {
         </Card>
         <Card className="p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">MRR estimado</p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">{formatCurrencyFromCents(metrics.mrrCents, "usd")}</p>
-          <p className="mt-1 text-xs text-slate-400">Excluye suscripciones en past_due (pago no confirmado)</p>
+          {/* The currency is read from the plans that produced the figure,
+              never assumed. It was hardcoded to "usd", which would have
+              labelled Colombian pesos as dollars the moment pricing moved
+              to COP — off by roughly four thousand. */}
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {metrics.mrrCurrency ? formatCurrencyFromCents(metrics.mrrCents, metrics.mrrCurrency) : "—"}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            {metrics.mrrCurrency === null && metrics.mrrCents > 0
+              ? "Planes en monedas distintas: sumarlos no daría un número con sentido."
+              : "Excluye suscripciones en past_due (pago no confirmado)"}
+          </p>
         </Card>
         <Card className="p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Pagos pendientes (past_due)</p>

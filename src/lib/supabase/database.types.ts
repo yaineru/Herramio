@@ -267,6 +267,22 @@ export type OriginalityReportRow = {
   ai_duration_ms: number | null;
 };
 
+export type ContactTopic = "problema" | "herramienta" | "privacidad" | "otro";
+export type ContactStatus = "new" | "reviewed" | "resolved" | "archived";
+
+/** Added by 0010_contact_messages.sql. Contains email addresses: no RLS read policy exists, service role only. */
+export type ContactMessageRow = {
+  id: string;
+  user_id: string | null;
+  email: string;
+  name: string | null;
+  topic: ContactTopic;
+  message: string;
+  page_path: string | null;
+  status: ContactStatus;
+  created_at: string;
+};
+
 /** Shape stored in originality_reports.ai_analysis. Mirrors AiExplanation minus the usage metadata, which lives in its own columns. */
 export type AiAnalysisJson = {
   summary: string;
@@ -380,6 +396,12 @@ export type Database = {
         Row: FeedbackRow;
         Insert: Partial<FeedbackRow> & { message: string };
         Update: Partial<FeedbackRow>;
+        Relationships: [];
+      };
+      contact_messages: {
+        Row: ContactMessageRow;
+        Insert: Partial<ContactMessageRow> & { email: string; message: string };
+        Update: Partial<ContactMessageRow>;
         Relationships: [];
       };
       citations: {

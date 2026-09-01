@@ -1,10 +1,23 @@
 import "server-only";
 
 const CROSSREF_ENDPOINT = "https://api.crossref.org/works";
-// Crossref's "polite pool" (better rate limits, and they can contact us if
-// something's wrong) just wants a real contact — reusing the same address
-// already published on /contacto, not a new identity for this feature.
-const CONTACT_EMAIL = "hola@herramio.com";
+/**
+ * Crossref's "polite pool" gives better rate limits in exchange for a
+ * contact address they can use if our requests misbehave.
+ *
+ * Read from the environment, never hardcoded. This used to send
+ * hola@herramio.com, an address with no mailbox behind it — which defeats
+ * the entire point of the polite pool: Crossref would have had no way to
+ * reach us, and we would have looked like a client claiming courtesy it
+ * could not honour.
+ *
+ * When no address is configured we send none and fall back to the
+ * anonymous pool. Slightly worse rate limits, honest.
+ */
+function politePoolContact(): string | null {
+  const configured = (process.env.CROSSREF_MAILTO ?? process.env.OPENALEX_MAILTO ?? "").trim();
+  return configured.includes("@") ? configured : null;
+}
 const REQUEST_TIMEOUT_MS = 5000;
 // A real, human-plausible reference is never a handful of characters —
 // don't waste a request (or risk a nonsense query) on garbage.
@@ -108,7 +121,8 @@ export async function verifyReferenceViaCrossref(query: string): Promise<Referen
   const url = new URL(CROSSREF_ENDPOINT);
   url.searchParams.set("query.bibliographic", trimmed);
   url.searchParams.set("rows", String(CANDIDATE_ROWS));
-  url.searchParams.set("mailto", CONTACT_EMAIL);
+  const contact = politePoolContact();
+  if (contact) url.searchParams.set("mailto", contact);
 
   let response: Response;
   try {

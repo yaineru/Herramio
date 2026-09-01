@@ -13,7 +13,9 @@ para que, si algo sale mal, la vuelta atrás esté escrita antes de necesitarla.
 - **Canal de feedback**: botón «Comentar» en el workspace y en los informes,
   y un centro de gestión en `/admin`.
 - **Planes**: Gratis, Pro y Equipo con límites reales aplicados en servidor.
-  **El cobro está desactivado.** Nadie puede pagar todavía.
+  **El cobro está desactivado.** Nadie puede pagar todavía: producción no tiene
+  ninguna variable de Mercado Pago, así que el checkout no puede ni empezar.
+  El ciclo completo está verificado en TEST (43/43, ver MONETIZATION.md).
 
 ## Qué está en beta y qué significa
 
@@ -132,7 +134,8 @@ degrade la funcionalidad, no la rompa.
 | `OPENAI_API_KEY` | **no configurada** (semántico apagado) |
 | `EMBEDDING_PROVIDER` | **no configurada** |
 | `ORIGINALITY_ACADEMIC_SEARCH` | **no configurada** (OpenAlex apagado) |
-| Mercado Pago | **fuera de alcance** hasta después de la beta |
+| `MERCADOPAGO_ACCESS_TOKEN` | **no configurada** — el cobro no puede activarse |
+| `MERCADOPAGO_WEBHOOK_SECRET` | **no configurada** |
 
 Cualquier variable nueva necesita un redespliegue para entrar: Vercel las inyecta
 en build, no en caliente.

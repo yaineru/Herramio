@@ -431,3 +431,85 @@ en `stripe-provider.ts` para el detalle.
   correcto para uno o dos operadores; si el equipo crece, migrar a una
   columna `is_admin` + políticas RLS es el siguiente paso natural, no
   antes.
+
+---
+
+# Mercado Pago — estado operativo (agosto 2026)
+
+Precios vigentes, decididos como precios y no como conversión de divisa. Una
+cuenta colombiana de Mercado Pago solo puede cobrar COP.
+
+| Plan | Precio | Frecuencia | Plan id en Mercado Pago (TEST) |
+|---|---|---|---|
+| Pro Mensual | 29.900 COP | 1 mes | `f752a4e49c70436e9c6b4a453035a606` |
+| Pro Anual | 299.000 COP | 12 meses | `3d37fa0a6fea499a802aae7b2628ce4b` |
+| Team Mensual | 79.900 COP | 1 mes | `fc83cd823f3648c88d159a68ea7fbe44` |
+
+Los ids de plan **no son secretos**. El access token y el webhook secret sí.
+
+## Cómo funciona el checkout (y por qué no puede ser de otra forma)
+
+No se puede crear una suscripción desde el servidor. `POST /preapproval`
+responde **`400 card_token_id is required`** en todas sus variantes: el token de
+tarjeta lo genera el navegador con MP.js a partir de datos que este servidor
+nunca debe ver. La única ruta es el checkout alojado del plan:
+
+```
+/precios -> createCheckoutSessionAction(planId, interval)
+         -> PreApprovalPlan.get(providerPriceId).init_point
+         -> + ?external_reference=<uuid del usuario>
+         -> redirect
+```
+
+El importe vive en el plan, del lado de Mercado Pago. Nada que envíe este
+proceso puede cambiar lo que se cobra.
+
+## Webhook
+
+URL: `/api/webhooks/mercadopago`. Tópicos a registrar:
+
+| Tópico | Qué hacemos |
+|---|---|
+| `subscription_preapproval` | fuente de verdad del estado de la suscripción |
+| `subscription_authorized_payment` | resolvemos la cuota a su suscripción y **releemos** el preapproval |
+| `subscription_preapproval_plan` | se registra, no se actúa |
+| `payments` | se registra, no se actúa |
+
+**Regla que no se debe romper: el estado de acceso sale del preapproval, nunca
+de un pago.** Mercado Pago reintenta un cobro rechazado (estado `recycling`)
+hasta 10 días y solo entonces cancela la suscripción. Marcar a alguien como
+moroso porque una cuota está reintentándose sería inventar un estado que el
+proveedor no reporta, y cortarle el acceso a un usuario que el proveedor sigue
+considerando al día. Tras 3 cuotas rechazadas Mercado Pago cancela la
+suscripción y eso llega como `subscription_preapproval` — que ya manejamos.
+
+## Renovación fallida: qué pasa exactamente
+
+1. La cuota se rechaza → queda en `recycling`, con hasta 4 reintentos en ~10 días.
+2. Durante ese periodo el preapproval sigue `authorized` → **el usuario conserva
+   el acceso**. Es la política de Mercado Pago, no una inventada aquí.
+3. Si Mercado Pago pausa la suscripción → `paused` → mapeado a `past_due`, que
+   `getEntitlements` sigue tratando como activo (periodo de gracia del proveedor).
+4. Tras 3 cuotas rechazadas Mercado Pago la cancela → `cancelled` → `canceled`
+   → deja de estar en los estados activos → **acceso revocado**.
+
+## Verificación
+
+- `node scripts/mercadopago-setup.mjs` — auditoría; `--create` crea los planes.
+- `node scripts/verify-billing-mapping.mjs` — lo que se muestra es lo que se cobra.
+- `node scripts/billing-e2e-test.mjs` — ciclo completo contra TEST (43 comprobaciones).
+
+## Puesta en producción
+
+1. Registrar el webhook en el panel de Mercado Pago y copiar su **secret**.
+2. `MERCADOPAGO_ACCESS_TOKEN` y `MERCADOPAGO_WEBHOOK_SECRET` en Vercel.
+3. Crear los planes con credenciales de producción (el script se niega a
+   hacerlo en una cuenta real sin `--i-understand-this-is-a-real-account`).
+4. Un primer cobro real, manual.
+
+## Rollback
+
+Eliminar `MERCADOPAGO_ACCESS_TOKEN` de Vercel y redesplegar. El checkout
+redirige a `/precios?error=pagos_no_configurados`; las suscripciones ya
+concedidas siguen intactas en la base de datos y el acceso no cambia. El
+webhook rechaza todo mientras falte el secret, así que no se corrompe nada.

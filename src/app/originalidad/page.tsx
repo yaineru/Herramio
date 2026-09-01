@@ -12,6 +12,7 @@ import { checkUsageLimit } from "@/lib/plans/limits";
 import { UploadForm } from "@/components/originality/UploadForm";
 import { DocumentHistoryList } from "@/components/originality/DocumentHistoryList";
 import { AnalyticsPageEvent } from "@/components/AnalyticsPageEvent";
+import { OriginalityExplainer } from "@/components/originality/OriginalityExplainer";
 
 export const metadata: Metadata = buildMetadata({
   title: "Análisis de originalidad",
@@ -123,6 +124,8 @@ export default async function OriginalityPage() {
           </ul>
         </Card>
       </div>
+
+      <OriginalityExplainer />
     </div>
   );
 }
