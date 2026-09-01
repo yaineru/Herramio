@@ -109,19 +109,28 @@ export default function ContactoPage() {
         <Card className="mt-8 p-6">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
             <Mail className="h-4.5 w-4.5 text-slate-500" aria-hidden="true" />
-            Escríbenos por correo
+            Escríbenos
           </h2>
           <p className="mt-1.5 text-sm text-slate-600">
-            El formulario abre tu aplicación de correo con el mensaje redactado. Si no tienes una configurada en este
-            equipo, usa el botón de comentarios de abajo a la derecha: ese envío no depende de tu correo.
+            El mensaje llega directamente a nuestro panel — no necesitas tener configurado un cliente de correo, ni
+            salir de esta página.
           </p>
           <div className="mt-5">
             <ContactForm />
           </div>
         </Card>
+
+        <p className="mt-6 text-sm leading-relaxed text-slate-600">
+          No publicamos una dirección de correo porque preferimos un canal que podamos garantizar: este formulario
+          guarda tu mensaje y lo leemos desde el panel de administración. Respondemos al correo que nos dejes, aunque
+          no prometemos un plazo concreto — somos pocos y preferimos no comprometernos a algo que no podemos
+          asegurar.
+        </p>
       </div>
 
-      {/* The channel that always works, even with no mail client. */}
+      {/* Feedback stays available and stays a different thing: this page is
+          for "necesito comunicarme", the widget is for "esto podría
+          mejorar". */}
       <FeedbackWidget />
     </div>
   );

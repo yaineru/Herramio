@@ -72,6 +72,12 @@ export const AnalyticsEvents = {
   // people notice it at all, submitted whether they finish, and failed
   // whether we are losing messages. Anything finer would be telemetry for
   // its own sake.
+  // Contact is tracked separately from feedback on purpose: "I need to
+  // reach someone" and "this could be better" are different intents, and
+  // merging them would hide which one is actually happening.
+  contactOpened: () => trackEvent("contact_opened"),
+  contactSubmitted: (topic: string) => trackEvent("contact_submitted", { topic }),
+  contactFailed: () => trackEvent("contact_failed"),
   feedbackOpened: (pagePath: string) => trackEvent("feedback_opened", { page_path: pagePath }),
   feedbackSubmitted: (kind: string) => trackEvent("feedback_submitted", { kind }),
   feedbackFailed: () => trackEvent("feedback_failed"),

@@ -5,6 +5,8 @@ import { isCurrentUserAdmin } from "@/lib/admin/auth";
 import { getAdminMetrics } from "@/lib/admin/metrics";
 import { listFeedback, getFeedbackCounts } from "@/lib/admin/feedback";
 import { FeedbackCenter, FeedbackSummary } from "@/components/admin/FeedbackCenter";
+import { listContactMessages } from "@/lib/admin/contact";
+import { ContactCenter } from "@/components/admin/ContactCenter";
 import { formatCurrencyFromCents } from "@/lib/plans/format";
 
 // Deliberately not indexed and deliberately not linked from anywhere in
@@ -16,10 +18,11 @@ export default async function AdminPage() {
   // exists to anyone probing it; a 404 doesn't.
   if (!(await isCurrentUserAdmin())) notFound();
 
-  const [metrics, feedback, feedbackCounts] = await Promise.all([
+  const [metrics, feedback, feedbackCounts, contactMessages] = await Promise.all([
     getAdminMetrics(),
     listFeedback(),
     getFeedbackCounts(),
+    listContactMessages({ status: "all" }),
   ]);
 
   return (
@@ -42,6 +45,14 @@ export default async function AdminPage() {
           <FeedbackCenter items={feedback} />
         </div>
       </Card>
+
+      {/* Separate section, not merged into feedback. Someone who used the
+          contact form is waiting for a reply; someone who left feedback is
+          not. Triaging them in one queue loses that distinction, which is
+          the only thing that decides which one is urgent. */}
+      <div className="mt-8">
+        <ContactCenter messages={contactMessages} />
+      </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Card className="p-5">
