@@ -15,13 +15,21 @@ export const metadata: Metadata = buildMetadata({
 });
 
 /**
- * Two channels on purpose.
+ * Two channels, kept separate on purpose.
  *
- * The form builds a mailto: link, which depends on the visitor having a
- * mail client configured — on a phone that is usually fine, on a shared
- * desktop it often is not. The feedback button writes straight to our
- * database and works regardless, so it is offered alongside rather than
- * hidden behind the form.
+ * The form posts to a Server Action that stores the message and is read in
+ * /admin. It no longer builds a mailto: link — that version pointed at a
+ * mailbox which did not exist, so every message was lost while the visitor
+ * watched their mail client open as if it had worked.
+ *
+ * The feedback widget stays available and stays a different thing: this
+ * page is for "I need to reach someone and expect a reply", the widget is
+ * for "this could be better". Merging them would lose the distinction that
+ * decides which one is urgent.
+ *
+ * No email address is published anywhere on this page, because there is
+ * not one we can currently guarantee. Saying so plainly beats printing an
+ * address that bounces.
  */
 
 const REASONS = [
@@ -80,25 +88,25 @@ export default function ContactoPage() {
           </p>
           <ul className="mt-3 space-y-1.5 text-sm">
             <li>
-              <Link href="/faq" className="font-medium text-emerald-700 hover:underline">
+              <Link href="/faq" className="-my-1 inline-flex min-h-6 items-center py-1 font-medium text-emerald-700 hover:underline">
                 Preguntas frecuentes
               </Link>{" "}
               <span className="text-slate-600">— si es gratis, si hay que registrarse, qué se guarda.</span>
             </li>
             <li>
-              <Link href="/privacidad" className="font-medium text-emerald-700 hover:underline">
+              <Link href="/privacidad" className="-my-1 inline-flex min-h-6 items-center py-1 font-medium text-emerald-700 hover:underline">
                 Privacidad
               </Link>{" "}
               <span className="text-slate-600">— qué datos se procesan y dónde.</span>
             </li>
             <li>
-              <Link href="/sobre-nosotros" className="font-medium text-emerald-700 hover:underline">
+              <Link href="/sobre-nosotros" className="-my-1 inline-flex min-h-6 items-center py-1 font-medium text-emerald-700 hover:underline">
                 Sobre nosotros
               </Link>{" "}
               <span className="text-slate-600">— quién está detrás de Herramio y por qué existe.</span>
             </li>
             <li>
-              <Link href="/herramientas" className="font-medium text-emerald-700 hover:underline">
+              <Link href="/herramientas" className="-my-1 inline-flex min-h-6 items-center py-1 font-medium text-emerald-700 hover:underline">
                 Todas las herramientas
               </Link>{" "}
               <span className="text-slate-600">— por si lo que buscas ya existe.</span>
