@@ -109,19 +109,49 @@ En producción: 0 apariciones de `hola@herramio.com`, 0 enlaces `mailto:`.
 
 ---
 
+### 4. `/generador-qr` — la página más débil que quedaba
+
+**Evidencia**: 241 palabras y **cero enlaces internos** en su propio
+contenido, siendo una de las páginas más importantes del sitio. Tres de sus
+cuatro preguntas FAQ eran las genéricas que aparecen en todas partes
+(«¿necesito una cuenta?»). Es una página propia, no construida sobre
+`ToolPageShell`, y por eso nunca heredó herramientas relacionadas ni FAQ
+específica — las 129 herramientas del registro sí las tienen.
+
+**Corrección**: responde las dos preguntas con las que se llega —qué tipo de
+código necesito y de qué tamaño lo imprimo—. La lista de tipos hace además de
+navegación real hacia las 14 páginas QR dedicadas. FAQ específica: tamaño de
+impresión (1 cm por cada 10 cm de distancia), por qué estos códigos no se
+pueden reapuntar tras imprimirlos, por qué un QR de WiFi falla en algunos
+teléfonos, PNG frente a SVG.
+
+**Verificación**: 241 → **738 palabras**, 0 → **12 enlaces internos**, 5 h2 +
+5 h3, schema `HowTo` presente. Sale por completo de las 15 páginas más débiles.
+
+---
+
 ## Estado actual (producción)
+
+Desplegado el **2026-09-04** · commit **`8606172`**
 
 | Métrica | Valor |
 |---|---|
-| Score global | **89 / 100** |
+| Score global | **89.1 / 100** |
 | Contenido | 16.2 / 20 |
 | SEO | 19.7 / 20 |
-| Navegación | 13.2 / 20 |
+| Navegación | 13.3 / 20 |
 | Confianza | 20 / 20 |
 | UX | 20 / 20 |
 | Duplicación media | 0.2 |
 | Páginas casi duplicadas | **0** |
 | Mediana de palabras en `<main>` | 276 |
+
+### Contacto verificado de extremo a extremo en producción
+
+Mensaje enviado desde el formulario real en herramio.com, comprobado en la base
+de datos (`topic`, `status=new`, `page_path=/contacto`, anónimo) y fixture
+eliminado. Sin residuos: 0 filas de contacto, 0 documentos, 0 usuarios de
+prueba.
 
 ---
 
@@ -129,13 +159,12 @@ En producción: 0 apariciones de `hola@herramio.com`, 0 enlaces `mailto:`.
 
 Honestamente, y sin intención de arreglarlo solo para AdSense:
 
-1. **`/generador-qr`** — 241 palabras y **sin sección de herramientas
-   relacionadas**, siendo una herramienta insignia. Es la página más débil que
-   queda.
-2. **Navegación (13.2/20)** — es el eje más bajo. Las páginas informativas
+1. **Navegación (13.3/20)** — es el eje más bajo. Las páginas informativas
    (`/cookies`, `/terminos`, `/sobre-nosotros`) enlazan poco desde su propio
    contenido; dependen del pie de página.
-3. **Blog** — 7 artículos de 200–400 palabras. Correctos, cortos.
+2. **Blog** — 7 artículos de 200–400 palabras. Correctos, cortos.
+3. **`/sobre-nosotros` y `/cookies`** — 179 y 161 palabras. Son páginas de
+   trámite; no se inflaron a propósito.
 4. **Páginas de herramienta** — mediana de 276 palabras. No es alarmante, y
    inflar 129 páginas a 1000 palabras sería exactamente el relleno que hay que
    evitar.
