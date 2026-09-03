@@ -92,8 +92,10 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
             <Star className="h-5 w-5" />
           </Link>
           <MagneticButton>
-            <Link href="/generador-qr" onClick={() => AnalyticsEvents.ctaClicked("navbar_generador_qr")}>
-              <Button size="sm">Generador QR</Button>
+            {/* The header CTA points at the product with a conversion
+                path, not at one of 129 tools. */}
+            <Link href="/originalidad" onClick={() => AnalyticsEvents.ctaClicked("navbar_originalidad")}>
+              <Button size="sm">Probar Originalidad</Button>
             </Link>
           </MagneticButton>
           {authState.isAuthenticated ? (
@@ -157,15 +159,15 @@ export function Navbar({ authState }: { authState: NavAuthState }) {
               </Link>
             ))}
             <Link
-              href="/generador-qr"
+              href="/originalidad"
               onClick={() => {
                 setOpen(false);
-                AnalyticsEvents.ctaClicked("navbar_mobile_generador_qr");
+                AnalyticsEvents.ctaClicked("navbar_mobile_originalidad");
               }}
               className="mt-2"
             >
               <Button className="w-full" size="sm">
-                Generador QR
+                Probar Originalidad
               </Button>
             </Link>
             <div className="mt-2 border-t border-slate-200 pt-2">

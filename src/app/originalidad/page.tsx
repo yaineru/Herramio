@@ -32,10 +32,14 @@ export default async function OriginalityPage() {
       <div className="mx-auto mt-8 max-w-6xl rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-slate-50 p-6 elevation-3 sm:p-8">
         <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700">Producto estrella</p>
-            <h1 className="mt-3 text-3xl font-bold tracking-[-0.05em] text-slate-900 sm:text-5xl">Análisis de originalidad</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700">Herramio Originalidad</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-[-0.05em] text-slate-900 sm:text-5xl">
+              Análisis de similitud y evidencia documental
+            </h1>
             <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
-              Sube un documento y revisa similitudes, citas y referencias antes de entregarlo. Pensado para ayudarte a revisar tu trabajo con criterio humano, no como un veredicto automático.
+              Para estudiantes, docentes e investigadores que necesitan revisar un trabajo antes de entregarlo o
+              evaluarlo. Muestra qué coincide, con qué fuente, y si las citas y referencias se sostienen — con la
+              evidencia delante, para que la conclusión la saque una persona.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -51,9 +55,10 @@ export default async function OriginalityPage() {
 
             <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
               {[
-                "Verificación de citas",
-                "Indicadores de similitud",
-                "Reflexión asistida",
+                "Similitud léxica y semántica",
+                "Evidencia lado a lado",
+                "Citas y referencias",
+                "Verificación con Crossref",
               ].map((pill) => (
                 <span key={pill} className="rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 shadow-sm">
                   {pill}
@@ -62,28 +67,44 @@ export default async function OriginalityPage() {
             </div>
           </div>
 
+          {/* The process, not a sample report.
+              This panel used to show "12.4% de similitud" and "8 citas
+              correctamente atribuidas" — invented figures styled as real
+              output, on the page of a product whose credibility depends on
+              never overstating what it measured. What someone deciding
+              whether to sign up actually needs is what will happen. */}
           <div className="rounded-2xl border border-emerald-200 bg-white p-5 elevation-2">
             <div className="flex items-center justify-between gap-3">
               <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                Privacidad
+                Cómo funciona
               </span>
-              <ShieldCheck className="h-5 w-5 text-emerald-700" />
+              <ShieldCheck className="h-5 w-5 text-emerald-700" aria-hidden="true" />
             </div>
 
-            <div className="mt-5 grid gap-3">
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Similitud</div>
-                <div className="mt-2 text-2xl font-bold tracking-[-0.04em] text-slate-900">12.4%</div>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Citas</div>
-                <div className="mt-2 text-sm font-medium text-slate-800">8 correctamente atribuidas</div>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-3">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Privacidad</div>
-                <div className="mt-2 text-sm font-medium text-slate-800">Tus documentos quedan privados para ti y tu equipo.</div>
-              </div>
-            </div>
+            <ol className="mt-5 space-y-2.5">
+              {[
+                "Subes el documento (PDF, DOCX o TXT)",
+                "Se extrae el texto y se divide en fragmentos",
+                "Se buscan coincidencias y se guarda su evidencia",
+                "Se detectan las citas y se contrastan las referencias",
+                "Recibes el informe con el contexto de cada hallazgo",
+              ].map((step, i) => (
+                <li key={step} className="flex items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-slate-900 text-[11px] font-semibold text-white"
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="text-sm leading-relaxed text-slate-700">{step}</span>
+                </li>
+              ))}
+            </ol>
+
+            <p className="mt-5 border-t border-slate-200 pt-4 text-sm text-slate-600">
+              Tus documentos son privados: solo tú — y tu equipo, si lo subes ahí — podéis verlos, y puedes
+              eliminarlos cuando quieras.
+            </p>
           </div>
         </div>
       </div>
@@ -107,22 +128,6 @@ export default async function OriginalityPage() {
           </Card>
         )}
 
-        <Card className="mt-8 p-6">
-          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
-            <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            Cómo interpretar el resultado
-          </h2>
-          <ul className="mt-4 space-y-2 text-sm text-slate-600">
-            <li>
-              El <strong>índice de similitud</strong> no determina por sí solo la existencia de plagio — requiere interpretación humana.
-            </li>
-            <li>Las citas correctamente atribuidas no se cuentan como similitud preocupante.</li>
-            <li>
-              Hoy comparamos contra tus propios documentos anteriores (y los de tu equipo, si aplica) — todavía no consultamos fuentes de internet ni usamos similitud semántica; ver detalles en el informe de cada documento.
-            </li>
-            <li>Tus documentos son privados: solo tú (y tu equipo, si lo subiste ahí) pueden verlos.</li>
-          </ul>
-        </Card>
       </div>
 
       <OriginalityExplainer />

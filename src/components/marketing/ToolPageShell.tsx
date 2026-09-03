@@ -17,6 +17,18 @@ import { getRelatedTools, getToolById, isLocalProcessing } from "@/lib/tools/reg
 import { getCategory } from "@/lib/tools/categories";
 import { SITE } from "@/lib/site";
 
+/**
+ * The only tools that mention Originalidad. Document work, where the next
+ * question genuinely might be "how similar are these?" — nothing else.
+ */
+const ORIGINALITY_CROSS_LINK = new Set([
+  "pdf-comparar-texto",
+  "texto-comparar",
+  "pdf-extraer-texto",
+  "texto-citas-apa",
+  "texto-contador-palabras",
+]);
+
 interface ToolPageShellProps {
   toolId: string;
   toolName: string;
@@ -105,6 +117,33 @@ export function ToolPageShell({
       </div>
 
       <div className="mt-8">{children}</div>
+
+      {/* Cross-link to Originalidad, on an allowlist of five tools and
+          nowhere else.
+          Someone comparing two documents or extracting text from a PDF is
+          plausibly one step from wanting a similarity analysis; someone
+          converting a temperature is not. Putting this on all 129 pages
+          would be the kind of CTA sprawl that makes a site feel like it is
+          selling rather than helping, so the list stays short and stays
+          here rather than being sprinkled per page. */}
+      {ORIGINALITY_CROSS_LINK.has(toolId) && (
+        <aside className="mt-10 flex flex-col gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-slate-900">¿Necesitas un análisis más profundo?</p>
+            <p className="mt-1 text-sm leading-relaxed text-slate-700">
+              Herramio Originalidad compara el documento completo, muestra la evidencia de cada coincidencia y revisa
+              las citas y referencias.
+            </p>
+          </div>
+          <Link
+            href="/originalidad"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+          >
+            Ver Originalidad
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
+        </aside>
+      )}
 
       {relatedTools.length > 0 && (
         <div className="mt-12">

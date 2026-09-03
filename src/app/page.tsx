@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Zap, ShieldCheck, Smartphone, Infinity as InfinityIcon, ArrowRight } from "lucide-react";
+import { Zap, ShieldCheck, Smartphone, Infinity as InfinityIcon, ArrowRight, FileSearch, Quote, BookOpen, Layers } from "lucide-react";
 import { Hero } from "@/components/marketing/Hero";
 import { ContinueWhereYouLeftOff } from "@/components/marketing/ContinueWhereYouLeftOff";
 import { CategoryGrid } from "@/components/marketing/CategoryGrid";
@@ -37,6 +37,30 @@ const POPULAR_IDS = [
 const POPULAR_TOOLS = POPULAR_IDS.map((id) => TOOLS.find((t) => t.id === id)).filter(
   (t): t is (typeof TOOLS)[number] => Boolean(t),
 );
+
+/** What Originalidad actually does. Capabilities, never sample output. */
+const ORIGINALITY_CAPABILITIES = [
+  {
+    icon: FileSearch,
+    title: "Coincidencias con su evidencia",
+    body: "Cada fragmento marcado se muestra junto al de la fuente, para leerlos uno al lado del otro.",
+  },
+  {
+    icon: Quote,
+    title: "Citas y referencias",
+    body: "Detecta citas APA y numéricas, y comprueba si cada una tiene una referencia que la respalde.",
+  },
+  {
+    icon: BookOpen,
+    title: "Verificación bibliográfica",
+    body: "Las referencias se contrastan contra Crossref, el índice público de metadatos académicos.",
+  },
+  {
+    icon: Layers,
+    title: "Análisis semántico",
+    body: "Además de coincidencias literales, similitud por significado para detectar reformulaciones.",
+  },
+];
 
 const BENEFITS = [
   {
@@ -119,37 +143,44 @@ export default function HomePage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 elevation-3 sm:p-8">
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Producto estrella</p>
-                <h2 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-slate-900">Originalidad, diseñada como un producto serio.</h2>
-                <p className="mt-3 max-w-xl text-base text-slate-600">
-                  Revisa coincidencias, citas y referencias antes de entregar un trabajo. La experiencia está pensada para interpretación humana, transparencia y claridad.
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                  El producto especializado
+                </p>
+                <h2 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-slate-900">
+                  Herramio Originalidad
+                </h2>
+                <p className="mt-2 text-lg font-medium text-slate-800">
+                  Análisis de similitud y evidencia documental.
+                </p>
+                <p className="mt-3 max-w-xl text-base leading-relaxed text-slate-600">
+                  Sube un trabajo académico y revisa qué coincide, con qué, y si tus citas y referencias se sostienen —
+                  antes de entregarlo. Te devuelve evidencia para que decidas tú, no un veredicto automático.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link href="/originalidad">
-                    <Button size="md" variant="secondary">Ver Originalidad</Button>
+                    <Button size="md" variant="secondary">
+                      Probar Originalidad
+                    </Button>
                   </Link>
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700">Resumen</span>
-                  <span className="rounded-full bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white">14.2%</span>
-                </div>
-                <div className="mt-5 space-y-3 text-sm text-slate-600">
-                  <div className="rounded-2xl bg-white p-3">
-                    <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Coincidencias</div>
-                    <div className="mt-2 font-semibold text-slate-900">6 fuentes relevantes</div>
-                  </div>
-                  <div className="rounded-2xl bg-white p-3">
-                    <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Citas</div>
-                    <div className="mt-2 font-semibold text-slate-900">31 correctamente atribuidas</div>
-                  </div>
-                  <div className="rounded-2xl bg-white p-3">
-                    <div className="text-xs uppercase tracking-[0.16em] text-slate-500">Estado</div>
-                    <div className="mt-2 font-semibold text-slate-900">Requiere revisión humana</div>
-                  </div>
-                </div>
-              </div>
+              {/* Capabilities, not a fabricated report.
+                  This panel used to show "14.2%", "6 fuentes relevantes" and
+                  "31 citas correctamente atribuidas" — invented numbers
+                  styled exactly like real output. On a product whose entire
+                  credibility rests on not overstating what it measured,
+                  that was the wrong thing to put on the front page. */}
+              <ul className="grid gap-2.5">
+                {ORIGINALITY_CAPABILITIES.map((item) => (
+                  <li key={item.title} className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+                    <item.icon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-emerald-700" aria-hidden="true" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{item.title}</p>
+                      <p className="mt-0.5 text-sm leading-relaxed text-slate-600">{item.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </Reveal>
